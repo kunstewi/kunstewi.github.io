@@ -1,0 +1,142 @@
+/* Basic */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Default light mode styling */
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.8;
+    background-color: #f4f4f4;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+h1, h2, h3 {
+    color: #2e2e2e;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-top: 30px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+}
+
+h3 {
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Container box style */
+
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #333;
+    margin-top: 20px;
+}
+
+/* Dark mode styling */
+
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #dcdcdc;
+}
+
+body.dark-mode .container {
+    background-color: #2e2e2e;
+    border-left: 4px solid #3b82f6; /* Blue border for dark mode */
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3 {
+    color: #dcdcdc;
+}
+
+body.dark-mode a {
+    color: #3b82f6;
+}
+
+body.dark-mode code {
+    background-color: #333;
+    color: #dcdcdc;
+}
+
+/* Code block styling */
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #e8e8e8;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+/* Code block dark mode */
+
+body.dark-mode code {
+    background-color: #444;
+    color: #dcdcdc;
+}
+
+/* Spacing for list items */
+
+ul {
+    margin-top: 10px;
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+/* Toggle button styling */
+
+.toggle-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color : #333;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 1000;
+}
+
+.toggle-button:hover {
+    background-color: #444;
+}
+
+/* Add bottom margin to each section for better spacing */
+
+section {
+    margin-bottom: 30px;
+}
