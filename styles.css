@@ -1,0 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: white;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header/Name Section */
+.header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+h2 {
+    font-size: 1.3rem;
+    color: #7f8c8d;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.contact-links a {
+    color: #3498db;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.contact-links a i {
+    margin-right: 5px;
+}
+
+.contact-links a:hover {
+    color: #2980b9;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 30px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin-bottom: 15px;
+    padding-left: 20px;
+    position: relative;
+}
+
+li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #3498db;
+}
+
+.date {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #7f8c8d;
+}
+
+.para{
+    margin-bottom: 8px;
+}
+
+.org, .description {
+    color: #000000;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .contact-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+}
