@@ -101,6 +101,10 @@ li:before {
     margin-bottom: 8px;
 }
 
+.exp-org{
+    margin-bottom: 8px;
+}
+
 .org, .description {
     color: #000000;
 }
