@@ -109,6 +109,7 @@ a {
     color: #3498db;
     text-decoration: none;
     transition: color 0.3s;
+    font-weight: bold;
 }
 
 a:hover {
