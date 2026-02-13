@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanai's Blog</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VP1VKLPKJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-4VP1VKLPKJ");
+  </script>
+</head>
+
+<body class="bg-orange-100 w-full max-w-[95%] md:w-[55%] mx-auto">
+  <nav class="mt-6">
+    <div>
+      <h1 class="font-serif text-4xl">Kanai's Blog</h1>
+      <div class="mt-5 flex flex-wrap gap-5">
+        <a href="../index.html"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Home</a>
+        <a href="./blog.html"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a>
+      </div>
+  </nav>
+
+  <hr class="mt-3" />
+
+  <div class="my-8">
+
+    <ul class="list-none">
+
+      <a href="../blogs/redis.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">2nd October, 2025</span>
+          <span class="w-full font-mono text-lg">Redis 101 : From a Beginners POV </span>
+        </li>
+      </a>
+
+      <a href="../blogs/distributed-systems.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">8th August, 2025</span>
+          <span class="w-full font-mono text-lg ">Distributed Systems 101 : From a Beginners POV</span>
+        </li>
+      </a>
+      <a href="../blogs/sockets.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">26th July, 2025</span>
+          <span class="w-full font-mono text-lg ">Sockets 101 : From a Beginners POV</span>
+        </li>
+      </a>
+      <a href="../blogs/vector-db.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">3rd July, 2025</span>
+          <span class="w-full font-mono text-lg">Vector Database 101 : From a Beginners POV</span>
+        </li>
+      </a>
+
+
+      <a href="../blogs/concurrency.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">10th May, 2025</span>
+          <span class="w-full font-mono text-lg">Concurrency from a Beginners POV</span>
+        </li>
+      </a>
+      <a href="../blogs/system-design.html">
+        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
+          <span class="text-gray-500 w-[40%]">28th April, 2025</span>
+          <span class="w-full font-mono text-lg">System Design from a Beginners POV</span>
+        </li>
+      </a>
+
+    </ul>
+
+  </div>
+</body>
+
+</html>
