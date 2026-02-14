@@ -1,86 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hehe</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ></script>
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-4VP1VKLPKJ"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
 
-      gtag("config", "G-4VP1VKLPKJ");
-    </script>
-    <stylesheet src="./css/main-page.css"></stylesheet>
-  </head>
-  <body class="bg-orange-100 w-full max-w-[90%] md:w-[43%] mx-auto">
-    <nav class="mt-6">
-      <div>
-        <h1 class="font-serif text-4xl">Kanai's Blog</h1>
-        <div class="mt-5 flex flex-wrap gap-5">
-          <a
-            href="index.html"
-            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
-            >Home</a
-          >
-          <a
-            href="./blogs/blog.html"
-            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
-            >Blogs</a
-          >
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hehe</title>
+  <link rel="icon" href="blogs/assets/favicon.ico" type="image/x-icon">
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VP1VKLPKJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-4VP1VKLPKJ");
+  </script>
+  <stylesheet src="./css/main-page.css"></stylesheet>
+</head>
+
+<body class="bg-orange-100 w-full max-w-[90%] md:w-[43%] mx-auto">
+  <nav class="mt-6">
+    <div>
+      <h1 class="font-serif text-4xl">Kanai's Blog</h1>
+      <div class="mt-5 flex flex-wrap gap-5">
+        <a href="index.html"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Home</a>
+        <a href="./blogs/blog.html"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <hr class="mt-3" />
+  <hr class="mt-3" />
 
-    <section class="mt-8">
-      <h1 class="text-lg">
-        Hi, myself <span class="font-semibold">Kanai Kumar</span>
-      </h1>
-      <h1 class="mt-4 text-lg">
-        A full stack engineer passionate about security and infrastructure. I primarily work with <strong>TypeScript</strong>, <strong>Python</strong> and <strong>Golang</strong>.
-        I love <strong>PostgreSQL</strong> and <strong>Redis</strong>.
-      </h1>
-      <h1 class="mt-4 text-lg">
-        Most of the time you would find me diving deeper into Linux internals, fixing CI/CD pipelines, optimizing Dockerfiles, spinning up Kubernetes clusters, setting and fixing monitoring tools or staring blankly at logfiles.
-      </h1>
-      <h1 class="mt-4 text-lg">Here are my socials, if you are searching :)</h1>
+  <section class="mt-8">
+    <h1 class="text-lg">
+      Hi, myself <span class="font-semibold">Kanai Kumar</span>
+    </h1>
+    <h1 class="mt-4 text-lg">
+      A full stack engineer passionate about security and infrastructure. I primarily work with
+      <strong>TypeScript</strong>, <strong>Python</strong> and <strong>Golang</strong>.
+      I love <strong>PostgreSQL</strong> and <strong>Redis</strong>.
+    </h1>
+    <h1 class="mt-4 text-lg">
+      Most of the time you would find me diving deeper into Linux internals, fixing CI/CD pipelines, optimizing
+      Dockerfiles, spinning up Kubernetes clusters, setting and fixing monitoring tools or staring blankly at logfiles.
+    </h1>
+    <h1 class="mt-4 text-lg">Here are my socials, if you are searching :)</h1>
 
-      <hr class="my-5" />
+    <hr class="my-5" />
 
-      <div class="flex gap-5 mx-auto">
-        <div class="m flex flex-wrap gap-5">
-          <a
-            href="https://x.com/kanaitwt"
-            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold"
-            >Twitter</a
-          >
-          <a
-            href="https://github.com/kunstewi"
-            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold"
-            >Github</a
-          >
-          <a
-            href="https://www.linkedin.com/in/kunstewi"
-            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold"
-            >LinkedIn</a
-          >
-        </div>
+    <div class="flex gap-5 mx-auto">
+      <div class="m flex flex-wrap gap-5">
+        <a href="https://x.com/kanaitwt"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold">Twitter</a>
+        <a href="https://github.com/kunstewi"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold">Github</a>
+        <a href="https://www.linkedin.com/in/kunstewi"
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300 font-semibold">LinkedIn</a>
       </div>
-    </section>
-  </body>
+    </div>
+  </section>
+</body>
+
 </html>

@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Computing everything at once</title>
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -28,7 +29,7 @@
         <a href="../index.html"
           class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Home</a>
         <a href="./blog.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a> 
+          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a>
       </div>
     </div>
   </nav>
@@ -143,7 +144,8 @@
     <p class="mt-3 text-lg">Lock, like mutexes or semaphores are essential for preventing race conditions when threads
       access shared data, but they introduce challenges like deadlocks, livelocks and performance overhead, but first
       <span class="font-bold">what is overhead ?</span>, it refers to the extra computational cost or resources consume
-      by a system, process or operation which is not directly linked to the main task.</p>
+      by a system, process or operation which is not directly linked to the main task.
+    </p>
 
     <ul class="ml-4 list-disc mt-4 text-lg">
       <li><span class="underline underline-offset-4">Deadlocks</span> : This occurs when two or more threads are stuck,
