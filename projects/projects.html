@@ -45,101 +45,269 @@
 
         <!-- Projects Section -->
         <section>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
+                <!-- Project Card 1 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            Distributed Task Queue
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        Distributed Task Queue
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">High-performance task queue with Go and Redis.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Go</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Redis</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Docker</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>High-performance async task processing</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Priority queue with retry mechanisms</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Horizontal scaling with worker pools</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Real-time monitoring dashboard</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Go</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Redis</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Docker</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
+                <!-- Project Card 2 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            Real-time Analytics Dashboard
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        Real-time Analytics Dashboard
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">Data visualization with WebSocket support.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">TypeScript</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">React</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">PostgreSQL</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Live data visualization with charts</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>WebSocket-based real-time updates</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Custom metrics and KPI tracking</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Responsive design with dark mode</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">TypeScript</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">React</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">PostgreSQL</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
+                <!-- Project Card 3 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            Kubernetes Operator
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        Kubernetes Operator
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">Custom operator for database backups automation.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Go</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Kubernetes</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Helm</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Automated database backup scheduling</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Custom resource definitions (CRDs)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Multi-cloud storage support</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Disaster recovery automation</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Go</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Kubernetes</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Helm</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
+                <!-- Project Card 4 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            API Gateway Service
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        API Gateway Service
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">Scalable gateway with rate limiting and auth.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Python</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">FastAPI</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Redis</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Intelligent rate limiting & throttling</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>JWT-based authentication system</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Request/response transformation</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>API versioning and routing</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Python</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">FastAPI</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Redis</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
+                <!-- Project Card 5 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            Microservices Platform
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        Microservices Platform
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">Event-driven microservices architecture.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Node.js</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">RabbitMQ</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">MongoDB</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Event-driven architecture pattern</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Service discovery and load balancing</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Distributed tracing with OpenTelemetry</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Circuit breaker implementation</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Node.js</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">RabbitMQ</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">MongoDB</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
+                <!-- Project Card 6 -->
                 <div
-                    class="border-4 border-orange-500 rounded-lg p-4 hover:border-orange-600 transition-all duration-300 hover:shadow-lg">
-                    <h3 class="text-lg font-semibold mb-2">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                            CI/CD Pipeline Tool
-                        </a>
+                    class="border-3 border-orange-500 rounded-2xl p-6 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-balance text-gray-900">
+                        CI/CD Pipeline Tool
                     </h3>
-                    <p class="text-xs text-gray-700 mb-2">Automated deployment and testing framework.</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Python</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Docker</span>
-                        <span class="px-2 py-0.5 bg-orange-200 text-xs font-mono rounded">Jenkins</span>
+
+                    <ul class="text-sm text-gray-800 mb-5 space-y-2 flex-grow list-none">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Automated build and deployment</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Multi-environment configuration</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Integrated testing frameworks</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-600 font-bold mt-0.5">•</span>
+                            <span>Rollback and blue-green deployment</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Python</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Docker</span>
+                        <span class="px-3 py-1.5 bg-orange-300 text-xs font-semibold rounded-md">Jenkins</span>
+                    </div>
+
+                    <div class="flex gap-3 mt-auto">
+                        <a href="#" aria-label="View GitHub repository"
+                            class="flex-1 px-4 py-2.5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 text-center hover:shadow-md">
+                            GitHub
+                        </a>
+                        <a href="#" aria-label="View live demo"
+                            class="flex-1 px-4 py-2.5 border-2 border-black text-black text-sm font-semibold rounded-lg hover:bg-black hover:text-white transition-all duration-200 text-center hover:shadow-md">
+                            Demo
+                        </a>
                     </div>
                 </div>
 
