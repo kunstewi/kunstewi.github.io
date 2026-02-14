@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kanai's Pull Requests</title>
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../blogs/assets/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VP1VKLPKJ"></script>
     <script>
@@ -31,7 +31,8 @@
                 <a href="../projects/projects.html"
                     class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Projects</a>
                 <a href="./prs.html"
-                    class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Pull Requests</a>
+                    class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Pull
+                    Requests</a>
                 <a href="../gallery/gallery.html"
                     class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Gallery</a>
             </div>
@@ -43,95 +44,199 @@
 
         <!-- Pull Requests Section -->
         <section>
-            <div class="space-y-3">
+            <div class="space-y-6">
 
                 <!-- PR 1 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            feat: Add authentication middleware to API routes
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    feat: Add authentication middleware to API routes
+                                </a>
+                                <span
+                                    class="inline-block px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded">feature</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Implemented JWT-based authentication middleware for securing API endpoints. Added
+                                role-based access control and token refresh mechanism.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">user-api-service</span>
+                                <span>• Merged on Jan 15, 2026</span>
+                                <span>• 8 files changed</span>
+                                <span class="text-green-600">+245</span>
+                                <span class="text-red-600">-32</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PR 2 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            perf: Optimize Docker build for production deployments
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    perf: Optimize Docker build for production deployments
+                                </a>
+                                <span
+                                    class="inline-block px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">performance</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Reduced Docker image size by 60% using multi-stage builds. Implemented layer caching
+                                strategies and removed unnecessary dependencies from production image.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">deployment-infrastructure</span>
+                                <span>• Merged on Jan 22, 2026</span>
+                                <span>• 3 files changed</span>
+                                <span class="text-green-600">+89</span>
+                                <span class="text-red-600">-124</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PR 3 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            feat: Implement Redis caching layer for user sessions
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    feat: Implement Redis caching layer for user sessions
+                                </a>
+                                <span
+                                    class="inline-block px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded">feature</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Added Redis-based session management to improve response times by 40%. Implemented
+                                session expiry, automatic cleanup, and fallback mechanisms for cache failures.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">user-api-service</span>
+                                <span>• Merged on Jan 28, 2026</span>
+                                <span>• 12 files changed</span>
+                                <span class="text-green-600">+567</span>
+                                <span class="text-red-600">-89</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PR 4 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            fix: Resolve memory leak in WebSocket connections
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    fix: Resolve memory leak in WebSocket connections
+                                </a>
+                                <span class="inline-block px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded">bug
+                                    fix</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Fixed critical memory leak caused by improper cleanup of WebSocket event listeners.
+                                Added connection pooling and automatic reconnection with exponential backoff.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">realtime-messaging</span>
+                                <span>• Merged on Feb 3, 2026</span>
+                                <span>• 5 files changed</span>
+                                <span class="text-green-600">+134</span>
+                                <span class="text-red-600">-67</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PR 5 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            docs: Add comprehensive API documentation with examples
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    docs: Add comprehensive API documentation with examples
+                                </a>
+                                <span
+                                    class="inline-block px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded">documentation</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Created detailed API documentation using OpenAPI 3.0 specification. Included
+                                request/response examples, authentication guides, and interactive Swagger UI for all
+                                endpoints.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">user-api-service</span>
+                                <span>• Merged on Feb 8, 2026</span>
+                                <span>• 15 files changed</span>
+                                <span class="text-green-600">+1,234</span>
+                                <span class="text-red-600">-45</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PR 6 -->
-                <div class="flex items-start gap-3 group">
-                    <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
-                    </svg>
-                    <div class="flex-1">
-                        <a href="#"
-                            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
-                            refactor: Migrate legacy codebase to TypeScript
-                        </a>
-                        <span class="text-sm text-gray-600 ml-2">• merged</span>
+                <div class="border-l-2 border-purple-600 pl-4 py-2">
+                    <div class="flex items-start gap-3 group">
+                        <svg class="size-5 mt-0.5 flex-shrink-0 text-purple-600" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
+                        </svg>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="#"
+                                    class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                                    refactor: Migrate legacy codebase to TypeScript
+                                </a>
+                                <span
+                                    class="inline-block px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded">refactor</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                Converted entire JavaScript codebase to TypeScript for improved type safety and
+                                developer experience. Added strict type checking, interfaces, and comprehensive type
+                                definitions.
+                            </p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                                <span class="font-medium">frontend-dashboard</span>
+                                <span>• Merged on Feb 12, 2026</span>
+                                <span>• 47 files changed</span>
+                                <span class="text-green-600">+3,456</span>
+                                <span class="text-red-600">-2,890</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
