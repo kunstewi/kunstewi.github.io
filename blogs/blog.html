@@ -42,49 +42,192 @@
 
   <div class="my-8">
 
-    <ul class="list-none">
+    <!-- Blog Posts Section -->
+    <section>
+      <div class="space-y-6">
 
-      <a href="../blogs/redis.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">2nd October, 2025</span>
-          <span class="w-full font-mono text-lg">Redis 101 : From a Beginners POV </span>
-        </li>
-      </a>
+        <!-- Blog 1: Redis -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/redis.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  Redis 101 : From a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded">database</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                A comprehensive introduction to Redis, covering its core data structures, use cases, and practical
+                implementation patterns. Learn about caching strategies, pub/sub messaging, and performance
+                optimization techniques.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on Oct 2, 2025</span>
+                <span>• 8 min read</span>
+                <span>• Beginner Friendly</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <a href="../blogs/distributed-systems.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">8th August, 2025</span>
-          <span class="w-full font-mono text-lg ">Distributed Systems 101 : From a Beginners POV</span>
-        </li>
-      </a>
-      <a href="../blogs/sockets.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">26th July, 2025</span>
-          <span class="w-full font-mono text-lg ">Sockets 101 : From a Beginners POV</span>
-        </li>
-      </a>
-      <a href="../blogs/vector-db.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">3rd July, 2025</span>
-          <span class="w-full font-mono text-lg">Vector Database 101 : From a Beginners POV</span>
-        </li>
-      </a>
+        <!-- Blog 2: Distributed Systems -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/distributed-systems.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  Distributed Systems 101 : From a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">architecture</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                Explore the fundamentals of distributed systems including CAP theorem, consistency models, and fault
+                tolerance. Understand how to design scalable systems with practical examples of load balancing,
+                replication, and consensus algorithms.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on Aug 8, 2025</span>
+                <span>• 12 min read</span>
+                <span>• Intermediate</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <!-- Blog 3: Sockets -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/sockets.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  Sockets 101 : From a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded">networking</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                Deep dive into socket programming and real-time communication. Learn about TCP/UDP protocols,
+                WebSockets, and how to build efficient client-server applications with practical code examples and
+                best practices.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on Jul 26, 2025</span>
+                <span>• 10 min read</span>
+                <span>• Beginner Friendly</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <a href="../blogs/concurrency.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">10th May, 2025</span>
-          <span class="w-full font-mono text-lg">Concurrency from a Beginners POV</span>
-        </li>
-      </a>
-      <a href="../blogs/system-design.html">
-        <li class="flex justify-between items-center hover:underline underline-offset-4 py-3">
-          <span class="text-gray-500 w-[40%]">28th April, 2025</span>
-          <span class="w-full font-mono text-lg">System Design from a Beginners POV</span>
-        </li>
-      </a>
+        <!-- Blog 4: Vector Database -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/vector-db.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  Vector Database 101 : From a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded">AI/ML</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                Understanding vector databases and their role in modern AI applications. Explore similarity search,
+                embeddings, and how vector databases power semantic search, recommendation systems, and RAG
+                applications.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on Jul 3, 2025</span>
+                <span>• 9 min read</span>
+                <span>• Intermediate</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    </ul>
+        <!-- Blog 5: Concurrency -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/concurrency.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  Concurrency from a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded">programming</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                Master the concepts of concurrent programming including threads, processes, and asynchronous
+                execution. Learn about race conditions, deadlocks, and synchronization mechanisms with practical
+                examples in modern languages.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on May 10, 2025</span>
+                <span>• 11 min read</span>
+                <span>• Intermediate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blog 6: System Design -->
+        <div class="border-l-2 border-orange-600 pl-4 py-2">
+          <div class="flex items-start gap-3 group">
+            <svg class="size-5 mt-0.5 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a href="../blogs/system-design.html"
+                  class="font-medium relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-300">
+                  System Design from a Beginners POV
+                </a>
+                <span class="inline-block px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">architecture</span>
+              </div>
+              <p class="text-sm text-gray-700 mt-1">
+                A beginner's guide to system design principles and patterns. Learn how to design scalable,
+                maintainable systems by understanding key concepts like microservices, API design, caching, and
+                database optimization.
+              </p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-600">
+                <span>• Published on Apr 28, 2025</span>
+                <span>• 15 min read</span>
+                <span>• Beginner Friendly</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
   </div>
 </body>
