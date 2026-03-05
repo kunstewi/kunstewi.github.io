@@ -1,0 +1,62 @@
+[
+    {
+        "title": "feat: Add authentication middleware to API routes",
+        "url": "#",
+        "label": "feature",
+        "repo": "user-api-service",
+        "mergedOn": "Jan 15, 2026",
+        "filesChanged": 8,
+        "additions": 245,
+        "deletions": 32
+    },
+    {
+        "title": "perf: Optimize Docker build for production deployments",
+        "url": "#",
+        "label": "performance",
+        "repo": "deployment-infrastructure",
+        "mergedOn": "Jan 22, 2026",
+        "filesChanged": 3,
+        "additions": 89,
+        "deletions": 124
+    },
+    {
+        "title": "feat: Implement Redis caching layer for user sessions",
+        "url": "#",
+        "label": "feature",
+        "repo": "user-api-service",
+        "mergedOn": "Jan 28, 2026",
+        "filesChanged": 12,
+        "additions": 567,
+        "deletions": 89
+    },
+    {
+        "title": "fix: Resolve memory leak in WebSocket connections",
+        "url": "#",
+        "label": "bug fix",
+        "repo": "realtime-messaging",
+        "mergedOn": "Feb 3, 2026",
+        "filesChanged": 5,
+        "additions": 134,
+        "deletions": 67
+    },
+    {
+        "title": "docs: Add comprehensive API documentation with examples",
+        "url": "#",
+        "label": "documentation",
+        "repo": "user-api-service",
+        "mergedOn": "Feb 8, 2026",
+        "filesChanged": 15,
+        "additions": 1234,
+        "deletions": 45
+    },
+    {
+        "title": "refactor: Migrate legacy codebase to TypeScript",
+        "url": "#",
+        "label": "refactor",
+        "repo": "frontend-dashboard",
+        "mergedOn": "Feb 12, 2026",
+        "filesChanged": 47,
+        "additions": 3456,
+        "deletions": 2890
+    }
+]
