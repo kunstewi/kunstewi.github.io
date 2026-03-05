@@ -1,0 +1,62 @@
+[
+    {
+        "file": "assets/image-1.jpeg",
+        "alt": "Technology workspace",
+        "caption": "Local Development"
+    },
+    {
+        "file": "assets/image-2.jpeg",
+        "alt": "Server infrastructure",
+        "caption": "Touching Grass"
+    },
+    {
+        "file": "assets/image-3.jpeg",
+        "alt": "Code on screen",
+        "caption": "Flex"
+    },
+    {
+        "file": "assets/image-4.jpeg",
+        "alt": "Cloud computing",
+        "caption": "Local Development"
+    },
+    {
+        "file": "assets/image-5.jpeg",
+        "alt": "Database systems",
+        "caption": "Typing Speed"
+    },
+    {
+        "file": "assets/image-6.jpeg",
+        "alt": "Network security",
+        "caption": "Rubik's Cube"
+    },
+    {
+        "file": "assets/image-7.jpeg",
+        "alt": "Database systems",
+        "caption": "Local Development"
+    },
+    {
+        "file": "assets/image-8.jpeg",
+        "alt": "Database systems",
+        "caption": "Broken Dream"
+    },
+    {
+        "file": "assets/image-9.jpeg",
+        "alt": "Database systems",
+        "caption": "Richard Feynman"
+    },
+    {
+        "file": "assets/image-10.jpeg",
+        "alt": "Database systems",
+        "caption": "ISI Kolkata"
+    },
+    {
+        "file": "assets/image-11.jpeg",
+        "alt": "Database systems",
+        "caption": "Late Night"
+    },
+    {
+        "file": "assets/image-12.jpeg",
+        "alt": "Database systems",
+        "caption": "Higher Algebra"
+    }
+]
