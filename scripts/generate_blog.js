@@ -91,6 +91,14 @@ if (frontMatterMatch) {
 
 const renderer = new marked.Renderer();
 
+// ---------------------------------------------------------------------------
+// Inline markdown helper — resolves **bold**, _italic_, `code`, links, etc.
+// Declared here so every renderer below can use it.
+// ---------------------------------------------------------------------------
+function inline(text) {
+  return marked.parseInline(text);
+}
+
 // Headings — generate slug IDs so TOC anchor links (#what-is-playwright) work
 renderer.heading = ({ text, depth }) => {
   const sizes = {
@@ -128,7 +136,7 @@ renderer.image = ({ href, title: imgTitle, text: alt }) => {
     ? `<p class="text-sm text-gray-500 text-center font-serif mt-2">${imgTitle}</p>`
     : "";
   return `<div class="my-10">
-  <img src="${href}" alt="${alt}" class="w-[75%] mx-auto" />
+  <img src="${href}" alt="${alt}" class="w-full h-auto block" />
   ${caption}
 </div>\n`;
 };
@@ -158,7 +166,7 @@ renderer.codespan = ({ text }) => {
 
 // Blockquotes
 renderer.blockquote = ({ text }) => {
-  return `<blockquote class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic">${text}</blockquote>\n`;
+  return `<blockquote class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic">${inline(text)}</blockquote>\n`;
 };
 
 // Horizontal rules
@@ -184,14 +192,14 @@ renderer.link = ({ href, title: linkTitle, text }) => {
   return `<a href="${href}"${titleAttr} class="underline underline-offset-2 hover:text-gray-600 transition-colors">${text}</a>`;
 };
 
-// Strong / em — marked passes an object { text } in v9+
-renderer.strong = ({ text }) => `<strong class="font-bold">${text}</strong>`;
-renderer.em = ({ text }) => `<em class="italic">${text}</em>`;
+// Strong / em — inner text may itself contain backticks or other inline syntax
+renderer.strong = ({ text }) => `<strong class="font-bold">${inline(text)}</strong>`;
+renderer.em = ({ text }) => `<em class="italic">${inline(text)}</em>`;
 
 // Tables
 renderer.table = ({ header, rows }) => {
   const headerHtml = header
-    .map((cell) => `<th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">${cell.text}</th>`)
+    .map((cell) => `<th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">${inline(cell.text)}</th>`)
     .join("");
   const rowsHtml = rows
     .map(
@@ -199,7 +207,7 @@ renderer.table = ({ header, rows }) => {
         `<tr>${row
           .map(
             (cell) =>
-              `<td class="border border-gray-300 px-4 py-2 font-serif text-sm">${cell.text}</td>`
+              `<td class="border border-gray-300 px-4 py-2 font-serif text-sm">${inline(cell.text)}</td>`
           )
           .join("")}</tr>`
     )
@@ -214,19 +222,7 @@ renderer.table = ({ header, rows }) => {
 
 marked.use({ renderer });
 
-// ---------------------------------------------------------------------------
-// Inline markdown helper
-// marked's block renderer receives raw text tokens in paragraph/listitem
-// callbacks — we must explicitly parse inline syntax (bold, italic, code,
-// links) ourselves.
-// ---------------------------------------------------------------------------
-function inline(text) {
-  // parseInline returns an HTML string with bold/italic/code/links resolved
-  return marked.parseInline(text);
-}
-
 // Patch paragraph and listitem to run inline parsing
-const _paragraph = renderer.paragraph.bind(renderer);
 renderer.paragraph = (token) => {
   const processed = inline(token.text);
   if (processed.trim().startsWith("<img")) {
