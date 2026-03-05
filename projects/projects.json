@@ -1,0 +1,98 @@
+[
+    {
+        "title": "Distributed Task Queue",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "Backend",
+            "Go",
+            "Redis",
+            "Docker"
+        ],
+        "bullets": [
+            "High-performance distributed task queue system built with Go and Redis.",
+            "Asynchronous task processing with priority queuing and automatic retry mechanisms.",
+            "Real-time monitoring dashboard for tracking task execution and system health."
+        ]
+    },
+    {
+        "title": "Real-time Analytics Dashboard",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "FullStack",
+            "TypeScript",
+            "React",
+            "PostgreSQL"
+        ],
+        "bullets": [
+            "Interactive analytics dashboard with live data visualization via WebSockets.",
+            "Custom metrics tracking, KPI monitoring, and real-time chart updates.",
+            "Responsive design with dark mode support."
+        ]
+    },
+    {
+        "title": "Kubernetes Operator",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "Infrastructure",
+            "Go",
+            "Kubernetes",
+            "Helm"
+        ],
+        "bullets": [
+            "Automated database backup management via custom Kubernetes operator.",
+            "Declarative backup scheduling with CRDs and multi-cloud storage support.",
+            "Disaster recovery automation with point-in-time restore capabilities."
+        ]
+    },
+    {
+        "title": "API Gateway Service",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "Backend",
+            "Python",
+            "FastAPI",
+            "Redis"
+        ],
+        "bullets": [
+            "High-performance API gateway with intelligent rate limiting and routing.",
+            "JWT-based authentication with role-based access control.",
+            "Utilizes Redis for distributed rate throttling and middleware transformations."
+        ]
+    },
+    {
+        "title": "Microservices Platform",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "FullStack",
+            "Node.js",
+            "RabbitMQ",
+            "MongoDB"
+        ],
+        "bullets": [
+            "Event-driven architecture with service discovery and load balancing.",
+            "Distributed tracing via OpenTelemetry and circuit breaker patterns.",
+            "Asynchronous inter-service communication using RabbitMQ."
+        ]
+    },
+    {
+        "title": "CI/CD Pipeline Tool",
+        "github": "#",
+        "demo": "#",
+        "tags": [
+            "Infrastructure",
+            "Python",
+            "Docker",
+            "Jenkins"
+        ],
+        "bullets": [
+            "Automated workflow orchestration for builds and deployments.",
+            "Multi-environment configuration management and parallel framework testing.",
+            "Advanced deployment capabilities including blue-green strategies and rollbacks."
+        ]
+    }
+]
