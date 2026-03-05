@@ -17,7 +17,8 @@
         "readingTime": 12,
         "depth": "Comprehensive Guide",
         "tags": [
-            "testing"
+            "testing",
+            "playwright"
         ]
     },
     {
@@ -27,7 +28,8 @@
         "readingTime": 8,
         "depth": "Beginner Friendly",
         "tags": [
-            "database"
+            "database",
+            "redis"
         ]
     },
     {
@@ -47,7 +49,8 @@
         "readingTime": 10,
         "depth": "Beginner Friendly",
         "tags": [
-            "networking"
+            "networking",
+            "websockets"
         ]
     },
     {
@@ -57,7 +60,8 @@
         "readingTime": 9,
         "depth": "Intermediate",
         "tags": [
-            "AI/ML"
+            "AI/ML",
+            "vector databases"
         ]
     },
     {
