@@ -161,7 +161,13 @@ renderer.code = ({ text, lang }) => {
 
 // Inline code
 renderer.codespan = ({ text }) => {
-  return `<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">${text}</code>`;
+  // Escape HTML entities so that backtick spans containing tag names like
+  // `<script>` or `<link>` render as visible text, not real HTML elements.
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return `<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">${escaped}</code>`;
 };
 
 // Blockquotes
@@ -182,9 +188,7 @@ renderer.list = ({ items, ordered }) => {
   return `<${tag} class="${style} font-serif text-lg my-4 space-y-1">${inner}</${tag}>\n`;
 };
 
-renderer.listitem = ({ text }) => {
-  return `<li class="text-lg font-serif">${text}</li>\n`;
-};
+// listitem — placeholder; will be replaced below after inline() is available
 
 // Links
 renderer.link = ({ href, title: linkTitle, text }) => {
@@ -231,8 +235,35 @@ renderer.paragraph = (token) => {
   return `<p class="text-lg font-serif mt-4">${processed}</p>\n`;
 };
 
-renderer.listitem = ({ text }) => {
-  return `<li class="text-lg font-serif">${inline(text)}</li>\n`;
+// listitem — walk token.tokens when present so text children are rendered
+// via inline() and nested list children become a proper indented <ul>.
+// Falling back to token.text only for simple items with no child tokens
+// prevents the raw "- sub-item1 - sub-item2" text from leaking into the
+// output alongside the nested list (the double-render bug).
+renderer.listitem = (token) => {
+  let body = '';
+
+  if (token.tokens && token.tokens.length) {
+    // Render each child token individually
+    for (const child of token.tokens) {
+      if (child.type === 'list') {
+        // Nested sub-list → render as indented <ul>/<ol>
+        const tag = child.ordered ? 'ol' : 'ul';
+        const nestedItems = child.items
+          .map((item) => renderer.listitem(item))
+          .join('');
+        body += `\n<${tag} class="list-disc ml-4 pl-4 mt-1 space-y-0.5 font-serif text-base">${nestedItems}</${tag}>`;
+      } else {
+        // Text / inline token → run through inline parser
+        body += inline(child.text || child.raw || '');
+      }
+    }
+  } else {
+    // Simple list item with no child tokens
+    body = inline(token.text || '');
+  }
+
+  return `<li class="text-lg font-serif">${body}</li>\n`;
 };
 
 // Re-apply renderer after patching
