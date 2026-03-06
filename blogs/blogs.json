@@ -2,7 +2,7 @@
     {
         "title": "p5.js: The Architecture of the p5.js Web Editor",
         "file": "p5-editor-architecture.html",
-        "date": "Mar 5, 2026",
+        "date": "Mar 6, 2026",
         "readingTime": 20,
         "depth": "Deep Dive",
         "tags": [
@@ -13,7 +13,7 @@
     {
         "title": "p5.js: Understanding the Architecture of p5.js",
         "file": "p5.html",
-        "date": "Mar 6, 2026",
+        "date": "Mar 3, 2026",
         "readingTime": 15,
         "depth": "Beginner Friendly",
         "tags": [
@@ -24,7 +24,7 @@
     {
         "title": "Playwright E2E Testing: A Deep Dive",
         "file": "playwright.html",
-        "date": "Mar 5, 2026",
+        "date": "Feb 20, 2026",
         "readingTime": 12,
         "depth": "Comprehensive Guide",
         "tags": [
