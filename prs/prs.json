@@ -1,5 +1,15 @@
 [
   {
+    "title": "feat: added initial jest + supertest unit tests for the backend",
+    "url": "https://github.com/kunstewi/ebook/pull/3",
+    "label": "feature",
+    "repo": "ebook",
+    "mergedOn": "Mar 06, 2026",
+    "filesChanged": 8,
+    "additions": 6062,
+    "deletions": 939
+  },
+  {
     "title": "fix : sound warning due to orphaned sound class as wrong names",
     "url": "https://github.com/processing/p5.sound.js/pull/77",
     "label": "bug fix",
@@ -22,7 +32,7 @@
   {
     "title": "feat: migrated the whole backend to typescript",
     "url": "https://github.com/kunstewi/ebook/pull/1",
-    "label": "refactor",
+    "label": "feature",
     "repo": "ebook",
     "mergedOn": "Feb 26, 2026",
     "filesChanged": 23,
@@ -32,9 +42,9 @@
   {
     "title": "fix: inconsistent paths and backticks in technical_overview.md file",
     "url": "https://github.com/processing/p5.js-website/pull/1050",
-    "label": "docs",
+    "label": "bug fix",
     "repo": "p5.js-website",
-    "mergedOn": "Feb 03, 2026",
+    "mergedOn": "Feb 04, 2026",
     "filesChanged": 1,
     "additions": 2,
     "deletions": 1
@@ -42,7 +52,7 @@
   {
     "title": "[BACKEND]: linked routes with remaining controllers",
     "url": "https://github.com/Open-Source-Chandigarh/orycon/pull/61",
-    "label": "chore",
+    "label": "feature",
     "repo": "orycon",
     "mergedOn": "Jan 17, 2026",
     "filesChanged": 9,
@@ -52,9 +62,9 @@
   {
     "title": "broken link fixed",
     "url": "https://github.com/cline/cline/pull/7986",
-    "label": "docs",
+    "label": "other",
     "repo": "cline",
-    "mergedOn": "Dec 09, 2025",
+    "mergedOn": "Dec 10, 2025",
     "filesChanged": 1,
     "additions": 1,
     "deletions": 1
@@ -72,9 +82,9 @@
   {
     "title": "removed telegram link",
     "url": "https://github.com/antiwork/antiwork/pull/97",
-    "label": "chore",
+    "label": "other",
     "repo": "antiwork",
-    "mergedOn": "Nov 11, 2025",
+    "mergedOn": "Nov 12, 2025",
     "filesChanged": 1,
     "additions": 0,
     "deletions": 14
@@ -82,7 +92,7 @@
   {
     "title": "[ FIX ] : fixed the link on the community page",
     "url": "https://github.com/pharo-project/pharo-website/pull/88",
-    "label": "docs",
+    "label": "bug fix",
     "repo": "pharo-website",
     "mergedOn": "Mar 13, 2025",
     "filesChanged": 1,
@@ -92,7 +102,7 @@
   {
     "title": "[FIX] : Just a small typo fix in README.md",
     "url": "https://github.com/kiwix/kiwix-js-pwa/pull/697",
-    "label": "docs",
+    "label": "bug fix",
     "repo": "kiwix-js-pwa",
     "mergedOn": "Mar 04, 2025",
     "filesChanged": 1,
@@ -104,7 +114,7 @@
     "url": "https://github.com/jenkins-infra/jenkins.io/pull/7906",
     "label": "bug fix",
     "repo": "jenkins.io",
-    "mergedOn": "Feb 22, 2025",
+    "mergedOn": "Feb 23, 2025",
     "filesChanged": 1,
     "additions": 5,
     "deletions": 0
@@ -112,7 +122,7 @@
   {
     "title": "[FIX]: Updated GSoC 2025 timeline dates, text and links on Homepage",
     "url": "https://github.com/pharo-project/pharo-gsoc/pull/120",
-    "label": "docs",
+    "label": "bug fix",
     "repo": "pharo-gsoc",
     "mergedOn": "Jan 31, 2025",
     "filesChanged": 1,
