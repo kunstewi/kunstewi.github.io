@@ -6,8 +6,19 @@
         "readingTime": 20,
         "depth": "Deep Dive",
         "tags": [
-            "architecture",
-            "p5.js"
+            "p5.js-web-editor",
+            "architecture"
+        ]
+    },
+    {
+        "title": "p5.js: Understanding the Architecture of p5.js",
+        "file": "p5.html",
+        "date": "Mar 6, 2026",
+        "readingTime": 15,
+        "depth": "Beginner Friendly",
+        "tags": [
+            "p5.js",
+            "architecture"
         ]
     },
     {
