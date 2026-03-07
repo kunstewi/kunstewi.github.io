@@ -1,5 +1,24 @@
 [
     {
+        "title": "Ebook AI Platform",
+        "github": "https://github.com/kunstewi/ebook",
+        "demo": "https://github.com/kunstewi/ebook",
+        "tags": [
+            "Node.js",
+            "MongoDB",
+            "React",
+            "Tailwind CSS",
+            "Jest",
+            "Playwright",
+            "AI Integrations"
+        ],
+        "bullets": [
+            "A comprehensive full-stack platform designed to facilitate the generation, consumption, and structural management of ebooks.",
+            "Features AI integration workflows assisting users directly in generating engaging book contents.",
+            "Includes a highly polished React UI, fortified backend security, and rigorous automated testing across unit and end-to-end layers."
+        ]
+    },
+    {
         "title": "C HTTP Server",
         "github": "https://github.com/kunstewi/c-http-server",
         "demo": "https://github.com/kunstewi/c-http-server",
@@ -30,25 +49,6 @@
             "A production-grade RESTful API structured around clean, scalable architectural principles.",
             "Features robust JWT-based authentication, structured error handling, and comprehensive API design.",
             "Integrated seamlessly with MongoDB for efficient data storage and performance modeling."
-        ]
-    },
-    {
-        "title": "Ebook AI Platform",
-        "github": "https://github.com/kunstewi/ebook",
-        "demo": "https://github.com/kunstewi/ebook",
-        "tags": [
-            "Node.js",
-            "MongoDB",
-            "React",
-            "Tailwind CSS",
-            "Jest",
-            "Playwright",
-            "AI Integrations"
-        ],
-        "bullets": [
-            "A comprehensive full-stack platform designed to facilitate the generation, consumption, and structural management of ebooks.",
-            "Features AI integration workflows assisting users directly in generating engaging book contents.",
-            "Includes a highly polished React UI, fortified backend security, and rigorous automated testing across unit and end-to-end layers."
         ]
     }
 ]
