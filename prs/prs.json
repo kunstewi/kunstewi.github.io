@@ -90,7 +90,7 @@
     "deletions": 14
   },
   {
-    "title": "[ FIX ] : fixed the link on the community page",
+    "title": "[FIX] : fixed the link on the community page",
     "url": "https://github.com/pharo-project/pharo-website/pull/88",
     "label": "bug fix",
     "repo": "pharo-website",
