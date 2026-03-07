@@ -1,98 +1,54 @@
 [
     {
-        "title": "Distributed Task Queue",
-        "github": "#",
-        "demo": "#",
+        "title": "C HTTP Server",
+        "github": "https://github.com/kunstewi/c-http-server",
+        "demo": "https://github.com/kunstewi/c-http-server",
         "tags": [
-            "Backend",
-            "Go",
-            "Redis",
-            "Docker"
+            "C",
+            "Socket Programming",
+            "HTTP Protocol",
+            "Networking"
         ],
         "bullets": [
-            "High-performance distributed task queue system built with Go and Redis.",
-            "Asynchronous task processing with priority queuing and automatic retry mechanisms.",
-            "Real-time monitoring dashboard for tracking task execution and system health."
+            "A lightweight, multi-threaded HTTP web server engineered entirely from scratch in C.",
+            "Implements low-level POSIX socket APIs, robust request parsing, and concurrent connection handling.",
+            "Designed to be highly performant, prioritizing minimal memory footprint and fast response times."
         ]
     },
     {
-        "title": "Real-time Analytics Dashboard",
-        "github": "#",
-        "demo": "#",
+        "title": "REST API Architecture",
+        "github": "https://github.com/kunstewi/rest-api",
+        "demo": "https://github.com/kunstewi/rest-api",
         "tags": [
-            "FullStack",
             "TypeScript",
-            "React",
-            "PostgreSQL"
-        ],
-        "bullets": [
-            "Interactive analytics dashboard with live data visualization via WebSockets.",
-            "Custom metrics tracking, KPI monitoring, and real-time chart updates.",
-            "Responsive design with dark mode support."
-        ]
-    },
-    {
-        "title": "Kubernetes Operator",
-        "github": "#",
-        "demo": "#",
-        "tags": [
-            "Infrastructure",
-            "Go",
-            "Kubernetes",
-            "Helm"
-        ],
-        "bullets": [
-            "Automated database backup management via custom Kubernetes operator.",
-            "Declarative backup scheduling with CRDs and multi-cloud storage support.",
-            "Disaster recovery automation with point-in-time restore capabilities."
-        ]
-    },
-    {
-        "title": "API Gateway Service",
-        "github": "#",
-        "demo": "#",
-        "tags": [
-            "Backend",
-            "Python",
-            "FastAPI",
-            "Redis"
-        ],
-        "bullets": [
-            "High-performance API gateway with intelligent rate limiting and routing.",
-            "JWT-based authentication with role-based access control.",
-            "Utilizes Redis for distributed rate throttling and middleware transformations."
-        ]
-    },
-    {
-        "title": "Microservices Platform",
-        "github": "#",
-        "demo": "#",
-        "tags": [
-            "FullStack",
             "Node.js",
-            "RabbitMQ",
-            "MongoDB"
+            "Express",
+            "MongoDB",
+            "JWT Auth"
         ],
         "bullets": [
-            "Event-driven architecture with service discovery and load balancing.",
-            "Distributed tracing via OpenTelemetry and circuit breaker patterns.",
-            "Asynchronous inter-service communication using RabbitMQ."
+            "A production-grade RESTful API structured around clean, scalable architectural principles.",
+            "Features robust JWT-based authentication, structured error handling, and comprehensive API design.",
+            "Integrated seamlessly with MongoDB for efficient data storage and performance modeling."
         ]
     },
     {
-        "title": "CI/CD Pipeline Tool",
-        "github": "#",
-        "demo": "#",
+        "title": "Ebook AI Platform",
+        "github": "https://github.com/kunstewi/ebook",
+        "demo": "https://github.com/kunstewi/ebook",
         "tags": [
-            "Infrastructure",
-            "Python",
-            "Docker",
-            "Jenkins"
+            "Node.js",
+            "MongoDB",
+            "React",
+            "Tailwind CSS",
+            "Jest",
+            "Playwright",
+            "AI Integrations"
         ],
         "bullets": [
-            "Automated workflow orchestration for builds and deployments.",
-            "Multi-environment configuration management and parallel framework testing.",
-            "Advanced deployment capabilities including blue-green strategies and rollbacks."
+            "A comprehensive full-stack platform designed to facilitate the generation, consumption, and structural management of ebooks.",
+            "Features AI integration workflows assisting users directly in generating engaging book contents.",
+            "Includes a highly polished React UI, fortified backend security, and rigorous automated testing across unit and end-to-end layers."
         ]
     }
 ]
