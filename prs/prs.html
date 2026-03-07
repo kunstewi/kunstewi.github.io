@@ -65,51 +65,69 @@
 
     <hr class="mt-3" />
 
-    <div class="my-8">
+
+
+    <!-- PRs grouped by org -->
+    <section class="mt-10 mb-12">
         <div id="pr-list">
-            <!-- PR entries are injected here from prs.json -->
+            <!-- PR entries grouped by org injected here -->
         </div>
-    </div>
+    </section>
 
     <script>
-        /** Extract year from date string like "Mar 06, 2026" */
-        function getYear(dateStr) {
-            return dateStr.trim().split(", ").pop();
-        }
-
         const MERGED_ICON = `<svg class="size-4 shrink-0 text-purple-600" viewBox="0 0 16 16" fill="currentColor"><path d="M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8-9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM4.25 4a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"></path></svg>`;
+
+        /** Extract GitHub org from PR url */
+        function getOrg(url) {
+            // https://github.com/ORG/REPO/pull/N
+            const parts = new URL(url).pathname.split("/");
+            return parts[1] || "";
+        }
 
         function renderPR(pr) {
             return `
-                <div class="group flex items-center gap-3 py-2.5">
+                <div class="group flex items-start gap-2.5 py-1.5">
                     ${MERGED_ICON}
-                    <span class="shrink-0 text-sm text-gray-400 tabular-nums">${pr.mergedOn}</span>
                     <a href="${pr.url}" target="_blank" rel="noopener noreferrer"
-                        class="relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-black after:bottom-[-2px] after:left-0 group-hover:after:w-full after:transition-all after:duration-200">
-                        ${pr.title}
-                    </a>
-                    <span class="shrink-0 text-sm text-gray-400">${pr.repo}</span>
+                        class="text-sm leading-snug relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-black after:bottom-[-1px] after:left-0 group-hover:after:w-full after:transition-all after:duration-200">${pr.title}</a>
+                    <span class="ml-auto shrink-0 text-xs text-gray-400 tabular-nums">${pr.mergedOn}</span>
                 </div>`;
+        }
+
+        /** Parse "Mar 06, 2026" into a Date for sorting */
+        function parseDate(dateStr) {
+            return new Date(dateStr);
         }
 
         fetch("./prs.json")
             .then(res => res.json())
             .then(prs => {
+                // Group by org
                 const grouped = {};
                 prs.forEach(pr => {
-                    const year = getYear(pr.mergedOn);
-                    if (!grouped[year]) grouped[year] = [];
-                    grouped[year].push(pr);
+                    const org = getOrg(pr.url);
+                    if (!grouped[org]) grouped[org] = [];
+                    grouped[org].push(pr);
                 });
 
-                const years = Object.keys(grouped).sort((a, b) => b - a);
-                let html = "";
+                // Sort PRs within each org: newest first
+                Object.values(grouped).forEach(list =>
+                    list.sort((a, b) => parseDate(b.mergedOn) - parseDate(a.mergedOn))
+                );
 
-                years.forEach(year => {
-                    html += `<h2 class="font-serif text-lg mt-6 mb-2 text-gray-500">${year}</h2>`;
-                    html += `<div class="divide-y divide-gray-200">`;
-                    html += grouped[year].map(renderPR).join("");
-                    html += `</div>`;
+                // Sort orgs by their most recent PR (newest first)
+                const orgNames = Object.keys(grouped).sort((a, b) =>
+                    parseDate(grouped[b][0].mergedOn) - parseDate(grouped[a][0].mergedOn)
+                );
+
+                // Render PRs grouped by org
+                let html = "";
+                orgNames.forEach(org => {
+                    html += `<div class="mt-6">`;
+                    html += `<h3 class="font-serif text-base text-gray-500">${org} <span class="text-xs text-gray-400 tabular-nums">(${grouped[org].length})</span></h3>`;
+                    html += `<div class="mt-1">`;
+                    html += grouped[org].map(renderPR).join("");
+                    html += `</div></div>`;
                 });
 
                 document.getElementById("pr-list").innerHTML = html;
