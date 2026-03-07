@@ -72,15 +72,15 @@
   </section>
 
   <script>
-    const DOC_ICON = `<svg class="size-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
+    const DOC_ICON = `<svg class="size-5 mt-0.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
 
     function renderBlog(blog) {
       return `
         <div class="group flex items-start gap-2.5 py-1.5">
           ${DOC_ICON}
           <a href="../blogs/${blog.file}"
-            class="text-sm leading-snug relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-black after:bottom-[-1px] after:left-0 group-hover:after:w-full after:transition-all after:duration-200">${blog.title}</a>
-          <span class="ml-auto shrink-0 text-xs text-gray-400 tabular-nums">${blog.date}</span>
+            class="text-base leading-snug relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-black after:bottom-[-1px] after:left-0 group-hover:after:w-full after:transition-all after:duration-200">${blog.title}</a>
+          <span class="ml-auto shrink-0 text-sm text-gray-400 tabular-nums pt-0.5">${blog.date}</span>
         </div>`;
     }
 
@@ -111,8 +111,8 @@
         let html = "";
         years.forEach(year => {
           html += `<div class="mt-6">`;
-          html += `<h3 class="font-serif text-base text-gray-500">${year} <span class="text-xs text-gray-400 tabular-nums">(${grouped[year].length})</span></h3>`;
-          html += `<div class="mt-1">`;
+          html += `<h3 class="font-serif text-lg text-gray-500">${year} <span class="text-sm text-gray-400 tabular-nums">(${grouped[year].length})</span></h3>`;
+          html += `<div class="mt-2 text-gray-800">`;
           html += grouped[year].map(renderBlog).join("");
           html += `</div></div>`;
         });
