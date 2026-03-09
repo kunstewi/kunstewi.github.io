@@ -1,5 +1,15 @@
 [
   {
+    "title": "docs: added a new section in installation.md to get the mongodb connection string from cloud.mongodb.com ",
+    "url": "https://github.com/processing/p5.js-web-editor/pull/3976",
+    "label": "docs",
+    "repo": "p5.js-web-editor",
+    "mergedOn": "Mar 09, 2026",
+    "filesChanged": 1,
+    "additions": 7,
+    "deletions": 0
+  },
+  {
     "title": "feat: added initial jest + supertest unit tests for the backend",
     "url": "https://github.com/kunstewi/ebook/pull/3",
     "label": "feature",
