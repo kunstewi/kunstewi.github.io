@@ -1,54 +1,92 @@
 [
-    {
-        "title": "Ebook AI Platform",
-        "github": "https://github.com/kunstewi/ebook",
-        "demo": "https://github.com/kunstewi/ebook",
-        "tags": [
-            "Node.js",
-            "MongoDB",
-            "React",
-            "Tailwind CSS",
-            "Jest",
-            "Playwright",
-            "AI Integrations"
-        ],
-        "bullets": [
-            "A comprehensive full-stack platform designed to facilitate the generation, consumption, and structural management of ebooks.",
-            "Features AI integration workflows assisting users directly in generating engaging book contents.",
-            "Includes a highly polished React UI, fortified backend security, and rigorous automated testing across unit and end-to-end layers."
-        ]
-    },
-    {
-        "title": "C HTTP Server",
-        "github": "https://github.com/kunstewi/c-http-server",
-        "demo": "https://github.com/kunstewi/c-http-server",
-        "tags": [
-            "C",
-            "Socket Programming",
-            "HTTP Protocol",
-            "Networking"
-        ],
-        "bullets": [
-            "A lightweight, multi-threaded HTTP web server engineered entirely from scratch in C.",
-            "Implements low-level POSIX socket APIs, robust request parsing, and concurrent connection handling.",
-            "Designed to be highly performant, prioritizing minimal memory footprint and fast response times."
-        ]
-    },
-    {
-        "title": "REST API Architecture",
-        "github": "https://github.com/kunstewi/rest-api",
-        "demo": "https://github.com/kunstewi/rest-api",
-        "tags": [
-            "TypeScript",
-            "Node.js",
-            "Express",
-            "MongoDB",
-            "JWT Auth"
-        ],
-        "bullets": [
-            "A production-grade RESTful API structured around clean, scalable architectural principles.",
-            "Features robust JWT-based authentication, structured error handling, and comprehensive API design.",
-            "Integrated seamlessly with MongoDB for efficient data storage and performance modeling."
-        ]
-    }
+  {
+    "title": "restaurant-landing-page",
+    "url": "https://github.com/kunstewi/the-banquet",
+    "tags": "html, css, js"
+  },
+  {
+    "title": "pet-adoption-landing-page",
+    "url": "https://github.com/kunstewi/pet-adoption-website",
+    "tags": "html, css, js"
+  },
+  {
+    "title": "yodora-landing-page",
+    "url": "https://github.com/kunstewi/yodora-landing",
+    "tags": "vite, react, tailwindcss"
+  },
+  {
+    "title": "noteflow-landing-page",
+    "url": "https://github.com/kunstewi/noteflow-landing",
+    "tags": "vite, react, tailwindcss"
+  },
+  {
+    "title": "travel-landing-page",
+    "url": "https://github.com/kunstewi/travel",
+    "tags": "vite, react, tailwindcss"
+  },
+  {
+    "title": "team-task-management-web-app",
+    "url": "https://github.com/kunstewi/achiever",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "blogging-web-app",
+    "url": "https://github.com/kunstewi/blogger",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "interview-prep-web-app",
+    "url": "https://github.com/kunstewi/interviewer",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "expense-tracker-web-app",
+    "url": "https://github.com/kunstewi/spender",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "invoice-generator-web-app",
+    "url": "https://github.com/kunstewi/invoice",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "resume-builder-web-app",
+    "url": "https://github.com/kunstewi/resume",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "ebook-generator-web-app",
+    "url": "https://github.com/kunstewi/ebook",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
+  },
+  {
+    "title": "chess-web-app",
+    "url": "https://github.com/kunstewi/chess",
+    "tags": "vite, react, tailwindcss, nodejs, express, mongodb, socketio"
+  },
+  {
+    "title": "bricks-game",
+    "url": "https://github.com/kunstewi/brickball",
+    "tags": "html, css, js"
+  },
+  {
+    "title": "c-http-server",
+    "url": "https://github.com/kunstewi/c-http-server",
+    "tags": "c"
+  },
+  {
+    "title": "production-rest-api",
+    "url": "https://github.com/kunstewi/rest-api",
+    "tags": "nodejs, express, typescript, mongodb"
+  },
+  {
+    "title": "nest-js-backend",
+    "url": "https://github.com/kunstewi/nest-backend",
+    "tags": "nestjs, typescript"
+  },
+  {
+    "title": "learnings",
+    "url": "https://github.com/kunstewi/learnings",
+    "tags": "documenting everything i have learned or currently learning"
+  }
 ]
