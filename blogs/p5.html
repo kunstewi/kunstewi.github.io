@@ -1,157 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deep Dive into the Architecture of p5.js</title>
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  <style type="text/tailwindcss">
-    @theme {
-      --font-sans: "Lexend", sans-serif;
-      --font-serif: "Lexend", sans-serif;
-    }
-  </style>
-  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <!-- Syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>
-    // Run highlight.js after page load; open <details> briefly so hljs can
-    // reach the code, then restore closed state.
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("details").forEach(d => {
-        const wasOpen = d.open;
-        d.open = true;
-        d.querySelectorAll("code.hljs").forEach(el => hljs.highlightElement(el));
-        d.open = wasOpen;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep Dive into the Architecture of p5.js</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/tailwindcss">
+      @theme {
+        --font-sans: "Lexend", sans-serif;
+        --font-serif: "Lexend", sans-serif;
+      }
+    </style>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <!-- Syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+      // Run highlight.js after page load; open <details> briefly so hljs can
+      // reach the code, then restore closed state.
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("details").forEach((d) => {
+          const wasOpen = d.open;
+          d.open = true;
+          d.querySelectorAll("code.hljs").forEach((el) =>
+            hljs.highlightElement(el),
+          );
+          d.open = wasOpen;
+        });
       });
-    });
-  </script>
-  <style>
-    html {
-      overflow: -moz-scrollbars-none;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    </script>
+    <style>
+      html {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
 
-    html::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
+      html::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
 
-    body {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-      overflow-y: scroll;
-    }
+      body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        overflow-y: scroll;
+      }
 
-    body::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
-  </style>
-</head>
+      body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    </style>
+  </head>
 
-<body class="bg-orange-100 w-full max-w-[95%] md:w-[60%] mx-auto">
-
-  <!-- ── Navigation ────────────────────────────────────────────────────── -->
-  <nav class="mt-6">
-    <div>
-      <h1 class="font-serif text-4xl">Kanai's Blog</h1>
-      <div class="mt-5 flex flex-wrap gap-5">
-        <a href="/"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Home</a>
-        <a href="./blog.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a>
-        <a href="../projects/projects.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Projects</a>
-        <a href="../prs/prs.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Pull
-          Requests</a>
-        <a href="../gallery/gallery.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Gallery</a>
+  <body class="bg-orange-100 w-full max-w-[95%] md:w-[60%] mx-auto">
+    <!-- ── Navigation ────────────────────────────────────────────────────── -->
+    <nav class="mt-6">
+      <div>
+        <h1 class="font-serif text-4xl">Kanai's Blog</h1>
+        <div class="mt-5 flex flex-wrap gap-5">
+          <a
+            href="/"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Home</a
+          >
+          <a
+            href="./blog.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Blogs</a
+          >
+          <a
+            href="../projects/projects.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Projects</a
+          >
+          <a
+            href="../prs/prs.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Pull Requests</a
+          >
+          <a
+            href="../gallery/gallery.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Gallery</a
+          >
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <hr class="mt-3" />
+    <hr class="mt-3" />
 
-  <!-- ── Post header ───────────────────────────────────────────────────── -->
-  <h1 class="text-4xl mt-[57px] mb-3 font-serif">Deep Dive into the Architecture of p5.js</h1>
+    <!-- ── Post header ───────────────────────────────────────────────────── -->
+    <h1 class="text-4xl mt-[57px] mb-3 font-serif">
+      Deep Dive into the Architecture of p5.js
+    </h1>
 
-
-
-  <!-- ── Post body ─────────────────────────────────────────────────────── -->
-  <blockquote class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic"><em class="italic">A
-      technical exploration of how one of the web&#39;s most beloved creative coding libraries is built — from its
-      rendering pipeline and module system to its Friendly Error System and WebGL internals.</em></blockquote>
-  <hr class="my-10" />
-  <h2 id="table-of-contents" class="text-2xl font-serif my-6">Table of Contents</h2>
-  <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><a href="#what-is-p5js"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">What is p5.js?</a></li>
-    <li class="text-lg font-serif"><a href="#repository-structure"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Repository Structure</a></li>
-    <li class="text-lg font-serif"><a href="#core-architecture-the-p5-object-model"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Core Architecture: The p5 Object
-        Model</a></li>
-    <li class="text-lg font-serif"><a href="#global-mode-vs-instance-mode"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Global Mode vs. Instance Mode</a>
-    </li>
-    <li class="text-lg font-serif"><a href="#the-sketch-lifecycle"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">The Sketch Lifecycle</a></li>
-    <li class="text-lg font-serif"><a href="#module-system-and-build-pipeline"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Module System and Build Pipeline</a>
-    </li>
-    <li class="text-lg font-serif"><a href="#the-rendering-architecture"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">The Rendering Architecture</a></li>
-    <li class="text-lg font-serif"><a href="#webgl-mode-internals"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">WebGL Mode Internals</a></li>
-    <li class="text-lg font-serif"><a href="#the-friendly-error-system-fes"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">The Friendly Error System (FES)</a>
-    </li>
-    <li class="text-lg font-serif"><a href="#the-addonextension-system"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">The Addon/Extension System</a></li>
-    <li class="text-lg font-serif"><a href="#p5js-20-a-paradigm-shift"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">p5.js 2.0: A Paradigm Shift</a></li>
-    <li class="text-lg font-serif"><a href="#internationalization-i18n"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Internationalization (i18n)</a></li>
-    <li class="text-lg font-serif"><a href="#testing-infrastructure"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Testing Infrastructure</a></li>
-    <li class="text-lg font-serif"><a href="#key-design-principles"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Key Design Principles</a></li>
-    <li class="text-lg font-serif"><a href="#conclusion"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Conclusion</a></li>
-  </ol>
-  <hr class="my-10" />
-  <h2 id="what-is-p5js" class="text-2xl font-serif my-6">What is p5.js?</h2>
-  <p class="text-lg font-serif mt-4">p5.js is a client-side JavaScript library that reinterprets the creative coding
-    philosophy of <a href="https://processing.org/"
-      class="underline underline-offset-2 hover:text-gray-600 transition-colors">Processing</a> for the modern web.
-    Rather than a port of Processing&#39;s Java syntax, p5.js is a native JavaScript library built on the HTML5 Canvas
-    API and WebGL, designed to make coding accessible to artists, designers, educators, and beginners.</p>
-  <p class="text-lg font-serif mt-4">The project is maintained by the <a href="https://processingfoundation.org/"
-      class="underline underline-offset-2 hover:text-gray-600 transition-colors">Processing Foundation</a> and powered
-    largely by volunteers. As of early 2026, the library is at version <strong class="font-bold">2.x</strong> (latest:
-    2.2.2), representing a significant architectural overhaul from 1.x.</p>
-  <hr class="my-10" />
-  <h2 id="repository-structure" class="text-2xl font-serif my-6">Repository Structure</h2>
-  <p class="text-lg font-serif mt-4">The <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">processing/p5.js</code> GitHub repository
-    follows a well-organized monorepo layout:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">p5.js/
+    <!-- ── Post body ─────────────────────────────────────────────────────── -->
+    <blockquote
+      class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic"
+    >
+      <em class="italic"
+        >A technical exploration of how one of the web&#39;s most beloved
+        creative coding libraries is built, from its rendering pipeline and
+        module system to its Friendly Error System and WebGL internals.</em
+      >
+    </blockquote>
+    <hr class="my-10" />
+    <h2 id="table-of-contents" class="text-2xl font-serif my-6">
+      Table of Contents
+    </h2>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <a
+          href="#what-is-p5js"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >What is p5.js?</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#repository-structure"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Repository Structure</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#core-architecture-the-p5-object-model"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Core Architecture: The p5 Object Model</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#global-mode-vs-instance-mode"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Global Mode vs. Instance Mode</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#the-sketch-lifecycle"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >The Sketch Lifecycle</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#module-system-and-build-pipeline"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Module System and Build Pipeline</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#the-rendering-architecture"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >The Rendering Architecture</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#webgl-mode-internals"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >WebGL Mode Internals</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#the-friendly-error-system-fes"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >The Friendly Error System (FES)</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#the-addonextension-system"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >The Addon/Extension System</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#p5js-20-a-paradigm-shift"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >p5.js 2.0: A Paradigm Shift</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#internationalization-i18n"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Internationalization (i18n)</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#testing-infrastructure"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Testing Infrastructure</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#key-design-principles"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Key Design Principles</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#conclusion"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Conclusion</a
+        >
+      </li>
+    </ol>
+    <hr class="my-10" />
+    <h2 id="what-is-p5js" class="text-2xl font-serif my-6">What is p5.js?</h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js is a client-side JavaScript library that reinterprets the creative
+      coding philosophy of
+      <a
+        href="https://processing.org/"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >Processing</a
+      >
+      for the modern web. Rather than a port of Processing&#39;s Java syntax,
+      p5.js is a native JavaScript library built on the HTML5 Canvas API and
+      WebGL, designed to make coding accessible to artists, designers,
+      educators, and beginners.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The project is maintained by the
+      <a
+        href="https://processingfoundation.org/"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >Processing Foundation</a
+      >
+      and powered largely by volunteers. As of early 2026, the library is at
+      version <strong class="font-bold">2.x</strong> (latest: 2.2.2),
+      representing a significant architectural overhaul from 1.x.
+    </p>
+    <hr class="my-10" />
+    <h2 id="repository-structure" class="text-2xl font-serif my-6">
+      Repository Structure
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >processing/p5.js</code
+      >
+      GitHub repository follows a well-organized monorepo layout:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">p5.js/
 ├── src/                    # All source code
 │   ├── core/               # p5 class, lifecycle, environment
 │   │   ├── friendly_errors/    # Friendly Error System (FES)
@@ -176,28 +305,56 @@
 ├── Gruntfile.js            # Build tasks (legacy)
 ├── rollup.config.js        # Module bundling configuration
 └── package.json</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">Each folder under <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">src/</code> typically maps directly to a
-    conceptual domain of the library. This <strong class="font-bold">domain-driven layout</strong> makes it easy for
-    contributors to find and reason about specific functionality.</p>
-  <hr class="my-10" />
-  <h2 id="core-architecture-the-p5-object-model" class="text-2xl font-serif my-6">Core Architecture: The p5 Object Model
-  </h2>
-  <p class="text-lg font-serif mt-4">At its heart, p5.js is built around a single class — <strong
-      class="font-bold"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5</code></strong>. This class is the
-    sketch instance and holds all state: canvas references, rendering context, frame count, environment variables, and
-    all the drawing functions the user calls.</p>
-  <h3 id="constructor-flow" class="text-xl font-serif my-6">Constructor Flow</h3>
-  <p class="text-lg font-serif mt-4">When <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">new p5(sketch)</code> is called (or when
-    the library initializes in global mode), here is roughly what happens:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// Simplified constructor logic
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Each folder under
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/</code
+      >
+      typically maps directly to a conceptual domain of the library. This
+      <strong class="font-bold">domain-driven layout</strong> makes it easy for
+      contributors to find and reason about specific functionality.
+    </p>
+    <hr class="my-10" />
+    <h2
+      id="core-architecture-the-p5-object-model"
+      class="text-2xl font-serif my-6"
+    >
+      Core Architecture: The p5 Object Model
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      At its heart, p5.js is built around a single class —
+      <strong class="font-bold"
+        ><code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5</code
+        ></strong
+      >. This class is the sketch instance and holds all state: canvas
+      references, rendering context, frame count, environment variables, and all
+      the drawing functions the user calls.
+    </p>
+    <h3 id="constructor-flow" class="text-xl font-serif my-6">
+      Constructor Flow
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      When
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >new p5(sketch)</code
+      >
+      is called (or when the library initializes in global mode), here is
+      roughly what happens:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// Simplified constructor logic
 function p5(sketch, node) {
   this._initializeInstanceVariables();   // Sets defaults (frameCount=0, etc.)
   this._createRenderer();                // Creates p5.Renderer2D or p5.RendererGL
@@ -206,44 +363,98 @@ function p5(sketch, node) {
   this._setup();                         // Calls user's setup()
   this._runDrawLoop();                   // Starts requestAnimationFrame loop
 }</code></pre>
-  </details>
-  <h3 id="prototype-extension-pattern" class="text-xl font-serif my-6">Prototype Extension Pattern</h3>
-  <p class="text-lg font-serif mt-4">All drawing functions — <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">rect()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">ellipse()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill()</code>, etc. — are attached to
-    <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.prototype</code> by each module
-    when it is loaded. This is the foundational extensibility mechanism:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// In src/shape/2d_primitives.js
+    </details>
+    <h3 id="prototype-extension-pattern" class="text-xl font-serif my-6">
+      Prototype Extension Pattern
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      All drawing functions —
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >rect()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >ellipse()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >fill()</code
+      >, etc. — are attached to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.prototype</code
+      >
+      by each module when it is loaded. This is the foundational extensibility
+      mechanism:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// In src/shape/2d_primitives.js
 p5.prototype.rect = function(x, y, w, h, ...) {
   this._renderer.rect([x, y, w, h, ...]);
   return this;
 };</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">This pattern means every sketch instance automatically gets all functions, and
-    addon libraries can add new methods by extending <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.prototype</code> (or, in 2.0, via <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fn</code> inside <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">registerAddon</code>).</p>
-  <hr class="my-10" />
-  <h2 id="global-mode-vs-instance-mode" class="text-2xl font-serif my-6">Global Mode vs. Instance Mode</h2>
-  <p class="text-lg font-serif mt-4">p5.js supports two operating modes, which affects how the sketch interacts with the
-    browser&#39;s global scope.</p>
-  <h3 id="global-mode" class="text-xl font-serif my-6">Global Mode</h3>
-  <p class="text-lg font-serif mt-4">This is the default, beginner-friendly mode. When p5.js detects <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">setup</code> or <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">draw</code> on the global (<code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">window</code>) object, it creates a sketch
-    automatically and maps all p5 functions to the global namespace:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// Global mode — functions are available globally
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This pattern means every sketch instance automatically gets all functions,
+      and addon libraries can add new methods by extending
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.prototype</code
+      >
+      (or, in 2.0, via
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >fn</code
+      >
+      inside
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >registerAddon</code
+      >).
+    </p>
+    <hr class="my-10" />
+    <h2 id="global-mode-vs-instance-mode" class="text-2xl font-serif my-6">
+      Global Mode vs. Instance Mode
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js supports two operating modes, which affects how the sketch interacts
+      with the browser&#39;s global scope.
+    </p>
+    <h3 id="global-mode" class="text-xl font-serif my-6">Global Mode</h3>
+    <p class="text-lg font-serif mt-4">
+      This is the default, beginner-friendly mode. When p5.js detects
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setup</code
+      >
+      or
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >draw</code
+      >
+      on the global (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >window</code
+      >) object, it creates a sketch automatically and maps all p5 functions to
+      the global namespace:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// Global mode — functions are available globally
 function setup() {
   createCanvas(400, 400);
 }
@@ -252,20 +463,39 @@ function draw() {
   background(200);
   circle(mouseX, mouseY, 50);
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">Internally, p5.js reflects all prototype methods onto <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">window</code>, meaning calls to <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">rect()</code> become <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">window.p5Instance.rect()</code> behind the
-    scenes.</p>
-  <h3 id="instance-mode" class="text-xl font-serif my-6">Instance Mode</h3>
-  <p class="text-lg font-serif mt-4">Instance mode gives the developer full control and avoids polluting the global
-    namespace — essential when embedding multiple sketches on a page or integrating with frameworks like React:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">const sketch = (p) =&gt; {
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Internally, p5.js reflects all prototype methods onto
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >window</code
+      >, meaning calls to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >rect()</code
+      >
+      become
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >window.p5Instance.rect()</code
+      >
+      behind the scenes.
+    </p>
+    <h3 id="instance-mode" class="text-xl font-serif my-6">Instance Mode</h3>
+    <p class="text-lg font-serif mt-4">
+      Instance mode gives the developer full control and avoids polluting the
+      global namespace — essential when embedding multiple sketches on a page or
+      integrating with frameworks like React:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">const sketch = (p) =&gt; {
   p.setup = () =&gt; {
     p.createCanvas(400, 400);
   };
@@ -276,19 +506,32 @@ function draw() {
 };
 
 const mySketch = new p5(sketch, document.getElementById('canvas-container'));</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">All functions and properties are scoped to <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p</code>, the sketch instance. This is the
-    pattern recommended for production use.</p>
-  <hr class="my-10" />
-  <h2 id="the-sketch-lifecycle" class="text-2xl font-serif my-6">The Sketch Lifecycle</h2>
-  <p class="text-lg font-serif mt-4">Understanding p5.js&#39;s lifecycle is key to understanding its architecture. Here
-    is the full lifecycle of a sketch:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">Library Load
+    </details>
+    <p class="text-lg font-serif mt-4">
+      All functions and properties are scoped to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p</code
+      >, the sketch instance. This is the pattern recommended for production
+      use.
+    </p>
+    <hr class="my-10" />
+    <h2 id="the-sketch-lifecycle" class="text-2xl font-serif my-6">
+      The Sketch Lifecycle
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Understanding p5.js&#39;s lifecycle is key to understanding its
+      architecture. Here is the full lifecycle of a sketch:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">Library Load
      │
      ▼
 [1] preload()   ← Asset loading (1.x) / async setup (2.x)
@@ -302,74 +545,150 @@ const mySketch = new p5(sketch, document.getElementById('canvas-container'));</c
      │
      ▼
 [4] remove()    ← Cleanup, stops draw loop, removes canvas</code></pre>
-  </details>
-  <h3 id="the-draw-loop" class="text-xl font-serif my-6">The Draw Loop</h3>
-  <p class="text-lg font-serif mt-4">The draw loop is implemented via <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">requestAnimationFrame</code> (rAF). The
-    <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.prototype.redraw()</code> function
-    is the core of this mechanism:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">p5.prototype._runFrames = function() {
+    </details>
+    <h3 id="the-draw-loop" class="text-xl font-serif my-6">The Draw Loop</h3>
+    <p class="text-lg font-serif mt-4">
+      The draw loop is implemented via
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >requestAnimationFrame</code
+      >
+      (rAF). The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.prototype.redraw()</code
+      >
+      function is the core of this mechanism:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">p5.prototype._runFrames = function() {
   if (this._drawInterval) {
     clearInterval(this._drawInterval);
   }
   // requestAnimationFrame-based loop
   this._loop();
 };</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">Frame rate is controlled by throttling rAF calls — if the target frame rate is
-    30fps, the loop only actually calls <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">draw()</code> every other rAF tick.</p>
-  <h3 id="asset-loading-preload-vs-asyncawait" class="text-xl font-serif my-6">Asset Loading: preload() vs. async/await
-  </h3>
-  <p class="text-lg font-serif mt-4">In <strong class="font-bold">p5.js 1.x</strong>, asset loading used a custom
-    synchronization mechanism based on reference counting:</p>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">_incrementPreload()</code> was called
-      each time a load function (e.g., <code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">loadImage()</code>) was invoked.</li>
-    <li class="text-lg font-serif"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">_decrementPreload()</code> was called
-      when loading completed.</li>
-    <li class="text-lg font-serif"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">draw()</code> would not start until the
-      count reached zero.</li>
-  </ul>
-  <p class="text-lg font-serif mt-4">In <strong class="font-bold">p5.js 2.x</strong>, this has been replaced with native
-    JavaScript <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">async/await</code>,
-    reflecting modern web standards. <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">setup()</code> can now be async:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// p5.js 2.x
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Frame rate is controlled by throttling rAF calls — if the target frame
+      rate is 30fps, the loop only actually calls
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >draw()</code
+      >
+      every other rAF tick.
+    </p>
+    <h3
+      id="asset-loading-preload-vs-asyncawait"
+      class="text-xl font-serif my-6"
+    >
+      Asset Loading: preload() vs. async/await
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      In <strong class="font-bold">p5.js 1.x</strong>, asset loading used a
+      custom synchronization mechanism based on reference counting:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >_incrementPreload()</code
+        >
+        was called each time a load function (e.g.,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >loadImage()</code
+        >) was invoked.
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >_decrementPreload()</code
+        >
+        was called when loading completed.
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >draw()</code
+        >
+        would not start until the count reached zero.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      In <strong class="font-bold">p5.js 2.x</strong>, this has been replaced
+      with native JavaScript
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >async/await</code
+      >, reflecting modern web standards.
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setup()</code
+      >
+      can now be async:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// p5.js 2.x
 async function setup() {
   createCanvas(400, 400);
   let img = await loadImage('photo.jpg');
   image(img, 0, 0);
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">The old <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">preload()</code> pattern is still
-    available via a <strong class="font-bold">compatibility addon</strong> to ease migration.</p>
-  <hr class="my-10" />
-  <h2 id="module-system-and-build-pipeline" class="text-2xl font-serif my-6">Module System and Build Pipeline</h2>
-  <h3 id="source-modules-esm" class="text-xl font-serif my-6">Source Modules (ESM)</h3>
-  <p class="text-lg font-serif mt-4">p5.js source code is written as <strong class="font-bold">ES Modules
-      (ESM)</strong>. Each module exports a function that, when called, attaches functionality to <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.prototype</code>. The top-level <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">src/app.js</code> imports and wires them
-    all together:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// src/app.js (simplified)
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The old
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >preload()</code
+      >
+      pattern is still available via a
+      <strong class="font-bold">compatibility addon</strong> to ease migration.
+    </p>
+    <hr class="my-10" />
+    <h2 id="module-system-and-build-pipeline" class="text-2xl font-serif my-6">
+      Module System and Build Pipeline
+    </h2>
+    <h3 id="source-modules-esm" class="text-xl font-serif my-6">
+      Source Modules (ESM)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js source code is written as
+      <strong class="font-bold">ES Modules (ESM)</strong>. Each module exports a
+      function that, when called, attaches functionality to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.prototype</code
+      >. The top-level
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/app.js</code
+      >
+      imports and wires them all together:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// src/app.js (simplified)
 import './color/color_conversion';
 import './color/creating_reading';
 import './core/environment';
@@ -377,133 +696,259 @@ import './shape/2d_primitives';
 import './math/calculation';
 import './webgl/p5.RendererGL';
 // ... many more</code></pre>
-  </details>
-  <h3 id="rollup-bundling" class="text-xl font-serif my-6">Rollup Bundling</h3>
-  <p class="text-lg font-serif mt-4">p5.js uses <a href="https://rollupjs.org/"
-      class="underline underline-offset-2 hover:text-gray-600 transition-colors">Rollup</a> to bundle its ESM source
-    into distributable formats. Two key output formats are produced:</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">IIFE (Immediately Invoked Function Expression)</strong> —
-    for use with <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">&lt;script&gt;</code>
-    tags in HTML:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Html snippet
-    </summary>
-    <pre
-      class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-html">&lt;script src="p5.js"&gt;&lt;/script&gt;</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">ESM</strong> — for use with modern bundlers (Webpack,
-    Vite) and <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">import</code> statements:
-  </p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">import p5 from 'p5';</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">In p5.js 2.0, the modular architecture goes further: individual modules (like <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5/math</code>) can be imported and
-    registered separately, enabling much smaller bundle sizes for projects that don&#39;t need the full library.</p>
-  <h3 id="build-artifacts" class="text-xl font-serif my-6">Build Artifacts</h3>
-  <div class="overflow-x-auto my-6">
-    <table class="w-full border-collapse text-left">
-      <thead>
-        <tr>
-          <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">File</th>
-          <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.js</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Full unminified build (includes FES)</td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.min.js</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Minified build (FES stripped for performance)
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.esm.js</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">ESM build for modern toolchains</td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.math.esm.js</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Example of standalone modular build (2.x)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <hr class="my-10" />
-  <h2 id="the-rendering-architecture" class="text-2xl font-serif my-6">The Rendering Architecture</h2>
-  <p class="text-lg font-serif mt-4">p5.js maintains a clean abstraction between the high-level drawing API and the
-    low-level rendering backend via a <strong class="font-bold">renderer class hierarchy</strong>:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">p5.Renderer (base class)
+    </details>
+    <h3 id="rollup-bundling" class="text-xl font-serif my-6">
+      Rollup Bundling
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js uses
+      <a
+        href="https://rollupjs.org/"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >Rollup</a
+      >
+      to bundle its ESM source into distributable formats. Two key output
+      formats are produced:
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold"
+        >IIFE (Immediately Invoked Function Expression)</strong
+      >
+      — for use with
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;script&gt;</code
+      >
+      tags in HTML:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Html snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-html">&lt;script src="p5.js"&gt;&lt;/script&gt;</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">ESM</strong> — for use with modern bundlers
+      (Webpack, Vite) and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >import</code
+      >
+      statements:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">import p5 from 'p5';</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      In p5.js 2.0, the modular architecture goes further: individual modules
+      (like
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5/math</code
+      >) can be imported and registered separately, enabling much smaller bundle
+      sizes for projects that don&#39;t need the full library.
+    </p>
+    <h3 id="build-artifacts" class="text-xl font-serif my-6">
+      Build Artifacts
+    </h3>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              File
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Description
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >p5.js</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Full unminified build (includes FES)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >p5.min.js</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Minified build (FES stripped for performance)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >p5.esm.js</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ESM build for modern toolchains
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >p5.math.esm.js</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Example of standalone modular build (2.x)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr class="my-10" />
+    <h2 id="the-rendering-architecture" class="text-2xl font-serif my-6">
+      The Rendering Architecture
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js maintains a clean abstraction between the high-level drawing API and
+      the low-level rendering backend via a
+      <strong class="font-bold">renderer class hierarchy</strong>:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">p5.Renderer (base class)
 ├── p5.Renderer2D    ← Wraps the browser's CanvasRenderingContext2D
 └── p5.RendererGL    ← Wraps WebGL1/WebGL2</code></pre>
-  </details>
-  <h3 id="p5renderer2d" class="text-xl font-serif my-6">p5.Renderer2D</h3>
-  <p class="text-lg font-serif mt-4"><code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Renderer2D</code> delegates directly to
-    the browser&#39;s built-in 2D canvas context. It is relatively shallow — most p5.js drawing calls map nearly 1:1 to
-    Canvas API calls:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// src/core/p5.Renderer2D.js (simplified)
+    </details>
+    <h3 id="p5renderer2d" class="text-xl font-serif my-6">p5.Renderer2D</h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.Renderer2D</code
+      >
+      delegates directly to the browser&#39;s built-in 2D canvas context. It is
+      relatively shallow — most p5.js drawing calls map nearly 1:1 to Canvas API
+      calls:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// src/core/p5.Renderer2D.js (simplified)
 p5.Renderer2D.prototype.rect = function(args) {
   const ctx = this.drawingContext; // CanvasRenderingContext2D
   ctx.beginPath();
   ctx.rect(args[0], args[1], args[2], args[3]);
   this._doFillStrokeClose(closeShape);
 };</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">2D mode call stacks are shallow because p5.js largely passes commands through to
-    the browser API, which handles rendering natively.</p>
-  <h3 id="p5renderergl" class="text-xl font-serif my-6">p5.RendererGL</h3>
-  <p class="text-lg font-serif mt-4">The WebGL renderer is significantly more complex. Because WebGL operates at a much
-    lower level than the 2D Canvas API, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.RendererGL</code> must:</p>
-  <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><strong class="font-bold">Tesselate shapes into triangles</strong> — the GPU only
-      knows about triangles</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Manage vertex buffers</strong> (VBOs) and upload geometry
-      data to the GPU</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Compile and link GLSL shaders</strong> for fills, strokes,
-      and materials</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Maintain a matrix stack</strong> for 3D transforms</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Cache geometry</strong> for performance via <code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Geometry</code></li>
-  </ol>
-  <h3 id="the-geometry-pipeline" class="text-xl font-serif my-6">The Geometry Pipeline</h3>
-  <p class="text-lg font-serif mt-4">p5.js 2.x introduced a cleaner separation between <strong
-      class="font-bold">immediate mode</strong> and <strong class="font-bold">retained mode</strong> geometry:</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">Immediate mode</strong> — shapes drawn frame-by-frame,
-    geometry computed each call:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">function draw() {
+    </details>
+    <p class="text-lg font-serif mt-4">
+      2D mode call stacks are shallow because p5.js largely passes commands
+      through to the browser API, which handles rendering natively.
+    </p>
+    <h3 id="p5renderergl" class="text-xl font-serif my-6">p5.RendererGL</h3>
+    <p class="text-lg font-serif mt-4">
+      The WebGL renderer is significantly more complex. Because WebGL operates
+      at a much lower level than the 2D Canvas API,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.RendererGL</code
+      >
+      must:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Tesselate shapes into triangles</strong> — the
+        GPU only knows about triangles
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Manage vertex buffers</strong> (VBOs) and
+        upload geometry data to the GPU
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Compile and link GLSL shaders</strong> for
+        fills, strokes, and materials
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Maintain a matrix stack</strong> for 3D
+        transforms
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Cache geometry</strong> for performance via
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5.Geometry</code
+        >
+      </li>
+    </ol>
+    <h3 id="the-geometry-pipeline" class="text-xl font-serif my-6">
+      The Geometry Pipeline
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js 2.x introduced a cleaner separation between
+      <strong class="font-bold">immediate mode</strong> and
+      <strong class="font-bold">retained mode</strong> geometry:
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Immediate mode</strong> — shapes drawn
+      frame-by-frame, geometry computed each call:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">function draw() {
   sphere(50); // Recalculates triangle data every frame
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">Retained mode</strong> — geometry cached in a <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Geometry</code> object and reused:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">let myGeo;
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Retained mode</strong> — geometry cached in a
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.Geometry</code
+      >
+      object and reused:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">let myGeo;
 function setup() {
   myGeo = buildGeometry(() =&gt; {
     sphere(50);
@@ -513,172 +958,367 @@ function setup() {
 function draw() {
   model(myGeo); // Reuses cached GPU buffers — much faster
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4"><code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Geometry</code> stores triangle data
-    and tracks its associated GPU-side buffers. Calling <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">freeGeometry()</code> clears GPU memory.
-    The key class internals look like:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">class p5.Geometry {
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.Geometry</code
+      >
+      stores triangle data and tracks its associated GPU-side buffers. Calling
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >freeGeometry()</code
+      >
+      clears GPU memory. The key class internals look like:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">class p5.Geometry {
   vertices: []      // Array of p5.Vector
   faces: []         // Triangle indices
   uvs: []           // Texture coordinates
   vertexNormals: [] // For lighting calculations
   _buffers: {}      // GPU-side WebGLBuffer references
 }</code></pre>
-  </details>
-  <h3 id="shader-system" class="text-xl font-serif my-6">Shader System</h3>
-  <p class="text-lg font-serif mt-4">Every shape rendered in WebGL mode uses exactly one shader for its <strong
-      class="font-bold">fills</strong> and one for its <strong class="font-bold">strokes</strong>. p5.js ships with
-    several built-in shader programs:</p>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><strong class="font-bold">Color shader</strong> — flat, unlit color</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Lighting shader</strong> — Phong shading with
-      ambient/directional/point lights</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Texture shader</strong> — for image-mapped surfaces</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Line shader</strong> — special geometry-based line
-      rendering (not GL_LINES)</li>
-    <li class="text-lg font-serif"><strong class="font-bold">Normal shader</strong> — visualizes surface normals (debug)
-    </li>
-  </ul>
-  <p class="text-lg font-serif mt-4">Users can supply custom GLSL shaders via <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">createShader()</code> and <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">shader()</code>. A design goal for p5.js
-    2.x is to allow custom shaders to <strong class="font-bold">import fragments</strong> of the built-in shaders (e.g.,
-    reuse the lighting equations) without copy-pasting — currently a known limitation.</p>
-  <hr class="my-10" />
-  <h2 id="webgl-mode-internals" class="text-2xl font-serif my-6">WebGL Mode Internals</h2>
-  <p class="text-lg font-serif mt-4">The WebGL architecture is the most complex part of the codebase. Here is a tour of
-    its key components:</p>
-  <h3 id="state-management" class="text-xl font-serif my-6">State Management</h3>
-  <p class="text-lg font-serif mt-4"><code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.RendererGL</code> maintains an internal
-    state object that mirrors WebGL&#39;s own state machine. This includes current fill color, stroke weight, active
-    shader, blend mode, matrix stack, and more. Before each draw call, the renderer checks which state has changed and
-    issues only the minimum necessary WebGL calls.</p>
-  <h3 id="matrix-stack" class="text-xl font-serif my-6">Matrix Stack</h3>
-  <p class="text-lg font-serif mt-4">3D transforms are managed through a matrix stack:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">push()    → pushes a copy of the current transform matrix
+    </details>
+    <h3 id="shader-system" class="text-xl font-serif my-6">Shader System</h3>
+    <p class="text-lg font-serif mt-4">
+      Every shape rendered in WebGL mode uses exactly one shader for its
+      <strong class="font-bold">fills</strong> and one for its
+      <strong class="font-bold">strokes</strong>. p5.js ships with several
+      built-in shader programs:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Color shader</strong> — flat, unlit color
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Lighting shader</strong> — Phong shading with
+        ambient/directional/point lights
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Texture shader</strong> — for image-mapped
+        surfaces
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Line shader</strong> — special geometry-based
+        line rendering (not GL_LINES)
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Normal shader</strong> — visualizes surface
+        normals (debug)
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      Users can supply custom GLSL shaders via
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >createShader()</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >shader()</code
+      >. A design goal for p5.js 2.x is to allow custom shaders to
+      <strong class="font-bold">import fragments</strong> of the built-in
+      shaders (e.g., reuse the lighting equations) without copy-pasting —
+      currently a known limitation.
+    </p>
+    <hr class="my-10" />
+    <h2 id="webgl-mode-internals" class="text-2xl font-serif my-6">
+      WebGL Mode Internals
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The WebGL architecture is the most complex part of the codebase. Here is a
+      tour of its key components:
+    </p>
+    <h3 id="state-management" class="text-xl font-serif my-6">
+      State Management
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.RendererGL</code
+      >
+      maintains an internal state object that mirrors WebGL&#39;s own state
+      machine. This includes current fill color, stroke weight, active shader,
+      blend mode, matrix stack, and more. Before each draw call, the renderer
+      checks which state has changed and issues only the minimum necessary WebGL
+      calls.
+    </p>
+    <h3 id="matrix-stack" class="text-xl font-serif my-6">Matrix Stack</h3>
+    <p class="text-lg font-serif mt-4">
+      3D transforms are managed through a matrix stack:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">push()    → pushes a copy of the current transform matrix
 pop()     → restores the previous matrix
 translate(x, y, z) → multiplies the current matrix by a translation
 rotate(angle, axis) → multiplies by a rotation matrix
 scale(x, y, z)      → multiplies by a scale matrix</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">The current transformation matrix is uploaded to the vertex shader as a uniform
-    (<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">uModelViewMatrix</code>) before each
-    draw call.</p>
-  <h3 id="camera-and-projection" class="text-xl font-serif my-6">Camera and Projection</h3>
-  <p class="text-lg font-serif mt-4">p5.js WebGL mode provides both <strong class="font-bold">perspective</strong>
-    (<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">perspective()</code>) and <strong
-      class="font-bold">orthographic</strong> (<code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">ortho()</code>) projection modes.
-    Internally these manipulate the projection matrix uniform (<code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">uProjectionMatrix</code>) sent to the
-    shader.</p>
-  <h3 id="line-rendering" class="text-xl font-serif my-6">Line Rendering</h3>
-  <p class="text-lg font-serif mt-4">One distinctive design choice in p5.js&#39;s WebGL mode is how strokes/lines are
-    rendered. Rather than using <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">GL_LINES</code> (which has poor
-    cross-browser support for thick lines), p5.js generates <strong class="font-bold">geometry</strong> for lines — each
-    line segment becomes a set of triangles forming a rectangle, capped appropriately. This is more expensive but
-    produces consistent, high-quality results across all devices.</p>
-  <p class="text-lg font-serif mt-4">This is also one of the most common performance bottlenecks, and a fast
-    &quot;simple line&quot; mode was introduced in 2.x for cases where visual quality can be traded for speed.</p>
-  <h3 id="off-screen-rendering" class="text-xl font-serif my-6">Off-screen Rendering</h3>
-  <p class="text-lg font-serif mt-4"><code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">createGraphics(w, h, WEBGL)</code> creates
-    a <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Graphics</code> object, which is
-    essentially a separate <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.RendererGL</code> instance backed by a
-    WebGL framebuffer. The result can be used as a texture on 3D geometry or blitted onto the main canvas.</p>
-  <hr class="my-10" />
-  <h2 id="the-friendly-error-system-fes" class="text-2xl font-serif my-6">The Friendly Error System (FES)</h2>
-  <p class="text-lg font-serif mt-4">One of p5.js&#39;s most distinctive architectural features is its <strong
-      class="font-bold">Friendly Error System</strong> (FES), identifiable by its 🌸 icon in the console. The FES is
-    designed to lower the barrier to debugging for beginners by translating cryptic browser error messages into plain
-    language.</p>
-  <h3 id="architecture" class="text-xl font-serif my-6">Architecture</h3>
-  <p class="text-lg font-serif mt-4">The FES lives in <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">src/core/friendly_errors/</code> and is
-    composed of several files:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">friendly_errors/
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The current transformation matrix is uploaded to the vertex shader as a
+      uniform (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >uModelViewMatrix</code
+      >) before each draw call.
+    </p>
+    <h3 id="camera-and-projection" class="text-xl font-serif my-6">
+      Camera and Projection
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js WebGL mode provides both
+      <strong class="font-bold">perspective</strong> (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >perspective()</code
+      >) and <strong class="font-bold">orthographic</strong> (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >ortho()</code
+      >) projection modes. Internally these manipulate the projection matrix
+      uniform (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >uProjectionMatrix</code
+      >) sent to the shader.
+    </p>
+    <h3 id="line-rendering" class="text-xl font-serif my-6">Line Rendering</h3>
+    <p class="text-lg font-serif mt-4">
+      One distinctive design choice in p5.js&#39;s WebGL mode is how
+      strokes/lines are rendered. Rather than using
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >GL_LINES</code
+      >
+      (which has poor cross-browser support for thick lines), p5.js generates
+      <strong class="font-bold">geometry</strong> for lines — each line segment
+      becomes a set of triangles forming a rectangle, capped appropriately. This
+      is more expensive but produces consistent, high-quality results across all
+      devices.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      This is also one of the most common performance bottlenecks, and a fast
+      &quot;simple line&quot; mode was introduced in 2.x for cases where visual
+      quality can be traded for speed.
+    </p>
+    <h3 id="off-screen-rendering" class="text-xl font-serif my-6">
+      Off-screen Rendering
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >createGraphics(w, h, WEBGL)</code
+      >
+      creates a
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.Graphics</code
+      >
+      object, which is essentially a separate
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.RendererGL</code
+      >
+      instance backed by a WebGL framebuffer. The result can be used as a
+      texture on 3D geometry or blitted onto the main canvas.
+    </p>
+    <hr class="my-10" />
+    <h2 id="the-friendly-error-system-fes" class="text-2xl font-serif my-6">
+      The Friendly Error System (FES)
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      One of p5.js&#39;s most distinctive architectural features is its
+      <strong class="font-bold">Friendly Error System</strong> (FES),
+      identifiable by its 🌸 icon in the console. The FES is designed to lower
+      the barrier to debugging for beginners by translating cryptic browser
+      error messages into plain language.
+    </p>
+    <h3 id="architecture" class="text-xl font-serif my-6">Architecture</h3>
+    <p class="text-lg font-serif mt-4">
+      The FES lives in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/core/friendly_errors/</code
+      >
+      and is composed of several files:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">friendly_errors/
 ├── fes_core.js          # _report(), _friendlyError(), _friendlyAutoplayError()
 ├── validate_params.js   # _validateParameters() — type checking
 ├── file_errors.js       # _friendlyFileLoadError()
 └── sketch_reader.js     # Reads sketch source to provide line-number context</code></pre>
-  </details>
-  <h3 id="key-functions" class="text-xl font-serif my-6">Key Functions</h3>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5._friendlyError(msg, fn, color)</code></strong>
-    — the primary display function. Formats a message and logs it to the console with the <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">🌸 p5.js says:</code> prefix.</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5._validateParameters(funcName, args)</code></strong>
-    — validates function arguments against inline JSDoc type annotations. For every function call, it:</p>
-  <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif">Looks up the parameter documentation (parsed at build time from JSDoc comments)</li>
-    <li class="text-lg font-serif">Checks the number and types of supplied arguments</li>
-    <li class="text-lg font-serif">Reports specific, actionable errors if mismatches are found</li>
-  </ol>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Plaintext snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">🌸 p5.js says: [sketch.js, line 13] arc() was expecting at
+    </details>
+    <h3 id="key-functions" class="text-xl font-serif my-6">Key Functions</h3>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold"
+        ><code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5._friendlyError(msg, fn, color)</code
+        ></strong
+      >
+      — the primary display function. Formats a message and logs it to the
+      console with the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >🌸 p5.js says:</code
+      >
+      prefix.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold"
+        ><code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5._validateParameters(funcName, args)</code
+        ></strong
+      >
+      — validates function arguments against inline JSDoc type annotations. For
+      every function call, it:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Looks up the parameter documentation (parsed at build time from JSDoc
+        comments)
+      </li>
+      <li class="text-lg font-serif">
+        Checks the number and types of supplied arguments
+      </li>
+      <li class="text-lg font-serif">
+        Reports specific, actionable errors if mismatches are found
+      </li>
+    </ol>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">🌸 p5.js says: [sketch.js, line 13] arc() was expecting at
    least 6 arguments, but received only 4.</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5._friendlyFileLoadError(errorType, filePath)</code></strong>
-    — triggered by failed asset loads from <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">loadImage()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">loadFont()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">loadJSON()</code>, etc. Provides the
-    incorrect path and links to troubleshooting resources.</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5._friendlyAutoplayError()</code></strong>
-    — helps users understand browser autoplay policies that block audio.</p>
-  <h3 id="performance-considerations" class="text-xl font-serif my-6">Performance Considerations</h3>
-  <p class="text-lg font-serif mt-4">Parameter validation at every function call would be prohibitively expensive. The
-    FES uses several strategies to manage this:</p>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><strong class="font-bold">Build-time extraction</strong>: Parameter type information
-      is extracted from JSDoc comments during the build process and compiled into a compact lookup structure.</li>
-    <li class="text-lg font-serif"><strong class="font-bold">p5.min.js disables FES entirely</strong>: The
-      production-minified build strips all FES code, so end-users of deployed sketches do not pay any performance cost.
-    </li>
-    <li class="text-lg font-serif"><strong class="font-bold"><code
-          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.disableFriendlyErrors = true</code></strong>:
-      Developers can opt out of FES in development if needed.</li>
-  </ul>
-  <h3 id="internationalization-in-fes" class="text-xl font-serif my-6">Internationalization in FES</h3>
-  <p class="text-lg font-serif mt-4">All FES messages are generated through an <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">i18next</code>-based <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">translator()</code> function. Error
-    message strings are stored in <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">translations/en/translation.json</code>
-    (and equivalent files for other languages), allowing the FES to display errors in the user&#39;s language.</p>
-  <hr class="my-10" />
-  <h2 id="the-addonextension-system" class="text-2xl font-serif my-6">The Addon/Extension System</h2>
-  <h3 id="p5js-1x-prototype-extension" class="text-xl font-serif my-6">p5.js 1.x: Prototype Extension</h3>
-  <p class="text-lg font-serif mt-4">In p5.js 1.x, addons extended the library by directly modifying <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.prototype</code>:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// p5.js 1.x addon pattern
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold"
+        ><code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5._friendlyFileLoadError(errorType, filePath)</code
+        ></strong
+      >
+      — triggered by failed asset loads from
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >loadImage()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >loadFont()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >loadJSON()</code
+      >, etc. Provides the incorrect path and links to troubleshooting
+      resources.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold"
+        ><code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5._friendlyAutoplayError()</code
+        ></strong
+      >
+      — helps users understand browser autoplay policies that block audio.
+    </p>
+    <h3 id="performance-considerations" class="text-xl font-serif my-6">
+      Performance Considerations
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Parameter validation at every function call would be prohibitively
+      expensive. The FES uses several strategies to manage this:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Build-time extraction</strong>: Parameter type
+        information is extracted from JSDoc comments during the build process
+        and compiled into a compact lookup structure.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">p5.min.js disables FES entirely</strong>: The
+        production-minified build strips all FES code, so end-users of deployed
+        sketches do not pay any performance cost.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >p5.disableFriendlyErrors = true</code
+          ></strong
+        >: Developers can opt out of FES in development if needed.
+      </li>
+    </ul>
+    <h3 id="internationalization-in-fes" class="text-xl font-serif my-6">
+      Internationalization in FES
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      All FES messages are generated through an
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >i18next</code
+      >-based
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >translator()</code
+      >
+      function. Error message strings are stored in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >translations/en/translation.json</code
+      >
+      (and equivalent files for other languages), allowing the FES to display
+      errors in the user&#39;s language.
+    </p>
+    <hr class="my-10" />
+    <h2 id="the-addonextension-system" class="text-2xl font-serif my-6">
+      The Addon/Extension System
+    </h2>
+    <h3 id="p5js-1x-prototype-extension" class="text-xl font-serif my-6">
+      p5.js 1.x: Prototype Extension
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      In p5.js 1.x, addons extended the library by directly modifying
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.prototype</code
+      >:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// p5.js 1.x addon pattern
 p5.prototype.myNewFunction = function() {
   // ...
 };
@@ -686,19 +1326,34 @@ p5.prototype.myNewFunction = function() {
 // Hooking into lifecycle events
 p5.prototype.mySetup = function() { /* ... */ };
 p5.prototype.registerMethod('beforeSetup', p5.prototype.mySetup);</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">This worked, but it was fragile — addons could accidentally overwrite each
-    other&#39;s methods, and there was no standardized discovery or lifecycle API.</p>
-  <h3 id="p5js-2x-registeraddon" class="text-xl font-serif my-6">p5.js 2.x: `registerAddon()`</h3>
-  <p class="text-lg font-serif mt-4">p5.js 2.0 introduces a first-class <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.registerAddon()</code> API that
-    provides a clean, safe contract between the core library and its extensions. Every module inside p5.js itself uses
-    this same API, unifying internal and external extension:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// p5.js 2.x addon structure
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This worked, but it was fragile — addons could accidentally overwrite each
+      other&#39;s methods, and there was no standardized discovery or lifecycle
+      API.
+    </p>
+    <h3 id="p5js-2x-registeraddon" class="text-xl font-serif my-6">
+      p5.js 2.x: `registerAddon()`
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js 2.0 introduces a first-class
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.registerAddon()</code
+      >
+      API that provides a clean, safe contract between the core library and its
+      extensions. Every module inside p5.js itself uses this same API, unifying
+      internal and external extension:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// p5.js 2.x addon structure
 const myAddon = function(p5, fn, lifecycles) {
   // fn is p5.prototype — attach new methods here
   fn.myNewFunction = function(x, y) {
@@ -717,60 +1372,128 @@ const myAddon = function(p5, fn, lifecycles) {
 };
 
 p5.registerAddon(myAddon);</code></pre>
-  </details>
-  <h3 id="available-lifecycle-hooks" class="text-xl font-serif my-6">Available Lifecycle Hooks</h3>
-  <div class="overflow-x-auto my-6">
-    <table class="w-full border-collapse text-left">
-      <thead>
-        <tr>
-          <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Hook</th>
-          <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">When it fires</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">presetup</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Immediately before <code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">setup()</code></td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">postsetup</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Immediately after <code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">setup()</code></td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">predraw</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">Before each <code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">draw()</code> call</td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">postdraw</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">After each <code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">draw()</code> call</td>
-        </tr>
-        <tr>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">remove</code></td>
-          <td class="border border-gray-300 px-4 py-2 font-serif text-sm">When <code
-              class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">remove()</code> is called</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <h3 id="module-composition-2x-internal-architecture" class="text-xl font-serif my-6">Module Composition (2.x Internal
-    Architecture)</h3>
-  <p class="text-lg font-serif mt-4">The new addon system allows the p5.js core itself to be split into composable
-    modules. Each sub-module registers itself using the same <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">registerAddon</code> pattern:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// src/math/index.js
+    </details>
+    <h3 id="available-lifecycle-hooks" class="text-xl font-serif my-6">
+      Available Lifecycle Hooks
+    </h3>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Hook
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              When it fires
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >presetup</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Immediately before
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >setup()</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >postsetup</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Immediately after
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >setup()</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >predraw</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Before each
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >draw()</code
+              >
+              call
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >postdraw</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              After each
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >draw()</code
+              >
+              call
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >remove</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              When
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >remove()</code
+              >
+              is called
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3
+      id="module-composition-2x-internal-architecture"
+      class="text-xl font-serif my-6"
+    >
+      Module Composition (2.x Internal Architecture)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The new addon system allows the p5.js core itself to be split into
+      composable modules. Each sub-module registers itself using the same
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >registerAddon</code
+      >
+      pattern:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// src/math/index.js
 import calculation from './calculation.js';
 import noise from './noise.js';
 import random from './random.js';
@@ -793,198 +1516,420 @@ export default calculation;
 if (typeof p5 !== 'undefined') {
   calculation(p5, p5.prototype);
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">This enables both tree-shaking (for bundler users) and selective CDN loading.</p>
-  <hr class="my-10" />
-  <h2 id="p5js-20-a-paradigm-shift" class="text-2xl font-serif my-6">p5.js 2.0: A Paradigm Shift</h2>
-  <p class="text-lg font-serif mt-4">p5.js 2.0 is not a minor version bump — it represents a deep architectural rethink
-    motivated by years of feedback. Here are the most significant changes:</p>
-  <h3 id="1-asyncawait-replaces-preload" class="text-xl font-serif my-6">1. Async/Await Replaces preload()</h3>
-  <p class="text-lg font-serif mt-4">The custom preload counter mechanism is gone. <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">setup()</code> is now natively async, and
-    all <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">load*</code> functions return
-    Promises:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">// 2.x — idiomatic async/await
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This enables both tree-shaking (for bundler users) and selective CDN
+      loading.
+    </p>
+    <hr class="my-10" />
+    <h2 id="p5js-20-a-paradigm-shift" class="text-2xl font-serif my-6">
+      p5.js 2.0: A Paradigm Shift
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js 2.0 is not a minor version bump — it represents a deep architectural
+      rethink motivated by years of feedback. Here are the most significant
+      changes:
+    </p>
+    <h3 id="1-asyncawait-replaces-preload" class="text-xl font-serif my-6">
+      1. Async/Await Replaces preload()
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The custom preload counter mechanism is gone.
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setup()</code
+      >
+      is now natively async, and all
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >load*</code
+      >
+      functions return Promises:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">// 2.x — idiomatic async/await
 async function setup() {
   createCanvas(400, 400);
   const font = await loadFont('OpenSans.ttf');
   const data = await loadJSON('data.json');
   // All loaded before draw() starts
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">This aligns p5.js with how JavaScript actually works, making it easier to transfer
-    skills to general web development.</p>
-  <h3 id="2-modular-build-system" class="text-xl font-serif my-6">2. Modular Build System</h3>
-  <p class="text-lg font-serif mt-4">The codebase has been refactored into modular pieces that can be imported
-    independently. This enables much smaller bundle sizes for projects that only use a subset of p5.js&#39;s
-    functionality.</p>
-  <h3 id="3-performance-improvements" class="text-xl font-serif my-6">3. Performance Improvements</h3>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif">~350% faster <code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">textToPoints()</code> for 3D text
-      extrusion</li>
-    <li class="text-lg font-serif">Fast simple-line rendering mode in WebGL</li>
-    <li class="text-lg font-serif">2D mode filter shaders without loading the full WebGL module</li>
-    <li class="text-lg font-serif">New public <code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">Matrix</code> class with pluggable
-      underlying math backends</li>
-  </ul>
-  <h3 id="4-color-space-support" class="text-xl font-serif my-6">4. Color Space Support</h3>
-  <p class="text-lg font-serif mt-4">The color module was refactored to support many more color spaces beyond RGB and
-    HSB, including <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">oklch</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">display-p3</code>, and others defined in
-    CSS Color Level 4.</p>
-  <h3 id="5-compatibility-addons" class="text-xl font-serif my-6">5. Compatibility Addons</h3>
-  <p class="text-lg font-serif mt-4">To ease migration, breaking changes are packaged as opt-in <strong
-      class="font-bold">compatibility addons</strong>:</p>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">preload.js</code> — restores <code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">preload()</code> behavior for sketches
-      not yet migrated to async</li>
-    <li class="text-lg font-serif"><code
-        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">shapes.js</code> — restores 1.x shape
-      drawing API</li>
-    <li class="text-lg font-serif">Various removed utility functions (replaced by native JS equivalents)</li>
-  </ul>
-  <h3 id="6-typography-refactor" class="text-xl font-serif my-6">6. Typography Refactor</h3>
-  <p class="text-lg font-serif mt-4">The typography system was rebuilt to be smaller, support variable fonts (OpenType
-    fvar), and provide more precise text measurement — critical for accessibility and layout-sensitive applications.</p>
-  <hr class="my-10" />
-  <h2 id="internationalization-i18n" class="text-2xl font-serif my-6">Internationalization (i18n)</h2>
-  <p class="text-lg font-serif mt-4">p5.js has a deep commitment to internationalization, particularly within the FES.
-    The translation system is built on <a href="https://www.i18next.com/"
-      class="underline underline-offset-2 hover:text-gray-600 transition-colors">i18next</a>.</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">Translation files</strong> live in <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">translations/{locale}/translation.json</code>.
-    Each key maps to a message template:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Json snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-json">{
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This aligns p5.js with how JavaScript actually works, making it easier to
+      transfer skills to general web development.
+    </p>
+    <h3 id="2-modular-build-system" class="text-xl font-serif my-6">
+      2. Modular Build System
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The codebase has been refactored into modular pieces that can be imported
+      independently. This enables much smaller bundle sizes for projects that
+      only use a subset of p5.js&#39;s functionality.
+    </p>
+    <h3 id="3-performance-improvements" class="text-xl font-serif my-6">
+      3. Performance Improvements
+    </h3>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        ~350% faster
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >textToPoints()</code
+        >
+        for 3D text extrusion
+      </li>
+      <li class="text-lg font-serif">
+        Fast simple-line rendering mode in WebGL
+      </li>
+      <li class="text-lg font-serif">
+        2D mode filter shaders without loading the full WebGL module
+      </li>
+      <li class="text-lg font-serif">
+        New public
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >Matrix</code
+        >
+        class with pluggable underlying math backends
+      </li>
+    </ul>
+    <h3 id="4-color-space-support" class="text-xl font-serif my-6">
+      4. Color Space Support
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The color module was refactored to support many more color spaces beyond
+      RGB and HSB, including
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >oklch</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >display-p3</code
+      >, and others defined in CSS Color Level 4.
+    </p>
+    <h3 id="5-compatibility-addons" class="text-xl font-serif my-6">
+      5. Compatibility Addons
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      To ease migration, breaking changes are packaged as opt-in
+      <strong class="font-bold">compatibility addons</strong>:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >preload.js</code
+        >
+        — restores
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >preload()</code
+        >
+        behavior for sketches not yet migrated to async
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >shapes.js</code
+        >
+        — restores 1.x shape drawing API
+      </li>
+      <li class="text-lg font-serif">
+        Various removed utility functions (replaced by native JS equivalents)
+      </li>
+    </ul>
+    <h3 id="6-typography-refactor" class="text-xl font-serif my-6">
+      6. Typography Refactor
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The typography system was rebuilt to be smaller, support variable fonts
+      (OpenType fvar), and provide more precise text measurement — critical for
+      accessibility and layout-sensitive applications.
+    </p>
+    <hr class="my-10" />
+    <h2 id="internationalization-i18n" class="text-2xl font-serif my-6">
+      Internationalization (i18n)
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js has a deep commitment to internationalization, particularly within
+      the FES. The translation system is built on
+      <a
+        href="https://www.i18next.com/"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >i18next</a
+      >.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Translation files</strong> live in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >translations/{locale}/translation.json</code
+      >. Each key maps to a message template:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Json snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-json">{
   "fes": {
     "friendlyParamError": {
       "type_wrong": "{{name}}() was expecting {{type}} for parameter #{{position}}, received {{received}} instead."
     }
   }
 }</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4">The <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">translator(key, interpolation)</code>
-    function resolves the correct locale at runtime and formats the message. This means all error messages — not just UI
-    text — are translatable, a relatively rare design choice in JavaScript libraries.</p>
-  <hr class="my-10" />
-  <h2 id="testing-infrastructure" class="text-2xl font-serif my-6">Testing Infrastructure</h2>
-  <p class="text-lg font-serif mt-4">p5.js uses a combination of <strong class="font-bold">Mocha</strong> (test runner)
-    and <strong class="font-bold">Chai</strong> (assertions) for unit and integration testing. Tests live in the <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">test/</code> directory, mirroring the
-    <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">src/</code> structure.</p>
-  <h3 id="test-categories" class="text-xl font-serif my-6">Test Categories</h3>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">Unit tests</strong> — test individual functions in
-    isolation:</p>
-  <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-    <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-      Js snippet
-    </summary>
-    <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-js">describe('p5.prototype.abs', function() {
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >translator(key, interpolation)</code
+      >
+      function resolves the correct locale at runtime and formats the message.
+      This means all error messages — not just UI text — are translatable, a
+      relatively rare design choice in JavaScript libraries.
+    </p>
+    <hr class="my-10" />
+    <h2 id="testing-infrastructure" class="text-2xl font-serif my-6">
+      Testing Infrastructure
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js uses a combination of <strong class="font-bold">Mocha</strong> (test
+      runner) and <strong class="font-bold">Chai</strong> (assertions) for unit
+      and integration testing. Tests live in the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >test/</code
+      >
+      directory, mirroring the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/</code
+      >
+      structure.
+    </p>
+    <h3 id="test-categories" class="text-xl font-serif my-6">
+      Test Categories
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Unit tests</strong> — test individual functions
+      in isolation:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">describe('p5.prototype.abs', function() {
   it('should return the absolute value', function() {
     assert.equal(myp5.abs(-5), 5);
   });
 });</code></pre>
-  </details>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">Visual tests</strong> — render a sketch and compare
-    pixels against a reference image (snapshot testing). Critical for verifying renderer behavior.</p>
-  <p class="text-lg font-serif mt-4"><strong class="font-bold">FES tests</strong> — verify that specific incorrect
-    inputs produce specific friendly error messages.</p>
-  <h3 id="test-execution" class="text-xl font-serif my-6">Test Execution</h3>
-  <p class="text-lg font-serif mt-4">Tests are run both in the browser (via an HTML test runner) and in Node.js (for CI
-    pipelines). The project uses GitHub Actions for continuous integration, running the full test suite on every pull
-    request.</p>
-  <p class="text-lg font-serif mt-4">A key challenge is that WebGL tests require a real GPU context. In CI environments,
-    this is handled via headless browser automation.</p>
-  <hr class="my-10" />
-  <h2 id="key-design-principles" class="text-2xl font-serif my-6">Key Design Principles</h2>
-  <p class="text-lg font-serif mt-4">Several architectural decisions in p5.js reflect its core values:</p>
-  <h3 id="1-beginner-friendliness-as-a-first-class-constraint" class="text-xl font-serif my-6">1. Beginner-friendliness
-    as a First-Class Constraint</h3>
-  <p class="text-lg font-serif mt-4">Every API decision considers whether a beginner could understand it. The FES, the
-    <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">preload()</code> function (and now
-    <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">async setup()</code>), the global mode
-    — all exist to minimize the gap between &quot;I have an idea&quot; and &quot;I have code that works.&quot;</p>
-  <h3 id="2-accessibility-over-features" class="text-xl font-serif my-6">2. Accessibility Over Features</h3>
-  <p class="text-lg font-serif mt-4">p5.js 2.0 formalized a principle: <strong class="font-bold">no new features will be
-      added unless they increase access</strong>. The focus is on making the existing feature set work better for more
-    people, rather than expanding scope.</p>
-  <h3 id="3-separation-of-concerns-via-the-renderer-abstraction" class="text-xl font-serif my-6">3. Separation of
-    Concerns via the Renderer Abstraction</h3>
-  <p class="text-lg font-serif mt-4">The <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">p5.Renderer</code> base class ensures that
-    user code doesn&#39;t need to know whether it&#39;s running in 2D or WebGL mode. Both renderers expose the same
-    high-level API (<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">rect()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill()</code>, <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">push()</code>/<code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">pop()</code>), allowing sketches to switch
-    modes with minimal code changes.</p>
-  <h3 id="4-modularity-without-complexity" class="text-xl font-serif my-6">4. Modularity Without Complexity</h3>
-  <p class="text-lg font-serif mt-4">The module system in 2.x achieves a delicate balance: the library is internally
-    modular (enabling tree-shaking and smaller bundles) but the user-facing API remains simple and monolithic by
-    default. Users who just want <code
-      class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">&lt;script src="p5.js"&gt;</code> still
-    get a single file that works.</p>
-  <h3 id="5-open-source-as-community-practice" class="text-xl font-serif my-6">5. Open Source as Community Practice</h3>
-  <p class="text-lg font-serif mt-4">p5.js views open source not just as a licensing choice but as a social practice.
-    The contributor guidelines, steward system (domain-specific maintainers), AI usage policy, and code of conduct are
-    all first-class parts of the codebase.</p>
-  <hr class="my-10" />
-  <h2 id="conclusion" class="text-2xl font-serif my-6">Conclusion</h2>
-  <p class="text-lg font-serif mt-4">p5.js is a fascinating case study in open-source library architecture. Beneath its
-    beginner-friendly surface lies a thoughtful system of renderer abstraction, prototype-based extension, a custom
-    error assistance layer, and — in 2.x — a modular addon architecture that unifies how internal and external
-    extensions are built.</p>
-  <p class="text-lg font-serif mt-4">The evolution from 1.x to 2.x mirrors broader shifts in the JavaScript ecosystem:
-    the move from custom async patterns to native Promises, from global-scope monoliths to modular ESM packages, and
-    from UMD bundles to Rollup-optimized IIFE and ESM outputs.</p>
-  <p class="text-lg font-serif mt-4">For anyone interested in creative coding, browser rendering, or the design of
-    accessible developer tools, the p5.js codebase is an excellent read — not just for what it does, but for the care it
-    takes in <em class="italic">how</em> it does it.</p>
-  <hr class="my-10" />
-  <h3 id="further-reading" class="text-xl font-serif my-6">Further Reading</h3>
-  <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
-    <li class="text-lg font-serif"><a href="https://github.com/processing/p5.js"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">p5.js GitHub Repository</a></li>
-    <li class="text-lg font-serif"><a href="https://p5js.org/contribute/webgl_mode_architecture/"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">WebGL Mode Architecture (Contributor
-        Docs)</a></li>
-    <li class="text-lg font-serif"><a href="https://p5js.org/contribute/friendly_error_system/"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Friendly Error System (Contributor
-        Docs)</a></li>
-    <li class="text-lg font-serif"><a href="https://github.com/processing/p5.js/issues/7014"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">p5.js 2.0 RFC: Functional Core and
-        Modular Build</a></li>
-    <li class="text-lg font-serif"><a
-        href="https://dev.to/limzykenneth/designing-an-addon-library-system-for-p5js-20-3d4p"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">Designing an Addon Library System for
-        p5.js 2.0</a></li>
-    <li class="text-lg font-serif"><a href="https://www.davepagurek.com/blog/p5-2.0-philosophy/"
-        class="underline underline-offset-2 hover:text-gray-600 transition-colors">p5.js 2.0 and Open Source Philosophy
-        — Dave Pagurek</a></li>
-  </ul>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Visual tests</strong> — render a sketch and
+      compare pixels against a reference image (snapshot testing). Critical for
+      verifying renderer behavior.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">FES tests</strong> — verify that specific
+      incorrect inputs produce specific friendly error messages.
+    </p>
+    <h3 id="test-execution" class="text-xl font-serif my-6">Test Execution</h3>
+    <p class="text-lg font-serif mt-4">
+      Tests are run both in the browser (via an HTML test runner) and in Node.js
+      (for CI pipelines). The project uses GitHub Actions for continuous
+      integration, running the full test suite on every pull request.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      A key challenge is that WebGL tests require a real GPU context. In CI
+      environments, this is handled via headless browser automation.
+    </p>
+    <hr class="my-10" />
+    <h2 id="key-design-principles" class="text-2xl font-serif my-6">
+      Key Design Principles
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Several architectural decisions in p5.js reflect its core values:
+    </p>
+    <h3
+      id="1-beginner-friendliness-as-a-first-class-constraint"
+      class="text-xl font-serif my-6"
+    >
+      1. Beginner-friendliness as a First-Class Constraint
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Every API decision considers whether a beginner could understand it. The
+      FES, the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >preload()</code
+      >
+      function (and now
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >async setup()</code
+      >), the global mode — all exist to minimize the gap between &quot;I have
+      an idea&quot; and &quot;I have code that works.&quot;
+    </p>
+    <h3 id="2-accessibility-over-features" class="text-xl font-serif my-6">
+      2. Accessibility Over Features
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js 2.0 formalized a principle:
+      <strong class="font-bold"
+        >no new features will be added unless they increase access</strong
+      >. The focus is on making the existing feature set work better for more
+      people, rather than expanding scope.
+    </p>
+    <h3
+      id="3-separation-of-concerns-via-the-renderer-abstraction"
+      class="text-xl font-serif my-6"
+    >
+      3. Separation of Concerns via the Renderer Abstraction
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5.Renderer</code
+      >
+      base class ensures that user code doesn&#39;t need to know whether
+      it&#39;s running in 2D or WebGL mode. Both renderers expose the same
+      high-level API (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >rect()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >fill()</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >push()</code
+      >/<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >pop()</code
+      >), allowing sketches to switch modes with minimal code changes.
+    </p>
+    <h3 id="4-modularity-without-complexity" class="text-xl font-serif my-6">
+      4. Modularity Without Complexity
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The module system in 2.x achieves a delicate balance: the library is
+      internally modular (enabling tree-shaking and smaller bundles) but the
+      user-facing API remains simple and monolithic by default. Users who just
+      want
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;script src="p5.js"&gt;</code
+      >
+      still get a single file that works.
+    </p>
+    <h3
+      id="5-open-source-as-community-practice"
+      class="text-xl font-serif my-6"
+    >
+      5. Open Source as Community Practice
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      p5.js views open source not just as a licensing choice but as a social
+      practice. The contributor guidelines, steward system (domain-specific
+      maintainers), AI usage policy, and code of conduct are all first-class
+      parts of the codebase.
+    </p>
+    <hr class="my-10" />
+    <h2 id="conclusion" class="text-2xl font-serif my-6">Conclusion</h2>
+    <p class="text-lg font-serif mt-4">
+      p5.js is a fascinating case study in open-source library architecture.
+      Beneath its beginner-friendly surface lies a thoughtful system of renderer
+      abstraction, prototype-based extension, a custom error assistance layer,
+      and — in 2.x — a modular addon architecture that unifies how internal and
+      external extensions are built.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The evolution from 1.x to 2.x mirrors broader shifts in the JavaScript
+      ecosystem: the move from custom async patterns to native Promises, from
+      global-scope monoliths to modular ESM packages, and from UMD bundles to
+      Rollup-optimized IIFE and ESM outputs.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      For anyone interested in creative coding, browser rendering, or the design
+      of accessible developer tools, the p5.js codebase is an excellent read —
+      not just for what it does, but for the care it takes in
+      <em class="italic">how</em> it does it.
+    </p>
+    <hr class="my-10" />
+    <h3 id="further-reading" class="text-xl font-serif my-6">
+      Further Reading
+    </h3>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <a
+          href="https://github.com/processing/p5.js"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >p5.js GitHub Repository</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="https://p5js.org/contribute/webgl_mode_architecture/"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >WebGL Mode Architecture (Contributor Docs)</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="https://p5js.org/contribute/friendly_error_system/"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Friendly Error System (Contributor Docs)</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="https://github.com/processing/p5.js/issues/7014"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >p5.js 2.0 RFC: Functional Core and Modular Build</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="https://dev.to/limzykenneth/designing-an-addon-library-system-for-p5js-20-3d4p"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Designing an Addon Library System for p5.js 2.0</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="https://www.davepagurek.com/blog/p5-2.0-philosophy/"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >p5.js 2.0 and Open Source Philosophy — Dave Pagurek</a
+        >
+      </li>
+    </ul>
 
-
-  <!-- ── Footer ────────────────────────────────────────────────────────── -->
-  <hr class="my-10" />
-  <footer class="my-8">
-    <div class="flex justify-between items-center">
-      <p>By Kanai</p>
-      <a href="https://buymeacoffee.com/Kanaixdev">BuyMeACoffee</a>
-    </div>
-  </footer>
-
-</body>
-
+    <!-- ── Footer ────────────────────────────────────────────────────────── -->
+    <hr class="my-10" />
+    <footer class="my-8">
+      <div class="flex justify-between items-center">
+        <p>By Kanai</p>
+        <a href="https://buymeacoffee.com/Kanaixdev">BuyMeACoffee</a>
+      </div>
+    </footer>
+  </body>
 </html>

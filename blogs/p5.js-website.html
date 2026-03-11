@@ -1,0 +1,2615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep Dive into the p5.js Website: A Technical Breakdown</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/tailwindcss">
+      @theme {
+        --font-sans: "Lexend", sans-serif;
+        --font-serif: "Lexend", sans-serif;
+      }
+    </style>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <!-- Syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+      // Run highlight.js after page load; open <details> briefly so hljs can
+      // reach the code, then restore closed state.
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("details").forEach((d) => {
+          const wasOpen = d.open;
+          d.open = true;
+          d.querySelectorAll("code.hljs").forEach((el) =>
+            hljs.highlightElement(el),
+          );
+          d.open = wasOpen;
+        });
+      });
+    </script>
+    <style>
+      html {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      html::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+      body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        overflow-y: scroll;
+      }
+      body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    </style>
+  </head>
+
+  <body class="bg-orange-100 w-full max-w-[95%] md:w-[60%] mx-auto">
+    <!-- ── Navigation ────────────────────────────────────────────────────── -->
+    <nav class="mt-6">
+      <div>
+        <h1 class="font-serif text-4xl">Kanai's Blog</h1>
+        <div class="mt-5 flex flex-wrap gap-5">
+          <a
+            href="/"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Home</a
+          >
+          <a
+            href="./blog.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Blogs</a
+          >
+          <a
+            href="../projects/projects.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Projects</a
+          >
+          <a
+            href="../prs/prs.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Pull Requests</a
+          >
+          <a
+            href="../gallery/gallery.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Gallery</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <hr class="mt-3" />
+
+    <!-- ── Post header ───────────────────────────────────────────────────── -->
+    <h1 class="text-4xl mt-[57px] mb-3 font-serif">
+      Deep Dive into the p5.js Website: A Technical Breakdown
+    </h1>
+
+    <!-- ── Post body ─────────────────────────────────────────────────────── -->
+    <blockquote
+      class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic"
+    >
+      Understanding how the official p5.js reference website is
+      architected, built, and deployed — covering everything from the framework
+      choices to the iframe-based code runner, i18n system, and accessibility
+      infrastructure.
+    </blockquote>
+    <hr class="my-10" />
+    <h2 id="table-of-contents" class="text-2xl font-serif my-6">
+      Table of Contents
+    </h2>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <a
+          href="#1-overview--tech-stack"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Overview & Tech Stack</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#2-project-structure"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Project Structure</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#3-astro-configuration--build-pipeline"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Astro Configuration & Build Pipeline</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#4-component-architecture"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Component Architecture</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#5-the-interactive-code-embed-system"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >The Interactive Code Embed System</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#6-internationalization-i18n"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Internationalization (i18n)</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#7-content-collections--locale-fallback-logic"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Content Collections & Locale Fallback Logic</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#8-navigation--jump-to-system"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Navigation & Jump-To System</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#9-accessibility-infrastructure"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Accessibility Infrastructure</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#10-openprocessing-integration"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >OpenProcessing Integration</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#11-service-worker--caching-strategy"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Service Worker & Caching Strategy</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#12-build-time-scripting--reference-generation"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Build-Time Scripting & Reference Generation</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#13-global-state-management"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Global State Management</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#14-styling-system"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Styling System</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#15-testing--cicd"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Testing & CI/CD</a
+        >
+      </li>
+    </ol>
+    <hr class="my-10" />
+    <h2 id="1-overview-tech-stack" class="text-2xl font-serif my-6">
+      1. Overview & Tech Stack
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The p5.js website (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >p5js.org</code
+      >) is a statically generated documentation and community platform built
+      with the following core technologies:
+    </p>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Category
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Technology
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Framework
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <a
+                href="https://astro.build/"
+                class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+                >Astro</a
+              >
+              v5
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              UI Components
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <a
+                href="https://preactjs.com/"
+                class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+                >Preact</a
+              >
+              v10 (with React compat layer)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Content
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              MDX + YAML via Astro content collections
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Styling
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Tailwind CSS v3 + SCSS modules
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Code Editor
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              CodeMirror 6 (<code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >@uiw/react-codemirror</code
+              >)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Search
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Fuse.js (client-side fuzzy search)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Testing
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Vitest + Playwright (for a11y tests)
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Deployment
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Static build, service-worker-powered offline support
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-lg font-serif mt-4">
+      The choice of <strong class="font-bold">Astro</strong> is strategically
+      important. Astro is designed for content-heavy sites and ships zero
+      JavaScript by default — components only hydrate on the client when
+      explicitly annotated with directives like
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >client:load</code
+      >
+      or
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >client:only</code
+      >. This means the reference documentation is fast and fully static, while
+      interactive UI elements (like the code editor or locale switcher) opt into
+      client-side rendering on-demand.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Preact</strong> (not React) is used as the
+      component runtime. Since Preact is a 3KB alternative to React with
+      identical APIs, this significantly reduces the bundle size. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >@astrojs/preact</code
+      >
+      integration is configured with
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >compat: true</code
+      >
+      to transparently support third-party React libraries (like
+      CodeMirror&#39;s React bindings) without shipping React itself.
+    </p>
+    <hr class="my-10" />
+    <h2 id="2-project-structure" class="text-2xl font-serif my-6">
+      2. Project Structure
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      At a high level, the repository is organized as:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">├── .github/               # CI/CD workflows and issue templates
+├── docs/                  # Contributor documentation
+├── public/                # Static assets (fonts, images, example media files)
+├── src/
+│   ├── api/               # External API integration (OpenProcessing)
+│   ├── cached-data/       # Pre-fetched JSON from OpenProcessing
+│   ├── components/        # Reusable UI components (Astro + Preact)
+│   ├── content/           # Astro content collections (MDX + YAML)
+│   │   ├── examples/      # Code examples (localized)
+│   │   ├── reference/     # API reference entries
+│   │   ├── tutorials/     # Tutorials (localized)
+│   │   ├── events/        # Community events
+│   │   ├── libraries/     # Third-party p5 libraries
+│   │   ├── people/        # Contributors and team
+│   │   ├── ui/            # UI translation strings (YAML per locale)
+│   │   └── banner/        # Site-wide banner content
+│   ├── globals/           # Shared runtime constants and state
+│   ├── i18n/              # Locale utilities and constants
+│   ├── layouts/           # Page layout wrappers
+│   ├── pages/             # Astro file-based routing
+│   └── scripts/           # Node.js build-time scripts
+├── styles/                # Global SCSS and variables
+├── test/                  # Unit and accessibility tests
+├── astro.config.mjs       # Astro + integration config
+└── package.json</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The separation between
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/scripts/</code
+      >
+      (build-time Node.js code) and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/components/</code
+      >
+      (browser code) is intentional and important — Astro enforces this boundary
+      at the framework level.
+    </p>
+    <hr class="my-10" />
+    <h2
+      id="3-astro-configuration-build-pipeline"
+      class="text-2xl font-serif my-6"
+    >
+      3. Astro Configuration & Build Pipeline
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >astro.config.mjs</code
+      >
+      file is the heart of the build configuration:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">export default defineConfig({
+  site: 'https://p5js.org',
+  compressHTML: false,
+  integrations: [
+    mermaid({ autoTheme: true }),
+    preact({ compat: true }),
+    mdx(),
+    tailwind(),
+    fast(),       // custom compression plugin
+    serviceWorker({ workbox: { ... } }),
+  ],
+  prefetch: {
+    defaultStrategy: "viewport",
+    prefetchAll: true,
+  },
+  trailingSlash: "always",
+  build: { format: "directory", concurrency: 2 },
+  image: {
+    domains: ["openprocessing.org"],
+    service: passthroughImageService()
+  },
+  markdown: {
+    shikiConfig: { theme: 'github-light-high-contrast' },
+  },
+});</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Key design decisions:</strong>
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >compressHTML: false</code
+          ></strong
+        >
+        — HTML compression is skipped in favor of a custom
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >fast</code
+        >
+        plugin (found in
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >src/scripts/fast-compress</code
+        >), giving the team more control over the output.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >prefetch: { defaultStrategy: "viewport", prefetchAll: true }</code
+          ></strong
+        >
+        — All links in the viewport are prefetched automatically, making
+        navigation feel near-instant. This is a significant UX enhancement for a
+        reference documentation site where users frequently jump between pages.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >build.concurrency: 2</code
+          ></strong
+        >
+        — Limits parallel page builds to avoid memory pressure during the large
+        reference section generation.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >passthroughImageService()</code
+          ></strong
+        >
+        — The built-in Astro image optimizer is bypassed. This is important
+        because the site references images from OpenProcessing&#39;s CDN (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >openprocessing.org</code
+        >) at build time, which a server-side image optimizer couldn&#39;t
+        process.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Mermaid integration</strong> — Enables
+        rendering of Mermaid diagrams directly inside MDX content, used in
+        contributor documentation.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Shiki syntax highlighting</strong> — Code
+        blocks in MDX are highlighted at build time with the
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >github-light-high-contrast</code
+        >
+        theme, outputting pre-rendered HTML with no client-side JavaScript
+        required.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      The build also defines several custom npm scripts for generating specific
+      sections of the site:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Json snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-json">"build:reference": "tsx ./src/scripts/builders/reference.ts",
+"build:contributor-docs": "tsx ./src/scripts/builders/contribute.ts",
+"build:contributors": "tsx ./src/scripts/builders/people.ts",
+"build:search": "tsx ./src/scripts/builders/search.ts",
+"build:p5-version": "tsx ./src/scripts/p5-version.ts",</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      These builders run before or independently from the main Astro build. They
+      clone the upstream p5.js library repository (using
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >simple-git</code
+      >), parse its JSDoc/YUIDoc annotations, and generate
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.mdx</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.yaml</code
+      >
+      files that Astro then processes as normal content. This means the
+      reference documentation is always generated from the actual source code of
+      the library.
+    </p>
+    <hr class="my-10" />
+    <h2 id="4-component-architecture" class="text-2xl font-serif my-6">
+      4. Component Architecture
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The site uses a dual-component model:
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.astro</code
+      >
+      files for server-rendered, mostly-static components, and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.tsx</code
+      >/<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.jsx</code
+      >
+      (Preact) files for interactive, client-hydrated components.
+    </p>
+    <h3 id="astro-components-server-rendered" class="text-xl font-serif my-6">
+      Astro Components (Server-Rendered)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      These run entirely at build time and ship pure HTML:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Head/index.astro</code
+          ></strong
+        >
+        — Full
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;head&gt;</code
+        >
+        with Open Graph, Twitter Card, and locale-mapped meta tags. The locale
+        map (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >en</code
+        >
+        →
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >en_US</code
+        >,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >ko</code
+        >
+        →
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >ko_KR</code
+        >, etc.) ensures proper social media preview cards per locale.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Footer/index.astro</code
+          ></strong
+        >
+        — Grid-based footer with localized section labels, external social
+        links, and the optional banner component. Pulls banner content from the
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >banner</code
+        >
+        content collection per locale.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Nav/index.astro</code
+          ></strong
+        >
+        — Computes locale, detects homepage vs. inner page (to toggle logo
+        color), and passes everything as props to the hydrated
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >NavPanels</code
+        >
+        Preact component.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >GridItem/*.astro</code
+          ></strong
+        >
+        — A family of card components for rendering different content types
+        (Examples, Tutorials, Libraries, Sketches, Events, People,
+        ContributorDocs). Each takes a typed
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >CollectionEntry</code
+        >
+        and renders a consistent card layout.
+      </li>
+    </ul>
+    <h3 id="preact-components-client-hydrated" class="text-xl font-serif my-6">
+      Preact Components (Client-Hydrated)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      These use
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >client:load</code
+      >
+      or
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >client:only</code
+      >
+      directives:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >CodeEmbed/index.jsx</code
+          ></strong
+        >
+        — The interactive p5.js code editor (detailed in the next section).
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Nav/NavPanels.tsx</code
+          ></strong
+        >
+        — Manages open/closed state for the main nav and jump-to panel, with
+        responsive behavior handled via a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >ResizeObserver</code
+        >.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >AccessibilitySettings/index.tsx</code
+          ></strong
+        >
+        — Reads/writes accessibility preferences to
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >localStorage</code
+        >
+        and toggles CSS classes on
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;html&gt;</code
+        >.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >LocaleSelect/index.tsx</code
+          ></strong
+        >
+        — Locale switcher that constructs the new URL and redirects.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >SearchProvider</code
+          ></strong
+        >
+        — Client-only Fuse.js-powered search.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >CopyCodeButton/index.tsx</code
+          ></strong
+        >
+        — Copies code to clipboard using the Clipboard API, with an accessible
+        live region announcement.
+      </li>
+    </ul>
+    <h3 id="shared-utility-components" class="text-xl font-serif my-6">
+      Shared Utility Components
+    </h3>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Icon/index.tsx</code
+          ></strong
+        >
+        — A comprehensive inline SVG icon system. Every icon is embedded
+        directly as SVG paths — no icon font, no external sprite. This avoids
+        FOUT and ensures icons are perfectly scaled at any size. The TypeScript
+        union type
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >IconKind</code
+        >
+        acts as a compile-time guarantee that only valid icon names can be
+        referenced, and an
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >assertNever</code
+        >
+        guard throws a runtime error if a new icon kind is added to the type but
+        not implemented.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Image/index.astro</code
+          ></strong
+        >
+        — A wrapper around Astro&#39;s built-in
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;Image&gt;</code
+        >
+        component that adds two important features: a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >visibleAltText</code
+        >
+        overlay (shows alt text visually as a badge over the image, toggled by
+        an accessibility setting), and support for
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >aspectRatio</code
+        >
+        variants (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >photo</code
+        >,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >square</code
+        >,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >none</code
+        >).
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >AnnotatedLine/index.astro</code
+          ></strong
+        >
+        — A specialized component for displaying annotated code in tutorials. It
+        parses inline slot markers embedded in code strings (e.g.,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >/*__SLOT_TOP_myLabel*/.../*__SLOT_END*/</code
+        >) and renders a table where each &quot;slot&quot; gets a colored
+        background, with annotation content placed above or below the
+        corresponding code segment. The coloring cycles through a palette using
+        alternating even/odd line schemes.
+      </li>
+    </ul>
+    <hr class="my-10" />
+    <h2
+      id="5-the-interactive-code-embed-system"
+      class="text-2xl font-serif my-6"
+    >
+      5. The Interactive Code Embed System
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      This is arguably the most technically interesting part of the codebase.
+      The site needs to run live p5.js sketches in the browser, allow editing,
+      and do so efficiently when multiple sketches appear on the same page.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The system has two distinct implementations for two contexts:
+    </p>
+    <h3
+      id="codeembedindexjsx-the-full-editor-client-only"
+      class="text-xl font-serif my-6"
+    >
+      `CodeEmbed/index.jsx` — The Full Editor (Client-Only)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Used on example pages where code is editable. On mount, it:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Injects a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;script id="p5ScriptTag" src={cdnLibraryUrl}&gt;</code
+        >
+        tag into the document
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;head&gt;</code
+        >
+        once (idempotent — it checks if the tag already exists).
+      </li>
+      <li class="text-lg font-serif">
+        Renders a
+        <a
+          href="https://codemirror.net/"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >CodeMirror</a
+        >
+        editor via
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >@uiw/react-codemirror</code
+        >
+        with JavaScript syntax highlighting and line wrapping.
+      </li>
+      <li class="text-lg font-serif">
+        Auto-detects canvas dimensions by parsing
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >createCanvas(w, h)</code
+        >
+        from the code string using a regex, and sets the preview iframe size
+        accordingly.
+      </li>
+      <li class="text-lg font-serif">
+        Detects DOM-creating p5 API calls (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >createButton</code
+        >,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >createDiv</code
+        >, etc.) and adds extra height to accommodate them.
+      </li>
+    </ol>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">const canvasMatch =
+  /createCanvas\(\s*(\d+),\s*(\d+)\s*(?:,\s*(?:P2D|WEBGL)\s*)?\)/m.exec(
+    initialCode,
+  );</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The editor buttons (Play, Stop, Reset, Copy) are rendered as
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CircleButton</code
+      >
+      components with accessible
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >aria-label</code
+      >
+      attributes. Pressing &quot;Run&quot; calls
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >updateOrReRun()</code
+      >, which resets
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >previewCodeString</code
+      >
+      to force a re-render of the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CodeFrame</code
+      >
+      iframe.
+    </p>
+    <h3
+      id="codeembedframetsx-the-iframe-runner"
+      class="text-xl font-serif my-6"
+    >
+      `CodeEmbed/frame.tsx` — The Iframe Runner
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The actual p5.js sketch runs inside a sandboxed
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;iframe&gt;</code
+      >
+      with
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >srcDoc</code
+      >
+      set to a self-contained HTML document. The document wrapping function is
+      notable:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const wrapInMarkup = (code: CodeBundle) =&gt; `&lt;!DOCTYPE html&gt;
+&lt;meta charset="utf8" /&gt;
+&lt;base href="${code.base || "/assets/"}" /&gt;
+&lt;style&gt;html, body { margin: 0; padding: 0; } canvas { display: block; }&lt;/style&gt;
+&lt;body&gt;${code.htmlBody || ""}&lt;/body&gt;
+&lt;script id="code" type="text/javascript"&gt;${wrapSketch(code.js) || ""}&lt;/script&gt;
+...`;</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >wrapSketch()</code
+      >
+      function automatically wraps bare p5.js code in a
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setup()</code
+      >
+      function if neither
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setup</code
+      >
+      nor a p5 constructor call is detected — this is a quality-of-life feature
+      for examples that show just a few drawing commands.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">The p5.js Library Loading Problem</strong>
+    </p>
+    <p class="text-lg font-serif mt-4">
+      Loading p5.min.js inside each iframe naively would cause multiple full
+      downloads — one per sketch on a page, every time the sketch runs. To solve
+      this, the system uses
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >postMessage</code
+      >:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        The parent page loads
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >p5.min.js</code
+        >
+        once (via the
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;script id="p5ScriptTag"&gt;</code
+        >
+        in
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;head&gt;</code
+        >).
+      </li>
+      <li class="text-lg font-serif">
+        When a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >CodeFrame</code
+        >
+        mounts and becomes visible, it
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >fetch()</code
+        >es the script&#39;s text content.
+      </li>
+      <li class="text-lg font-serif">
+        It sends that text via
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >postMessage</code
+        >
+        to the iframe:
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >iframeRef.current.contentWindow.postMessage({ sender: cdnLibraryUrl,
+          message: p5ScriptText }, "*")</code
+        >.
+      </li>
+      <li class="text-lg font-serif">
+        Inside the iframe, a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >message</code
+        >
+        event listener receives the text, creates a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;script&gt;</code
+        >
+        element, and injects it into
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >&lt;head&gt;</code
+        >.
+      </li>
+    </ol>
+    <p class="text-lg font-serif mt-4">
+      This lets the browser cache the library in one place while every iframe
+      reuses that cached content.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">Intersection Observer for Performance</strong>
+    </p>
+    <p class="text-lg font-serif mt-4">
+      Both
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CodeFrame</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CodeFrameForServer</code
+      >
+      use
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >IntersectionObserver</code
+      >
+      to stop rendering sketches that scroll out of view:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const observer = new IntersectionObserver(
+  (entries) =&gt; {
+    entries.forEach((entry) =&gt; {
+      if (entry.isIntersecting) {
+        iframeRef.current.style.removeProperty("display");
+      } else {
+        iframeRef.current.style.display = "none";
+      }
+    });
+  },
+  { rootMargin: "20px" },
+);</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Setting
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >display: none</code
+      >
+      on an iframe stops the browser from running the sketch&#39;s
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >draw()</code
+      >
+      loop every frame, which is critical on pages (like the reference) that
+      embed many simultaneous sketches.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      <strong class="font-bold">iframe Sandbox</strong>
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The iframe uses
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >sandbox="allow-scripts allow-popups allow-modals allow-forms
+        allow-same-origin"</code
+      >. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >allow-same-origin</code
+      >
+      flag is required for the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >postMessage</code
+      >
+      communication to work across the parent → iframe boundary in some browser
+      configurations.
+    </p>
+    <h3
+      id="codeembedframeforservertsx-static-preview"
+      class="text-xl font-serif my-6"
+    >
+      `CodeEmbed/frameForServer.tsx` — Static Preview
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      A simpler version used on SSR/static pages where the code is not editable.
+      Instead of the postMessage trick, it includes p5.js directly via a CDN
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;script src&gt;</code
+      >
+      tag baked into the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >srcDoc</code
+      >. The Intersection Observer is still used, but instead of toggling
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >display: none</code
+      >, it fully removes and restores the iframe&#39;s
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >srcDoc</code
+      >
+      content.
+    </p>
+    <hr class="my-10" />
+    <h2 id="6-internationalization-i18n" class="text-2xl font-serif my-6">
+      6. Internationalization (i18n)
+    </h2>
+    <p class="text-lg font-serif mt-4">The site supports six locales:</p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >en</code
+        >
+        (English — the default)
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >es</code
+        >
+        (Spanish)
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >hi</code
+        >
+        (Hindi)
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >ko</code
+        >
+        (Korean)
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >zh-Hans</code
+        >
+        (Simplified Chinese)
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      Internationalization is built from scratch, without using any external
+      i18n library. It is split across two files:
+    </p>
+    <h3 id="srci18nconstts" class="text-xl font-serif my-6">
+      `src/i18n/const.ts`
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export const defaultLocale = "en";
+export const nonDefaultSupportedLocales = ["es", "hi", "ko", "zh-Hans"];
+export const supportedLocales = [defaultLocale, ...nonDefaultSupportedLocales];</code></pre>
+    </details>
+    <h3 id="srci18nutilsts" class="text-xl font-serif my-6">
+      `src/i18n/utils.ts`
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The key function is
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >getUiTranslator()</code
+      >, which:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Reads a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >src/content/ui/{locale}.yaml</code
+        >
+        file for the requested locale.
+      </li>
+      <li class="text-lg font-serif">Reads the English fallback file.</li>
+      <li class="text-lg font-serif">
+        Returns a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >t(...keys)</code
+        >
+        function that does recursive key lookup with English fallback.
+      </li>
+    </ol>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const t = (...args: string[]) =&gt; {
+  let val = findTranslation(args, currentLocaleDict);
+  if (val === undefined) val = findTranslation(args, defaultLocaleDict);
+  if (val === undefined) return args[args.length - 1]; // key as last-resort fallback
+  return val;
+};</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The variadic
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >...args</code
+      >
+      signature supports nested keys, e.g.,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >t("referenceCategories", "modules", "color")</code
+      >, which maps to a nested YAML structure. This is used extensively for
+      categorized translations (tutorial categories, reference categories,
+      callout titles, attribution text, etc.).
+    </p>
+    <p class="text-lg font-serif mt-4">
+      Locale detection from the URL is done via
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >getCurrentLocale(pathname)</code
+      >, which uses a regex to match the path against known locale prefixes. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >LocaleSelect</code
+      >
+      Preact component constructs the new locale&#39;s URL by replacing the
+      locale prefix in the current path.
+    </p>
+    <h3
+      id="the-outdatedtranslationbanner-component"
+      class="text-xl font-serif my-6"
+    >
+      The `OutdatedTranslationBanner` Component
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      When a page exists in a non-English locale but has fallen behind the
+      English source, the site shows a banner. The banner text itself is
+      hardcoded in the component (not in YAML translation files) to avoid a
+      chicken-and-egg problem — if the translation files are outdated, you
+      can&#39;t rely on them to display an accurate &quot;this is outdated&quot;
+      message. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >checkTranslationBanner</code
+      >
+      utility compares content file modification timestamps to determine
+      staleness.
+    </p>
+    <hr class="my-10" />
+    <h2
+      id="7-content-collections-locale-fallback-logic"
+      class="text-2xl font-serif my-6"
+    >
+      7. Content Collections & Locale Fallback Logic
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Astro content collections are used for all structured content. The most
+      important utility is the locale fallback system in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/pages/_utils.ts</code
+      >.
+    </p>
+    <h3 id="getcollectioninlocalewithfallbacks" class="text-xl font-serif my-6">
+      `getCollectionInLocaleWithFallbacks()`
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export const getCollectionInLocaleWithFallbacks = memoize(
+  async (collectionName, locale) =&gt; {
+    const localizedEntries = await getCollectionInLocale(
+      collectionName,
+      locale,
+    );
+    const defaultLocaleCollection =
+      await getCollectionInDefaultLocale(collectionName);
+    const filteredDefaultEntries = defaultLocaleCollection.filter(
+      (defaultEntry) =&gt; {
+        return !localizedEntries.some(
+          (localeEntry) =&gt;
+            removeLocalePrefix(localeEntry.id) ===
+            removeLocalePrefix(defaultEntry.id),
+        );
+      },
+    );
+    return [...localizedEntries, ...filteredDefaultEntries];
+  },
+  (...args) =&gt; args.join("_"),
+);</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This function merges localized entries with English fallbacks. For any
+      content piece that doesn&#39;t exist in the requested locale, the English
+      version is shown. The result is memoized with Lodash&#39;s
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >memoize</code
+      >
+      using a string key of all arguments — this is a significant performance
+      optimization since this function is called many times during a build (once
+      per page, for multiple collections).
+    </p>
+    <h3 id="slug-transformation" class="text-xl font-serif my-6">
+      Slug Transformation
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Examples historically used a different URL scheme than what Astro
+      generates from directory structure. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >exampleContentSlugToLegacyWebsiteSlug()</code
+      >
+      function handles backward compatibility:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export const exampleContentSlugToLegacyWebsiteSlug = (slug: string): string =&gt;
+  slug
+    .replace(/^[\w-]+?\//, "") // strip locale prefix
+    .replace(/\d+_(.*?)\/\d+_(.*?)\/description$/, "$1-$2") // "123_topic/456_sub/description" → "topic-sub"
+    .replace(/_/g, "-"); // underscores → hyphens</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This preserves all existing inbound links from external sites that linked
+      to the old URL format.
+    </p>
+    <h3 id="generatejumptostate" class="text-xl font-serif my-6">
+      `generateJumpToState()`
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      This function powers the in-page &quot;Jump To&quot; navigation panel. It:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Fetches all entries in a collection for the current locale (with
+        fallbacks).
+      </li>
+      <li class="text-lg font-serif">
+        Extracts categories (from
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >data.category</code
+        >
+        for tutorials, from slug structure for examples, from a static config
+        for reference).
+      </li>
+      <li class="text-lg font-serif">
+        Builds a list of
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >JumpToLink</code
+        >
+        objects, marking the currently-viewed entry as
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >current: true</code
+        >.
+      </li>
+      <li class="text-lg font-serif">
+        Moves the currently-active category to the top of the list for
+        discoverability.
+      </li>
+    </ol>
+    <p class="text-lg font-serif mt-4">
+      The result is stored in a module-level
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >jumpToState</code
+      >
+      singleton during the build, then consumed by the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >NavPanels</code
+      >
+      component.
+    </p>
+    <hr class="my-10" />
+    <h2 id="8-navigation-jump-to-system" class="text-2xl font-serif my-6">
+      8. Navigation & Jump-To System
+    </h2>
+    <p class="text-lg font-serif mt-4">The navigation is a two-panel system:</p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Main nav panel</strong> — Site-wide links
+        (Reference, Tutorials, Examples, etc.) plus Editor and Donate CTAs.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Jump-to panel</strong> — Page-specific
+        in-content navigation (table of contents for the current page&#39;s
+        section).
+      </li>
+    </ol>
+    <p class="text-lg font-serif mt-4">
+      Both panels are managed by the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >NavPanels</code
+      >
+      Preact component, which tracks open/closed state for each:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const [isOpen, setIsOpen] = useState({ main: false, jump: false });</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">Mobile behavior differs from desktop:</p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        On <strong class="font-bold">mobile</strong> (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >width &lt; 768px</code
+        >): only one panel can be open at a time — opening one closes the other.
+      </li>
+      <li class="text-lg font-serif">
+        On <strong class="font-bold">desktop</strong> (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >width &gt;= 768px</code
+        >): both panels default to open.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      This responsive behavior is handled with a
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >ResizeObserver</code
+      >
+      on
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >document.body</code
+      >
+      rather than CSS media queries, because the state changes need to trigger
+      JavaScript re-renders (not just style changes):
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const documentObserver = new ResizeObserver((entries) =&gt; {
+  for (const entry of entries) {
+    if (!isMobile &amp;&amp; entry.contentRect.width &lt; 768) {
+      setIsMobile(true);
+      setIsOpen({ main: false, jump: false });
+    } else if (isMobile &amp;&amp; entry.contentRect.width &gt;= 768) {
+      setIsMobile(false);
+      setIsOpen({ main: true, jump: true });
+    }
+  }
+});
+documentObserver.observe(document.body);</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The <strong class="font-bold">jump-to state</strong> is set at build time
+      in each layout (e.g.,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >ExampleLayout.astro</code
+      >
+      calls
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setJumpToState(jumpToState)</code
+      >) and then read by the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >NavPanels</code
+      >
+      component via the global
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >jumpToState</code
+      >
+      singleton from
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/globals/state.ts</code
+      >.
+    </p>
+    <hr class="my-10" />
+    <h2 id="9-accessibility-infrastructure" class="text-2xl font-serif my-6">
+      9. Accessibility Infrastructure
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Accessibility is treated as a first-class concern with dedicated
+      infrastructure:
+    </p>
+    <h3 id="accessibilitysettings-component" class="text-xl font-serif my-6">
+      `AccessibilitySettings` Component
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Exposes four toggleable settings, stored in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >localStorage</code
+      >:
+    </p>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Setting
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Effect
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >dark-theme</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Toggles dark color scheme via CSS class on
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >&lt;html&gt;</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >monochrome-theme</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Replaces all colors with grayscale
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >show-alt-text</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Makes the visually-hidden alt text badge on images visible
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >reduced-motion</code
+              >
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Disables CSS animations and transitions
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-lg font-serif mt-4">
+      The settings are loaded from
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >localStorage</code
+      >
+      and applied to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >document.documentElement</code
+      >
+      on component mount. To avoid a flash of un-themed content, the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >BaseLayout.astro</code
+      >
+      injects an inline
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;script&gt;</code
+      >
+      in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;head&gt;</code
+      >
+      that reads and applies these settings <em class="italic">before</em> the
+      page renders:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">&lt;script is:inline&gt;
+  const settings = ["dark-theme", "monochrome-theme", "show-alt-text", "reduced-motion"];
+  const storedSettings = settings.filter(s =&gt; localStorage.getItem(s) === "true");
+  if (storedSettings.length === 0) storedSettings.push("light-theme");
+  document.documentElement.className = `${storedSettings.join(" ")} ${document.documentElement.className}`;
+&lt;/script&gt;</code></pre>
+    </details>
+    <h3 id="useliveregion-hook" class="text-xl font-serif my-6">
+      `useLiveRegion` Hook
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      A custom Preact hook that provides an
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >announce(message)</code
+      >
+      function for ARIA live region notifications:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">const announce = (message: string, clearMessage = 1000) =&gt; {
+  const node = ref.current;
+  clearTimer();
+  node.textContent = message;
+  timerRef.current = setTimeout(() =&gt; {
+    if (node) node.textContent = "";
+  }, clearMessage);
+};</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This is used in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CopyCodeButton</code
+      >
+      (announces &quot;Code copied to clipboard&quot;) and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >CodeEmbed</code
+      >
+      (announces &quot;Sketch is running&quot; / &quot;Sketch stopped&quot; /
+      &quot;Code reset&quot;). Screen reader users receive audio feedback for
+      all interactive code embed actions.
+    </p>
+    <h3 id="skip-navigation" class="text-xl font-serif my-6">
+      Skip Navigation
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Every page has a &quot;Skip to main content&quot; link at the very top of
+      the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;nav&gt;</code
+      >
+      element:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Html snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-html">&lt;a href="#main-content" class="skip-to-main"&gt;Skip to main content&lt;/a&gt;</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This links to
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >&lt;main id="main-content"&gt;</code
+      >
+      in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >BaseLayout.astro</code
+      >.
+    </p>
+    <h3 id="callout-component-aria" class="text-xl font-serif my-6">
+      `Callout` Component ARIA
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >Callout</code
+      >
+      component renders with proper
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >role="region"</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >aria-label</code
+      >, using the localized callout title as the accessible name:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Astro snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-astro">&lt;section role="region" aria-label={String(t('calloutTitles', props.title || "Try this!"))}&gt;</code></pre>
+    </details>
+    <h3 id="image-alt-text-system" class="text-xl font-serif my-6">
+      Image Alt Text System
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The custom
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >Image</code
+      >
+      component renders alt text both as an HTML
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >alt</code
+      >
+      attribute (for screen readers) and as a visible overlay badge when
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >show-alt-text</code
+      >
+      is enabled. The badge is
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >aria-hidden</code
+      >
+      since it&#39;s redundant with the
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >alt</code
+      >
+      attribute — it&#39;s purely for sighted users who want to review alt text
+      quality.
+    </p>
+    <h3 id="playwright-accessibility-tests" class="text-xl font-serif my-6">
+      Playwright Accessibility Tests
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The test suite includes
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >test/a11y/</code
+      >
+      — Playwright tests using
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >@axe-core/playwright</code
+      >
+      — which run automated accessibility audits against the rendered pages.
+    </p>
+    <hr class="my-10" />
+    <h2 id="10-openprocessing-integration" class="text-2xl font-serif my-6">
+      10. OpenProcessing Integration
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The &quot;Sketches&quot; section of the community area showcases creative
+      p5.js work from
+      <a
+        href="https://openprocessing.org"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >OpenProcessing</a
+      >. Rather than making live API calls at runtime (which would fail during
+      static builds), all sketch data is pre-fetched and committed to the
+      repository as JSON files in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/cached-data/</code
+      >.
+    </p>
+    <h3 id="data-structure" class="text-xl font-serif my-6">Data Structure</h3>
+    <p class="text-lg font-serif mt-4">Two curation JSON files exist:</p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >openprocessing-curation-87649-sketches.json</code
+        >
+        — 2024 curation
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >openprocessing-curation-89576-sketches.json</code
+        >
+        — 2025 curation
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      Individual sketch detail files live in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/cached-data/openprocessing-sketches/{id}.json</code
+      >, each containing metadata like
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >title</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >description</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >instructions</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >width</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >height</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >mode</code
+      >, and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >createdOn</code
+      >.
+    </p>
+    <h3 id="srcapiopenprocessingts" class="text-xl font-serif my-6">
+      `src/api/OpenProcessing.ts`
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The API module provides typed access to this cached data:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export async function getCurationSketches(): Promise&lt;OpenProcessingCurationResponse&gt; {
+  const payload2024 = await readJson(CURATION_2024_FILE);
+  const payload2025 = await readJson(CURATION_2025_FILE);
+  // Priority sketches are featured first
+  const prioritySketches = payload2025
+    .filter((s) =&gt; priorityIds.includes(String(s.visualID)))
+    .sort(
+      (a, b) =&gt;
+        priorityIds.indexOf(String(a.visualID)) -
+        priorityIds.indexOf(String(b.visualID)),
+    );
+  // Merge, deduplication handled by checking if individual sketch file exists
+  const allSketches = [...prioritySketches, ...payload2024];
+  const availableSketches = [];
+  for (const sketch of allSketches) {
+    if (await exists(SKETCH_FILE(sketch.visualID)))
+      availableSketches.push(sketch);
+  }
+  return availableSketches;
+}</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      A handpicked
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >priorityIds</code
+      >
+      array ensures specific high-quality sketches from the 2025 curation always
+      appear at the top of the gallery.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      Sketches are embedded in their own pages via the OpenProcessing embed URL:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export const makeSketchEmbedUrl = (id: number) =&gt;
+  `https://openprocessing.org/sketch/${id}/embed/?plusEmbedFullscreen=true&amp;plusEmbedInstructions=false`;</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >SketchLayout.astro</code
+      >
+      calculates an aspect ratio for the iframe based on the sketch&#39;s
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >width</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >height</code
+      >
+      metadata, adding 50px to account for OpenProcessing&#39;s own toolbar. A
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >ScalingIframe</code
+      >
+      component handles responsive scaling.
+    </p>
+    <hr class="my-10" />
+    <h2
+      id="11-service-worker-caching-strategy"
+      class="text-2xl font-serif my-6"
+    >
+      11. Service Worker & Caching Strategy
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The site uses
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >astrojs-service-worker</code
+      >
+      (backed by
+      <a
+        href="https://developer.chrome.com/docs/workbox"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >Workbox</a
+      >) to enable offline support and fast repeat visits.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Js snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-js">serviceWorker({
+  workbox: {
+    globPatterns: ["**/*.{css,js,jpg,json,png,svg,ico,woff,woff2}"],
+    clientsClaim: true,
+    runtimeCaching: [
+      {
+        urlPattern: ({ url }) =&gt; url.pathname.endsWith(".html"),
+        handler: "CacheFirst",
+        options: {
+          cacheName: "html-pages-cache",
+          expiration: { maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 * 7 }
+        },
+      },
+    ],
+  },
+}),</code></pre>
+    </details>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Static assets</strong> (CSS, JS, fonts,
+        images) are precached at install time using Workbox&#39;s
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >globPatterns</code
+        >.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">HTML pages</strong> use a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >CacheFirst</code
+        >
+        runtime strategy — served from cache immediately, network only as
+        fallback. Pages are cached for up to 7 days, with a maximum of 50 HTML
+        pages in the cache.
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >clientsClaim: true</code
+        >
+        ensures the service worker takes control of all open tabs immediately
+        upon activation, without requiring a page reload.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      This is particularly important for p5.js&#39;s audience — creative coders
+      who may work offline or in low-connectivity environments.
+    </p>
+    <hr class="my-10" />
+    <h2
+      id="12-build-time-scripting-reference-generation"
+      class="text-2xl font-serif my-6"
+    >
+      12. Build-Time Scripting & Reference Generation
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >src/scripts/utils.ts</code
+      >
+      module provides the foundational utilities for all build scripts:
+    </p>
+    <h3 id="library-repository-cloning" class="text-xl font-serif my-6">
+      Library Repository Cloning
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">export const cloneLibraryRepo = async (localSavePath, repoUrl, branch) =&gt; {
+  const hasRecentRepo =
+    branch !== "main" &amp;&amp; repoExists &amp;&amp; (await fileModifiedSince(localSavePath));
+  if (!hasRecentRepo) {
+    await git.clone(repoUrl, localSavePath, [
+      "--depth",
+      "1",
+      "--filter=blob:none",
+      "--branch",
+      branch,
+    ]);
+  }
+};</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >--depth 1 --filter=blob:none</code
+      >
+      flags create a shallow, blobless clone — this is a Git optimization that
+      downloads only the tree structure without any file content initially, then
+      fetches only the files actually needed. This dramatically reduces clone
+      time for the large p5.js library repository.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The function includes a staleness check: if the local clone is less than
+      72 hours old and we&#39;re not on
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >main</code
+      >, it skips re-cloning. This makes incremental builds much faster.
+    </p>
+    <h3 id="preprocessor-path-fix" class="text-xl font-serif my-6">
+      Preprocessor Path Fix
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The p5.js library&#39;s documentation preprocessor (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >docs/preprocessor.js</code
+      >) uses an absolute
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >process.cwd()</code
+      >
+      path to reference
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >parameterData.json</code
+      >. When cloned into an arbitrary directory, this breaks. The build script
+      automatically patches it to use
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >__dirname</code
+      >
+      instead:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">preprocessorContent = preprocessorContent.replace(
+  "path.join(process.cwd(), 'docs', 'parameterData.json')",
+  `path.join(__dirname, 'parameterData.json')`,
+);</code></pre>
+    </details>
+    <h3 id="content-file-discovery" class="text-xl font-serif my-6">
+      Content File Discovery
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >getContentFilePaths()</code
+      >
+      recursively finds all
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.mdx</code
+      >
+      and
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.yaml</code
+      >
+      files in a directory, used by the reference and contributor-docs builders
+      to enumerate what needs to be generated.
+    </p>
+    <h3 id="markdown-link-rewriting" class="text-xl font-serif my-6">
+      Markdown Link Rewriting
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >rewriteRelativeMdLinks()</code
+      >
+      converts relative
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.md</code
+      >
+      links (from the source library&#39;s GitHub docs) to the Astro URL
+      convention (no extension, trailing slash):
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">./access.md  →  ./access/</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This ensures that imported markdown from external repos (like
+      contributor-docs sourced from the p5.js library repo) has correct
+      navigation links on the website.
+    </p>
+    <hr class="my-10" />
+    <h2 id="13-global-state-management" class="text-2xl font-serif my-6">
+      13. Global State Management
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      The site has minimal client-side state. For the build-time inter-layout
+      communication needed by the nav system, a module-level singleton is used:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">// src/globals/state.ts
+export let jumpToState: JumpToState | null = null;
+export const setJumpToState = (newJumpToState: JumpToState | null) =&gt; {
+  jumpToState = newJumpToState;
+};</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This pattern works because during Astro&#39;s static build, all layouts
+      run in the same Node.js process, so module state is shared. Each layout
+      calls
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >setJumpToState()</code
+      >
+      with its page-specific links, overwriting any previous value. Since pages
+      are built sequentially (or with controlled concurrency), each page gets
+      its own jump-to state at render time.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >NavPanels</code
+      >
+      component receives
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >jumpToState</code
+      >
+      as a prop (not imported directly from the module) to maintain clean
+      component boundaries.
+    </p>
+    <hr class="my-10" />
+    <h2 id="14-styling-system" class="text-2xl font-serif my-6">
+      14. Styling System
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Styling uses a combination of Tailwind CSS utility classes and SCSS
+      modules:
+    </p>
+    <h3 id="tailwind" class="text-xl font-serif my-6">Tailwind</h3>
+    <p class="text-lg font-serif mt-4">
+      Used for the majority of component-level styling. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >@astrojs/tailwind</code
+      >
+      integration generates a stylesheet from utility classes found across all
+      component files. Custom design tokens (colors, spacing) are defined in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >tailwind.config.mjs</code
+      >
+      and referenced via CSS custom properties.
+    </p>
+    <h3 id="scss-modules" class="text-xl font-serif my-6">SCSS Modules</h3>
+    <p class="text-lg font-serif mt-4">
+      Used in a few places where Tailwind&#39;s constraint-based approach is
+      limiting — particularly for complex state-driven styles. The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >Nav/styles.module.scss</code
+      >
+      is the primary example, handling the intricate open/closed/mobile/desktop
+      state matrix with nested selectors.
+    </p>
+    <h3 id="global-scss" class="text-xl font-serif my-6">Global SCSS</h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >styles/global.scss</code
+      >
+      defines:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Custom
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >@font-face</code
+        >
+        declarations for the &quot;National Park&quot; font family (in multiple
+        weights, loaded as WOFF2).
+      </li>
+      <li class="text-lg font-serif">
+        CSS custom properties for design tokens used by the accessibility
+        themes.
+      </li>
+      <li class="text-lg font-serif">
+        Base element styles and utility classes like
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >.rendered-markdown</code
+        >
+        (which styles MDX-rendered content),
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >.content-grid</code
+        >, and
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >.skip-to-main</code
+        >.
+      </li>
+    </ul>
+    <h3 id="variables" class="text-xl font-serif my-6">Variables</h3>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >styles/variables.scss</code
+      >
+      defines breakpoint constants (<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >$breakpoint-tablet</code
+      >,
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >$breakpoint-desktop</code
+      >) used across SCSS modules to keep responsive breakpoints consistent.
+    </p>
+    <hr class="my-10" />
+    <h2 id="15-testing-cicd" class="text-2xl font-serif my-6">
+      15. Testing & CI/CD
+    </h2>
+    <h3 id="unit-tests-vitest" class="text-xl font-serif my-6">
+      Unit Tests (Vitest)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Vitest is configured with two test projects:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Ts snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-ts">test: {
+  projects: [
+    { test: { name: "DOM", environment: "jsdom", include: ["test/**/*"] } },
+    { test: { name: "node", include: ["test/pages/*"] } },
+  ];
+}</code></pre>
+    </details>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">DOM tests</strong> run in a jsdom environment,
+        suitable for component tests.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Node tests</strong> run in Node.js, used for
+        testing build-time page generation logic.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >test/api/OpenProcessing.test.ts</code
+      >
+      file tests the curation API utilities in isolation with mock data.
+    </p>
+    <h3
+      id="accessibility-tests-playwright-axe-core"
+      class="text-xl font-serif my-6"
+    >
+      Accessibility Tests (Playwright + axe-core)
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >test/a11y/</code
+      >
+      suite uses
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >@axe-core/playwright</code
+      >
+      to run automated WCAG compliance checks against rendered pages. These
+      tests are run with
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >npm run test:a11y</code
+      >
+      and are separate from the unit test suite.
+    </p>
+    <h3 id="github-actions" class="text-xl font-serif my-6">GitHub Actions</h3>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.github/workflows/</code
+      >
+      directory contains:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >deploy.yml</code
+          ></strong
+        >
+        — Triggered on main branch pushes, builds and deploys to production.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >beta_deploy.yml</code
+          ></strong
+        >
+        — Deploys preview builds for PRs.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >test.yml</code
+          ></strong
+        >
+        — Runs Vitest and type checks on all PRs.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >translation-sync.yml</code
+          ></strong
+        >
+        — Runs the translation tracker to identify outdated translations.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >auto-close-issues.yml</code
+          ></strong
+        >
+        — Closes stale issues automatically.
+      </li>
+    </ul>
+    <h3 id="translation-tracker" class="text-xl font-serif my-6">
+      Translation Tracker
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >.github/actions/translation-tracker/</code
+      >
+      is a custom GitHub Action written in Node.js. It compares the modification
+      dates of localized content files against their English counterparts and
+      generates a report of outdated translations, which is then posted as a PR
+      comment or issue update. This is a sophisticated piece of infrastructure
+      for maintaining multilingual documentation quality at scale.
+    </p>
+    <hr class="my-10" />
+    <h2 id="summary" class="text-2xl font-serif my-6">Summary</h2>
+    <p class="text-lg font-serif mt-4">
+      The p5.js website is a well-engineered documentation platform with several
+      standout technical decisions:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Astro&#39;s island architecture</strong> keeps
+        the page fast by default while enabling rich interactivity only where
+        needed.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          >The postMessage-based p5.js library sharing</strong
+        >
+        between parent page and iframes is an elegant solution to the &quot;same
+        library, many iframes&quot; performance problem.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Build-time reference generation</strong> from
+        actual library source code ensures the documentation is never stale
+        relative to the library.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          >Locale fallback logic with memoization</strong
+        >
+        makes internationalization transparent to content authors while keeping
+        build performance acceptable.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          >Accessibility as a first-class feature</strong
+        >
+        — not bolted on, but architecturally integrated from the component level
+        (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >useLiveRegion</code
+        >, ARIA attributes) through to automated Playwright test coverage.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          >IntersectionObserver-based sketch lifecycle management</strong
+        >
+        prevents unnecessary CPU usage from p5.js
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >draw()</code
+        >
+        loops on pages with multiple sketches.
+      </li>
+    </ol>
+    <p class="text-lg font-serif mt-4">
+      The codebase reflects a thoughtful balance between developer experience,
+      end-user performance, accessibility, and the unique requirements of a
+      creative-coding community platform.
+    </p>
+
+    <!-- ── Footer ────────────────────────────────────────────────────────── -->
+    <hr class="my-10" />
+    <footer class="my-8">
+      <div class="flex justify-between items-center">
+        <p>By Kanai</p>
+        <a href="https://buymeacoffee.com/Kanaixdev">BuyMeACoffee</a>
+      </div>
+    </footer>
+  </body>
+</html>

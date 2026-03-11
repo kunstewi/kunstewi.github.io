@@ -1,98 +1,82 @@
 [
-    {
-        "title": "p5.js: The Architecture of the p5.js Web Editor",
-        "file": "p5-editor-architecture.html",
-        "date": "Mar 6, 2026",
-        "readingTime": 20,
-        "depth": "Deep Dive",
-        "tags": [
-            "p5.js-web-editor",
-            "architecture"
-        ]
-    },
-    {
-        "title": "p5.js: Understanding the Architecture of p5.js",
-        "file": "p5.html",
-        "date": "Mar 3, 2026",
-        "readingTime": 15,
-        "depth": "Beginner Friendly",
-        "tags": [
-            "p5.js",
-            "architecture"
-        ]
-    },
-    {
-        "title": "Playwright E2E Testing: A Deep Dive",
-        "file": "playwright.html",
-        "date": "Feb 20, 2026",
-        "readingTime": 12,
-        "depth": "Comprehensive Guide",
-        "tags": [
-            "testing",
-            "playwright"
-        ]
-    },
-    {
-        "title": "Redis 101 : From a Beginners POV",
-        "file": "redis.html",
-        "date": "Oct 2, 2025",
-        "readingTime": 8,
-        "depth": "Beginner Friendly",
-        "tags": [
-            "database",
-            "redis"
-        ]
-    },
-    {
-        "title": "Distributed Systems 101 : From a Beginners POV",
-        "file": "distributed-systems.html",
-        "date": "Aug 8, 2025",
-        "readingTime": 12,
-        "depth": "Intermediate",
-        "tags": [
-            "architecture"
-        ]
-    },
-    {
-        "title": "Sockets 101 : From a Beginners POV",
-        "file": "sockets.html",
-        "date": "Jul 26, 2025",
-        "readingTime": 10,
-        "depth": "Beginner Friendly",
-        "tags": [
-            "networking",
-            "websockets"
-        ]
-    },
-    {
-        "title": "Vector Database 101 : From a Beginners POV",
-        "file": "vector-db.html",
-        "date": "Jul 3, 2025",
-        "readingTime": 9,
-        "depth": "Intermediate",
-        "tags": [
-            "AI/ML",
-            "vector databases"
-        ]
-    },
-    {
-        "title": "Concurrency from a Beginners POV",
-        "file": "concurrency.html",
-        "date": "May 10, 2025",
-        "readingTime": 11,
-        "depth": "Intermediate",
-        "tags": [
-            "programming"
-        ]
-    },
-    {
-        "title": "System Design from a Beginners POV",
-        "file": "system-design.html",
-        "date": "Apr 28, 2025",
-        "readingTime": 15,
-        "depth": "Beginner Friendly",
-        "tags": [
-            "architecture"
-        ]
-    }
+  {
+    "title": "p5.js: The Architecture of the p5.js Web Editor",
+    "file": "p5-editor-architecture.html",
+    "date": "Mar 6, 2026",
+    "readingTime": 20,
+    "depth": "Deep Dive",
+    "tags": ["p5.js-web-editor", "architecture"]
+  },
+  {
+    "title": "p5.js: A Technical Breakdown of the p5.js Website",
+    "file": "p5.js-website.html",
+    "date": "Mar 11, 2026",
+    "readingTime": 15,
+    "depth": "Deep Dive",
+    "tags": ["p5.js-website", "architecture"]
+  },
+  {
+    "title": "p5.js: Understanding the Architecture of p5.js",
+    "file": "p5.html",
+    "date": "Mar 3, 2026",
+    "readingTime": 15,
+    "depth": "Beginner Friendly",
+    "tags": ["p5.js", "architecture"]
+  },
+  {
+    "title": "Playwright E2E Testing: A Deep Dive",
+    "file": "playwright.html",
+    "date": "Feb 20, 2026",
+    "readingTime": 12,
+    "depth": "Comprehensive Guide",
+    "tags": ["testing", "playwright"]
+  },
+  {
+    "title": "Redis 101 : From a Beginners POV",
+    "file": "redis.html",
+    "date": "Oct 2, 2025",
+    "readingTime": 8,
+    "depth": "Beginner Friendly",
+    "tags": ["database", "redis"]
+  },
+  {
+    "title": "Distributed Systems 101 : From a Beginners POV",
+    "file": "distributed-systems.html",
+    "date": "Aug 8, 2025",
+    "readingTime": 12,
+    "depth": "Intermediate",
+    "tags": ["architecture"]
+  },
+  {
+    "title": "Sockets 101 : From a Beginners POV",
+    "file": "sockets.html",
+    "date": "Jul 26, 2025",
+    "readingTime": 10,
+    "depth": "Beginner Friendly",
+    "tags": ["networking", "websockets"]
+  },
+  {
+    "title": "Vector Database 101 : From a Beginners POV",
+    "file": "vector-db.html",
+    "date": "Jul 3, 2025",
+    "readingTime": 9,
+    "depth": "Intermediate",
+    "tags": ["AI/ML", "vector databases"]
+  },
+  {
+    "title": "Concurrency from a Beginners POV",
+    "file": "concurrency.html",
+    "date": "May 10, 2025",
+    "readingTime": 11,
+    "depth": "Intermediate",
+    "tags": ["programming"]
+  },
+  {
+    "title": "System Design from a Beginners POV",
+    "file": "system-design.html",
+    "date": "Apr 28, 2025",
+    "readingTime": 15,
+    "depth": "Beginner Friendly",
+    "tags": ["architecture"]
+  }
 ]

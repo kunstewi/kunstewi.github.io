@@ -1,136 +1,519 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Playwright E2E Testing: A Deep Dive</title>
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-  <style type="text/tailwindcss">
-    @theme {
-      --font-sans: "Lexend", sans-serif;
-      --font-serif: "Lexend", sans-serif;
-    }
-  </style>
-  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <!-- Syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script>
-    // Run highlight.js after page load; open <details> briefly so hljs can
-    // reach the code, then restore closed state.
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("details").forEach(d => {
-        const wasOpen = d.open;
-        d.open = true;
-        d.querySelectorAll("code.hljs").forEach(el => hljs.highlightElement(el));
-        d.open = wasOpen;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playwright E2E Testing: A Deep Dive</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/tailwindcss">
+      @theme {
+        --font-sans: "Lexend", sans-serif;
+        --font-serif: "Lexend", sans-serif;
+      }
+    </style>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <!-- Syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+      // Run highlight.js after page load; open <details> briefly so hljs can
+      // reach the code, then restore closed state.
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("details").forEach((d) => {
+          const wasOpen = d.open;
+          d.open = true;
+          d.querySelectorAll("code.hljs").forEach((el) =>
+            hljs.highlightElement(el),
+          );
+          d.open = wasOpen;
+        });
       });
-    });
-  </script>
-  <style>
-    html {
-      overflow: -moz-scrollbars-none;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    html::-webkit-scrollbar { display: none; width: 0; height: 0; }
-    body { -ms-overflow-style: none; scrollbar-width: none; overflow-y: scroll; }
-    body::-webkit-scrollbar { display: none; width: 0; height: 0; }
-  </style>
-</head>
+    </script>
+    <style>
+      html {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      html::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+      body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        overflow-y: scroll;
+      }
+      body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    </style>
+  </head>
 
-<body class="bg-orange-100 w-full max-w-[95%] md:w-[60%] mx-auto">
-
-  <!-- ── Navigation ────────────────────────────────────────────────────── -->
-  <nav class="mt-6">
-    <div>
-      <h1 class="font-serif text-4xl">Kanai's Blog</h1>
-      <div class="mt-5 flex flex-wrap gap-5">
-        <a href="/"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Home</a>
-        <a href="./blog.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Blogs</a>
-        <a href="../projects/projects.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Projects</a>
-        <a href="../prs/prs.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Pull Requests</a>
-        <a href="../gallery/gallery.html"
-          class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300">Gallery</a>
+  <body class="bg-orange-100 w-full max-w-[95%] md:w-[60%] mx-auto">
+    <!-- ── Navigation ────────────────────────────────────────────────────── -->
+    <nav class="mt-6">
+      <div>
+        <h1 class="font-serif text-4xl">Kanai's Blog</h1>
+        <div class="mt-5 flex flex-wrap gap-5">
+          <a
+            href="/"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Home</a
+          >
+          <a
+            href="./blog.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Blogs</a
+          >
+          <a
+            href="../projects/projects.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Projects</a
+          >
+          <a
+            href="../prs/prs.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Pull Requests</a
+          >
+          <a
+            href="../gallery/gallery.html"
+            class="relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-black after:bottom-[-4px] after:left-0 hover:after:w-full after:transition-all after:duration-300"
+            >Gallery</a
+          >
+        </div>
       </div>
+    </nav>
+
+    <hr class="mt-3" />
+
+    <!-- ── Post header ───────────────────────────────────────────────────── -->
+    <h1 class="text-4xl mt-[57px] mb-3 font-serif">
+      Playwright E2E Testing: A Deep Dive
+    </h1>
+
+    <!-- ── Post body ─────────────────────────────────────────────────────── -->
+    <blockquote
+      class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic"
+    >
+      A comprehensive guide to features, internals, and advanced patterns,
+      everything you need to know about playwright.
+    </blockquote>
+    <hr class="my-10" />
+    <h2 id="table-of-contents" class="text-2xl font-serif my-6">
+      Table of Contents
+    </h2>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <a
+          href="#what-is-playwright"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >What Is Playwright?</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#how-playwright-works-internally"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >How Playwright Works Internally</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#installation--project-setup"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Installation & Project Setup</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#core-concepts"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Core Concepts</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#locators-the-heart-of-playwright"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Locators: The Heart of Playwright</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#actions"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Actions</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#assertions"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Assertions</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#auto-waiting-the-magic-behind-reliability"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Auto-Waiting: The Magic Behind Reliability</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#fixtures--test-lifecycle"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Fixtures & Test Lifecycle</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#page-object-model"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Page Object Model</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#network-interception--mocking"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Network Interception & Mocking</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#authentication--state-management"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Authentication & State Management</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#browser-contexts-isolation-without-overhead"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Browser Contexts: Isolation Without Overhead</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#parallel-execution--sharding"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Parallel Execution & Sharding</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#screenshots-videos--traces"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Screenshots, Videos & Traces</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#component-testing"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Component Testing</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#api-testing"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >API Testing</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#visual-comparisons"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Visual Comparisons</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#codegen-record--replay"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Codegen: Record & Replay</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#cicd-integration"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >CI/CD Integration</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#configuration-deep-dive"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Configuration Deep Dive</a
+        >
+      </li>
+      <li class="text-lg font-serif">
+        <a
+          href="#advanced-patterns--tips"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >Advanced Patterns & Tips</a
+        >
+      </li>
+    </ol>
+    <hr class="my-10" />
+    <h2 id="what-is-playwright" class="text-2xl font-serif my-6">
+      What Is Playwright?
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright is a modern, open-source end-to-end testing framework built by
+      Microsoft. Released in 2020, it was created by the same team that
+      originally built Puppeteer at Google. Its primary goal is to provide a
+      <strong class="font-bold"
+        >single API to automate Chromium, Firefox, and WebKit</strong
+      >
+      — meaning your test suite runs against all major browser engines without
+      changing a line of test code.
+    </p>
+    <p class="text-lg font-serif mt-4">
+      Unlike older tools such as Selenium (which relies on WebDriver, a W3C
+      standard protocol built as a remote HTTP layer), Playwright communicates
+      with browsers via the
+      <strong class="font-bold">Chrome DevTools Protocol (CDP)</strong> for
+      Chromium and custom protocol implementations for Firefox and WebKit. This
+      gives Playwright deeper, faster, and more reliable browser control.
+    </p>
+    <h3 id="why-playwright-over-alternatives" class="text-xl font-serif my-6">
+      Why Playwright Over Alternatives?
+    </h3>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Feature
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Playwright
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Cypress
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Selenium
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Multi-browser (real engines)
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Chromium, Firefox, WebKit
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Chromium only (Firefox beta)
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ via WebDriver
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Auto-waiting
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Built-in
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Built-in
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ❌ Manual waits
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Parallel test execution
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Native
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Paid plan for parallelism
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Grid required
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Network interception
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Full
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Full
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Limited
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              iframes / shadow DOM
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ First-class
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Partial
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Manual
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Multiple tabs/windows
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ❌
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Mobile emulation
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Device profiles
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Viewport only
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ⚠️ Limited
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Component testing
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ❌
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Trace viewer
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅ Built-in
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ✅
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              ❌
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </nav>
-
-  <hr class="mt-3" />
-
-  <!-- ── Post header ───────────────────────────────────────────────────── -->
-  <h1 class="text-4xl mt-[57px] mb-3 font-serif">Playwright E2E Testing: A Deep Dive</h1>
-  
-  
-
-  <!-- ── Post body ─────────────────────────────────────────────────────── -->
-  <blockquote class="border-l-4 border-gray-400 pl-4 my-6 text-gray-600 font-serif text-lg italic">A comprehensive guide to features, internals, and advanced patterns — everything you need to go from zero to expert.</blockquote>
-<hr class="my-10" />
-<h2 id="table-of-contents" class="text-2xl font-serif my-6">Table of Contents</h2>
-<ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><a href="#what-is-playwright" class="underline underline-offset-2 hover:text-gray-600 transition-colors">What Is Playwright?</a></li>
-<li class="text-lg font-serif"><a href="#how-playwright-works-internally" class="underline underline-offset-2 hover:text-gray-600 transition-colors">How Playwright Works Internally</a></li>
-<li class="text-lg font-serif"><a href="#installation--project-setup" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Installation & Project Setup</a></li>
-<li class="text-lg font-serif"><a href="#core-concepts" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Core Concepts</a></li>
-<li class="text-lg font-serif"><a href="#locators-the-heart-of-playwright" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Locators: The Heart of Playwright</a></li>
-<li class="text-lg font-serif"><a href="#actions" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Actions</a></li>
-<li class="text-lg font-serif"><a href="#assertions" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Assertions</a></li>
-<li class="text-lg font-serif"><a href="#auto-waiting-the-magic-behind-reliability" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Auto-Waiting: The Magic Behind Reliability</a></li>
-<li class="text-lg font-serif"><a href="#fixtures--test-lifecycle" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Fixtures & Test Lifecycle</a></li>
-<li class="text-lg font-serif"><a href="#page-object-model" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Page Object Model</a></li>
-<li class="text-lg font-serif"><a href="#network-interception--mocking" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Network Interception & Mocking</a></li>
-<li class="text-lg font-serif"><a href="#authentication--state-management" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Authentication & State Management</a></li>
-<li class="text-lg font-serif"><a href="#browser-contexts-isolation-without-overhead" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Browser Contexts: Isolation Without Overhead</a></li>
-<li class="text-lg font-serif"><a href="#parallel-execution--sharding" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Parallel Execution & Sharding</a></li>
-<li class="text-lg font-serif"><a href="#screenshots-videos--traces" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Screenshots, Videos & Traces</a></li>
-<li class="text-lg font-serif"><a href="#component-testing" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Component Testing</a></li>
-<li class="text-lg font-serif"><a href="#api-testing" class="underline underline-offset-2 hover:text-gray-600 transition-colors">API Testing</a></li>
-<li class="text-lg font-serif"><a href="#visual-comparisons" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Visual Comparisons</a></li>
-<li class="text-lg font-serif"><a href="#codegen-record--replay" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Codegen: Record & Replay</a></li>
-<li class="text-lg font-serif"><a href="#cicd-integration" class="underline underline-offset-2 hover:text-gray-600 transition-colors">CI/CD Integration</a></li>
-<li class="text-lg font-serif"><a href="#configuration-deep-dive" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Configuration Deep Dive</a></li>
-<li class="text-lg font-serif"><a href="#advanced-patterns--tips" class="underline underline-offset-2 hover:text-gray-600 transition-colors">Advanced Patterns & Tips</a></li>
-</ol>
-<hr class="my-10" />
-<h2 id="what-is-playwright" class="text-2xl font-serif my-6">What Is Playwright?</h2>
-<p class="text-lg font-serif mt-4">Playwright is a modern, open-source end-to-end testing framework built by Microsoft. Released in 2020, it was created by the same team that originally built Puppeteer at Google. Its primary goal is to provide a <strong class="font-bold">single API to automate Chromium, Firefox, and WebKit</strong> — meaning your test suite runs against all major browser engines without changing a line of test code.</p>
-<p class="text-lg font-serif mt-4">Unlike older tools such as Selenium (which relies on WebDriver, a W3C standard protocol built as a remote HTTP layer), Playwright communicates with browsers via the <strong class="font-bold">Chrome DevTools Protocol (CDP)</strong> for Chromium and custom protocol implementations for Firefox and WebKit. This gives Playwright deeper, faster, and more reliable browser control.</p>
-<h3 id="why-playwright-over-alternatives" class="text-xl font-serif my-6">Why Playwright Over Alternatives?</h3>
-<div class="overflow-x-auto my-6">
-  <table class="w-full border-collapse text-left">
-    <thead><tr><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Feature</th><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Playwright</th><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Cypress</th><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Selenium</th></tr></thead>
-    <tbody><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Multi-browser (real engines)</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Chromium, Firefox, WebKit</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Chromium only (Firefox beta)</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ via WebDriver</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Auto-waiting</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Built-in</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Built-in</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">❌ Manual waits</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Parallel test execution</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Native</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Paid plan for parallelism</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Grid required</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Network interception</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Full</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Full</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Limited</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">iframes / shadow DOM</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ First-class</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Partial</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Manual</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Multiple tabs/windows</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">❌</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Mobile emulation</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Device profiles</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Viewport only</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">⚠️ Limited</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Component testing</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">❌</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Trace viewer</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅ Built-in</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">✅</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm">❌</td></tr></tbody>
-  </table>
-</div>
-<hr class="my-10" />
-<h2 id="how-playwright-works-internally" class="text-2xl font-serif my-6">How Playwright Works Internally</h2>
-<p class="text-lg font-serif mt-4">Understanding Playwright&#39;s architecture is key to writing tests that are fast, stable, and debuggable.</p>
-<h3 id="the-protocol-layer" class="text-xl font-serif my-6">The Protocol Layer</h3>
-<p class="text-lg font-serif mt-4">Playwright maintains its own <strong class="font-bold">browser protocol implementations</strong>:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><strong class="font-bold">Chromium</strong>: Uses the Chrome DevTools Protocol (CDP) directly over a WebSocket connection.</li>
-<li class="text-lg font-serif"><strong class="font-bold">Firefox</strong>: Playwright maintains a custom browser patch (<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">juggler</code>) that exposes a CDP-like protocol. It ships its own patched Firefox binary.</li>
-<li class="text-lg font-serif"><strong class="font-bold">WebKit</strong>: Similarly, Playwright patches WebKit and ships its own binary, exposing automation hooks not available in stock Safari.</li>
-</ul>
-<p class="text-lg font-serif mt-4">This means Playwright does <strong class="font-bold">not</strong> use WebDriver at all. It speaks directly to the browser&#39;s internal messaging bus, which is why it can do things like:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Intercept network requests at the protocol level before they hit the network stack.</li>
-<li class="text-lg font-serif">Emulate devices at the browser-engine level (not just viewport resizing).</li>
-<li class="text-lg font-serif">Control service workers, web workers, and browser extensions.</li>
-</ul>
-<h3 id="the-nodejs-browser-bridge" class="text-xl font-serif my-6">The Node.js ↔ Browser Bridge</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Plaintext snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">Test (Node.js)
+    <hr class="my-10" />
+    <h2 id="how-playwright-works-internally" class="text-2xl font-serif my-6">
+      How Playwright Works Internally
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Understanding Playwright&#39;s architecture is key to writing tests that
+      are fast, stable, and debuggable.
+    </p>
+    <h3 id="the-protocol-layer" class="text-xl font-serif my-6">
+      The Protocol Layer
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Playwright maintains its own
+      <strong class="font-bold">browser protocol implementations</strong>:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Chromium</strong>: Uses the Chrome DevTools
+        Protocol (CDP) directly over a WebSocket connection.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Firefox</strong>: Playwright maintains a
+        custom browser patch (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >juggler</code
+        >) that exposes a CDP-like protocol. It ships its own patched Firefox
+        binary.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">WebKit</strong>: Similarly, Playwright patches
+        WebKit and ships its own binary, exposing automation hooks not available
+        in stock Safari.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      This means Playwright does <strong class="font-bold">not</strong> use
+      WebDriver at all. It speaks directly to the browser&#39;s internal
+      messaging bus, which is why it can do things like:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Intercept network requests at the protocol level before they hit the
+        network stack.
+      </li>
+      <li class="text-lg font-serif">
+        Emulate devices at the browser-engine level (not just viewport
+        resizing).
+      </li>
+      <li class="text-lg font-serif">
+        Control service workers, web workers, and browser extensions.
+      </li>
+    </ul>
+    <h3 id="the-nodejs-browser-bridge" class="text-xl font-serif my-6">
+      The Node.js ↔ Browser Bridge
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">Test (Node.js)
     │
     ▼
 Playwright Node API
@@ -143,28 +526,78 @@ Browser (Chromium / Firefox / WebKit)
     │
     ▼
 Page (JS execution context)</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">When you call <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">page.click('#btn')</code>, Playwright:</p>
-<ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Serializes the command to JSON and sends it over an IPC pipe (or WebSocket for remote browsers).</li>
-<li class="text-lg font-serif">The browser server dispatches it to the target page via the protocol.</li>
-<li class="text-lg font-serif">The browser executes the action and returns an ack with any return value or error.</li>
-<li class="text-lg font-serif">Playwright&#39;s Node layer resolves the corresponding Promise.</li>
-</ol>
-<h3 id="the-event-loop-async-nature" class="text-xl font-serif my-6">The Event Loop & Async Nature</h3>
-<p class="text-lg font-serif mt-4">Every Playwright API returns a <strong class="font-bold">Promise</strong>. There is no synchronous mode. This isn&#39;t just a stylistic choice — it reflects that every operation crosses a process boundary. Your test runner (Node.js) and the browser are separate processes, and all communication is inherently async.</p>
-<h3 id="execution-contexts" class="text-xl font-serif my-6">Execution Contexts</h3>
-<p class="text-lg font-serif mt-4">Each page has two execution contexts:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><strong class="font-bold">Main world</strong>: Where page JavaScript runs. Your app code lives here.</li>
-<li class="text-lg font-serif"><strong class="font-bold">Isolated world</strong>: A sandboxed JS context Playwright injects its automation helpers into. This prevents your app&#39;s JavaScript from accidentally (or intentionally) interfering with Playwright&#39;s selectors and actions.</li>
-</ul>
-<p class="text-lg font-serif mt-4">When you call <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">page.evaluate(() => document.title)</code>, Playwright runs that code in the <strong class="font-bold">main world</strong>. When it internally queries selectors, it uses the <strong class="font-bold">isolated world</strong>.</p>
-<hr class="my-10" />
-<h2 id="installation-project-setup" class="text-2xl font-serif my-6">Installation & Project Setup</h2>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash"># Create a new project and install Playwright
+    </details>
+    <p class="text-lg font-serif mt-4">
+      When you call
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >page.click('#btn')</code
+      >, Playwright:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Serializes the command to JSON and sends it over an IPC pipe (or
+        WebSocket for remote browsers).
+      </li>
+      <li class="text-lg font-serif">
+        The browser server dispatches it to the target page via the protocol.
+      </li>
+      <li class="text-lg font-serif">
+        The browser executes the action and returns an ack with any return value
+        or error.
+      </li>
+      <li class="text-lg font-serif">
+        Playwright&#39;s Node layer resolves the corresponding Promise.
+      </li>
+    </ol>
+    <h3 id="the-event-loop-async-nature" class="text-xl font-serif my-6">
+      The Event Loop & Async Nature
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Every Playwright API returns a <strong class="font-bold">Promise</strong>.
+      There is no synchronous mode. This isn&#39;t just a stylistic choice — it
+      reflects that every operation crosses a process boundary. Your test runner
+      (Node.js) and the browser are separate processes, and all communication is
+      inherently async.
+    </p>
+    <h3 id="execution-contexts" class="text-xl font-serif my-6">
+      Execution Contexts
+    </h3>
+    <p class="text-lg font-serif mt-4">Each page has two execution contexts:</p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Main world</strong>: Where page JavaScript
+        runs. Your app code lives here.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Isolated world</strong>: A sandboxed JS
+        context Playwright injects its automation helpers into. This prevents
+        your app&#39;s JavaScript from accidentally (or intentionally)
+        interfering with Playwright&#39;s selectors and actions.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      When you call
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >page.evaluate(() => document.title)</code
+      >, Playwright runs that code in the
+      <strong class="font-bold">main world</strong>. When it internally queries
+      selectors, it uses the <strong class="font-bold">isolated world</strong>.
+    </p>
+    <hr class="my-10" />
+    <h2 id="installation-project-setup" class="text-2xl font-serif my-6">
+      Installation & Project Setup
+    </h2>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash"># Create a new project and install Playwright
 npm init playwright@latest
 
 # Or add to an existing project
@@ -175,26 +608,43 @@ npx playwright install
 
 # Install only specific browsers
 npx playwright install chromium firefox</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">The <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">npm init playwright@latest</code> scaffolding creates:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Plaintext snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">my-project/
+    </details>
+    <p class="text-lg font-serif mt-4">
+      The
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >npm init playwright@latest</code
+      >
+      scaffolding creates:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">my-project/
 ├── playwright.config.ts     # Main configuration
 ├── tests/
 │   └── example.spec.ts      # Sample test
 ├── tests-examples/
 │   └── demo-todo-app.spec.ts
 └── package.json</code></pre>
-</details>
-<h3 id="your-first-test" class="text-xl font-serif my-6">Your First Test</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// tests/home.spec.ts
+    </details>
+    <h3 id="your-first-test" class="text-xl font-serif my-6">
+      Your First Test
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// tests/home.spec.ts
 import { test, expect } from '@playwright/test';
 
 test('homepage has correct title', async ({ page }) =&gt; {
@@ -207,42 +657,91 @@ test('navigation works', async ({ page }) =&gt; {
   await page.getByRole('link', { name: 'More information' }).click();
   await expect(page).toHaveURL(/iana\.org/);
 });</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Run it:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright test                     # All tests, headless
+    </details>
+    <p class="text-lg font-serif mt-4">Run it:</p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright test                     # All tests, headless
 npx playwright test --headed            # With visible browser
 npx playwright test --ui                # Interactive UI mode
 npx playwright test tests/home.spec.ts  # Specific file
 npx playwright test --debug             # Step-by-step debugger</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="core-concepts" class="text-2xl font-serif my-6">Core Concepts</h2>
-<h3 id="browser-context-and-page" class="text-xl font-serif my-6">Browser, Context, and Page</h3>
-<p class="text-lg font-serif mt-4">These three objects form Playwright&#39;s hierarchy:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// The low-level way (usually managed by fixtures in practice)
+    </details>
+    <hr class="my-10" />
+    <h2 id="core-concepts" class="text-2xl font-serif my-6">Core Concepts</h2>
+    <h3 id="browser-context-and-page" class="text-xl font-serif my-6">
+      Browser, Context, and Page
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      These three objects form Playwright&#39;s hierarchy:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// The low-level way (usually managed by fixtures in practice)
 const browser = await chromium.launch();
 const context = await browser.newContext();
 const page = await context.newPage();</code></pre>
-</details>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><strong class="font-bold"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">Browser</code></strong>: Represents a browser process. Expensive to create; usually one per worker.</li>
-<li class="text-lg font-serif"><strong class="font-bold"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">BrowserContext</code></strong>: An isolated browser session — like a fresh incognito window. Has its own cookies, localStorage, cache, and network state. Very cheap to create; you can spin up dozens per test suite.</li>
-<li class="text-lg font-serif"><strong class="font-bold"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">Page</code></strong>: A single tab within a context.</li>
-</ul>
-<p class="text-lg font-serif mt-4">The key insight: <strong class="font-bold">contexts give you isolation without launching a new browser</strong>. This is why Playwright tests are fast even when running hundreds of them in parallel.</p>
-<h3 id="the-test-object" class="text-xl font-serif my-6">The `test` Object</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">import { test, expect } from '@playwright/test';
+    </details>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Browser</code
+          ></strong
+        >: Represents a browser process. Expensive to create; usually one per
+        worker.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >BrowserContext</code
+          ></strong
+        >: An isolated browser session — like a fresh incognito window. Has its
+        own cookies, localStorage, cache, and network state. Very cheap to
+        create; you can spin up dozens per test suite.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold"
+          ><code
+            class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+            >Page</code
+          ></strong
+        >: A single tab within a context.
+      </li>
+    </ul>
+    <p class="text-lg font-serif mt-4">
+      The key insight:
+      <strong class="font-bold"
+        >contexts give you isolation without launching a new browser</strong
+      >. This is why Playwright tests are fast even when running hundreds of
+      them in parallel.
+    </p>
+    <h3 id="the-test-object" class="text-xl font-serif my-6">
+      The `test` Object
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">import { test, expect } from '@playwright/test';
 
 // Basic test
 test('my test', async ({ page }) =&gt; { ... });
@@ -263,69 +762,130 @@ test.describe('feature X', () =&gt; {
   test('does Y', async ({ page }) =&gt; { ... });
   test('does Z', async ({ page }) =&gt; { ... });
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="locators-the-heart-of-playwright" class="text-2xl font-serif my-6">Locators: The Heart of Playwright</h2>
-<p class="text-lg font-serif mt-4">Locators are Playwright&#39;s mechanism for finding elements. Unlike raw selectors that query the DOM once and return a static reference, <strong class="font-bold">locators are lazy</strong> — they re-query the DOM every time an action is performed on them. This is fundamental to Playwright&#39;s retry-ability.</p>
-<h3 id="recommended-locators-resilient-to-ui-changes" class="text-xl font-serif my-6">Recommended Locators (Resilient to UI Changes)</h3>
-<h4 id="getbyrole-the-gold-standard" class="text-lg font-serif my-6">`getByRole` — The Gold Standard</h4>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Prefer semantic role locators — they test what users actually perceive
+    </details>
+    <hr class="my-10" />
+    <h2 id="locators-the-heart-of-playwright" class="text-2xl font-serif my-6">
+      Locators: The Heart of Playwright
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Locators are Playwright&#39;s mechanism for finding elements. Unlike raw
+      selectors that query the DOM once and return a static reference,
+      <strong class="font-bold">locators are lazy</strong> — they re-query the
+      DOM every time an action is performed on them. This is fundamental to
+      Playwright&#39;s retry-ability.
+    </p>
+    <h3
+      id="recommended-locators-resilient-to-ui-changes"
+      class="text-xl font-serif my-6"
+    >
+      Recommended Locators (Resilient to UI Changes)
+    </h3>
+    <h4 id="getbyrole-the-gold-standard" class="text-lg font-serif my-6">
+      `getByRole` — The Gold Standard
+    </h4>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Prefer semantic role locators — they test what users actually perceive
 await page.getByRole('button', { name: 'Submit' }).click();
 await page.getByRole('link', { name: 'Home' }).click();
 await page.getByRole('heading', { level: 1 }).textContent();
 await page.getByRole('checkbox', { name: 'Accept terms' }).check();
 await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
 await page.getByRole('combobox', { name: 'Country' }).selectOption('India');</code></pre>
-</details>
-<p class="text-lg font-serif mt-4"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">getByRole</code> queries by ARIA roles — the same attributes screen readers use. Tests written this way are both accessible-friendly and resilient to CSS changes.</p>
-<h4 id="getbylabel" class="text-lg font-serif my-6">`getByLabel`</h4>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Finds an input associated with a &lt;label&gt;
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >getByRole</code
+      >
+      queries by ARIA roles — the same attributes screen readers use. Tests
+      written this way are both accessible-friendly and resilient to CSS
+      changes.
+    </p>
+    <h4 id="getbylabel" class="text-lg font-serif my-6">`getByLabel`</h4>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Finds an input associated with a &lt;label&gt;
 await page.getByLabel('Password').fill('secret');</code></pre>
-</details>
-<h4 id="getbyplaceholder" class="text-lg font-serif my-6">`getByPlaceholder`</h4>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.getByPlaceholder('Search...').fill('playwright');</code></pre>
-</details>
-<h4 id="getbytext" class="text-lg font-serif my-6">`getByText`</h4>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.getByText('Welcome back!').isVisible();
+    </details>
+    <h4 id="getbyplaceholder" class="text-lg font-serif my-6">
+      `getByPlaceholder`
+    </h4>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.getByPlaceholder('Search...').fill('playwright');</code></pre>
+    </details>
+    <h4 id="getbytext" class="text-lg font-serif my-6">`getByText`</h4>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.getByText('Welcome back!').isVisible();
 await page.getByText(/logged in as/i).textContent();</code></pre>
-</details>
-<h4 id="getbytestid" class="text-lg font-serif my-6">`getByTestId`</h4>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Uses data-testid attribute (configurable)
+    </details>
+    <h4 id="getbytestid" class="text-lg font-serif my-6">`getByTestId`</h4>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Uses data-testid attribute (configurable)
 await page.getByTestId('submit-btn').click();</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Configure the attribute name in <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">playwright.config.ts</code>:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">use: { testIdAttribute: 'data-cy' }  // or any custom attribute</code></pre>
-</details>
-<h3 id="chaining-locators" class="text-xl font-serif my-6">Chaining Locators</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Scope to a specific region
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Configure the attribute name in
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >playwright.config.ts</code
+      >:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">use: { testIdAttribute: 'data-cy' }  // or any custom attribute</code></pre>
+    </details>
+    <h3 id="chaining-locators" class="text-xl font-serif my-6">
+      Chaining Locators
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Scope to a specific region
 const modal = page.getByRole('dialog');
 await modal.getByRole('button', { name: 'Confirm' }).click();
 
@@ -334,22 +894,32 @@ await page.getByRole('listitem')
   .filter({ hasText: 'Product A' })
   .getByRole('button', { name: 'Add to cart' })
   .click();</code></pre>
-</details>
-<h3 id="nth-matching" class="text-xl font-serif my-6">Nth Matching</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.getByRole('row').nth(2);           // 0-indexed
+    </details>
+    <h3 id="nth-matching" class="text-xl font-serif my-6">Nth Matching</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.getByRole('row').nth(2);           // 0-indexed
 await page.getByRole('row').first();
 await page.getByRole('row').last();</code></pre>
-</details>
-<h3 id="css-xpath-use-sparingly" class="text-xl font-serif my-6">CSS & XPath (Use Sparingly)</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// CSS selector
+    </details>
+    <h3 id="css-xpath-use-sparingly" class="text-xl font-serif my-6">
+      CSS & XPath (Use Sparingly)
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// CSS selector
 await page.locator('div.card &gt; h2').textContent();
 
 // XPath
@@ -360,32 +930,78 @@ await page.locator('li:has-text("Item 3")').click();
 
 // :has() — contains a descendant
 await page.locator('section:has(h2)').screenshot();</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="actions" class="text-2xl font-serif my-6">Actions</h2>
-<h3 id="navigation" class="text-xl font-serif my-6">Navigation</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.goto('https://example.com');
+    </details>
+    <hr class="my-10" />
+    <h2 id="actions" class="text-2xl font-serif my-6">Actions</h2>
+    <h3 id="navigation" class="text-xl font-serif my-6">Navigation</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.goto('https://example.com');
 await page.goto('/dashboard', { waitUntil: 'networkidle' });
 await page.goBack();
 await page.goForward();
 await page.reload();</code></pre>
-</details>
-<p class="text-lg font-serif mt-4"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">waitUntil</code> options:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">'load'</code> — <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">window.load</code> event fired (default)</li>
-<li class="text-lg font-serif"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">'domcontentloaded'</code> — DOM ready</li>
-<li class="text-lg font-serif"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">'networkidle'</code> — no network activity for 500ms</li>
-<li class="text-lg font-serif"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">'commit'</code> — navigation committed (fastest)</li>
-</ul>
-<h3 id="clicks-interaction" class="text-xl font-serif my-6">Clicks & Interaction</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await locator.click();
+    </details>
+    <p class="text-lg font-serif mt-4">
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >waitUntil</code
+      >
+      options:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >'load'</code
+        >
+        —
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >window.load</code
+        >
+        event fired (default)
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >'domcontentloaded'</code
+        >
+        — DOM ready
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >'networkidle'</code
+        >
+        — no network activity for 500ms
+      </li>
+      <li class="text-lg font-serif">
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >'commit'</code
+        >
+        — navigation committed (fastest)
+      </li>
+    </ul>
+    <h3 id="clicks-interaction" class="text-xl font-serif my-6">
+      Clicks & Interaction
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await locator.click();
 await locator.click({ button: 'right' });
 await locator.click({ modifiers: ['Control'] });  // Ctrl+Click
 await locator.click({ position: { x: 10, y: 20 } });
@@ -394,13 +1010,17 @@ await locator.dblclick();
 await locator.hover();
 await locator.focus();
 await locator.blur();</code></pre>
-</details>
-<h3 id="form-inputs" class="text-xl font-serif my-6">Form Inputs</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Text input
+    </details>
+    <h3 id="form-inputs" class="text-xl font-serif my-6">Form Inputs</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Text input
 await page.getByLabel('Name').fill('Alice');     // Sets value directly
 await page.getByLabel('Name').type('Alice');     // Simulates keystrokes (slower, but realistic)
 await page.getByLabel('Name').pressSequentially('Alice', { delay: 50 });
@@ -423,35 +1043,58 @@ await page.getByLabel('Upload').setInputFiles(['/path/a.pdf', '/path/b.pdf']);
 await page.keyboard.press('Enter');
 await page.keyboard.press('Control+A');
 await page.keyboard.type('Hello World');</code></pre>
-</details>
-<h3 id="drag-and-drop" class="text-xl font-serif my-6">Drag and Drop</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.dragAndDrop('#source', '#target');
+    </details>
+    <h3 id="drag-and-drop" class="text-xl font-serif my-6">Drag and Drop</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.dragAndDrop('#source', '#target');
 
 // Or with locators
 await page.locator('#source').dragTo(page.locator('#target'));</code></pre>
-</details>
-<h3 id="scrolling" class="text-xl font-serif my-6">Scrolling</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await page.mouse.wheel(0, 500);   // Scroll down 500px
+    </details>
+    <h3 id="scrolling" class="text-xl font-serif my-6">Scrolling</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await page.mouse.wheel(0, 500);   // Scroll down 500px
 await locator.scrollIntoViewIfNeeded();
 await page.evaluate(() =&gt; window.scrollTo(0, document.body.scrollHeight));</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="assertions" class="text-2xl font-serif my-6">Assertions</h2>
-<p class="text-lg font-serif mt-4">Playwright&#39;s <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">expect</code> is built on top of Jest&#39;s assertion library but adds <strong class="font-bold">web-first assertions</strong> that automatically retry until the condition is met or a timeout is reached.</p>
-<h3 id="element-assertions" class="text-xl font-serif my-6">Element Assertions</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Visibility
+    </details>
+    <hr class="my-10" />
+    <h2 id="assertions" class="text-2xl font-serif my-6">Assertions</h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright&#39;s
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >expect</code
+      >
+      is built on top of Jest&#39;s assertion library but adds
+      <strong class="font-bold">web-first assertions</strong> that automatically
+      retry until the condition is met or a timeout is reached.
+    </p>
+    <h3 id="element-assertions" class="text-xl font-serif my-6">
+      Element Assertions
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Visibility
 await expect(locator).toBeVisible();
 await expect(locator).toBeHidden();
 
@@ -483,66 +1126,263 @@ await expect(locator).toMatchAriaSnapshot(`
     - listitem: "Item 1"
     - listitem: "Item 2"
 `);</code></pre>
-</details>
-<h3 id="page-assertions" class="text-xl font-serif my-6">Page Assertions</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await expect(page).toHaveTitle('My App');
+    </details>
+    <h3 id="page-assertions" class="text-xl font-serif my-6">
+      Page Assertions
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await expect(page).toHaveTitle('My App');
 await expect(page).toHaveTitle(/My App/);
 await expect(page).toHaveURL('https://example.com/dashboard');
 await expect(page).toHaveURL(/\/dashboard$/);</code></pre>
-</details>
-<h3 id="soft-assertions" class="text-xl font-serif my-6">Soft Assertions</h3>
-<p class="text-lg font-serif mt-4">Soft assertions don&#39;t stop the test on failure — they collect all failures and report them together at the end:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await expect.soft(page).toHaveTitle('Correct Title');
+    </details>
+    <h3 id="soft-assertions" class="text-xl font-serif my-6">
+      Soft Assertions
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Soft assertions don&#39;t stop the test on failure — they collect all
+      failures and report them together at the end:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await expect.soft(page).toHaveTitle('Correct Title');
 await expect.soft(locator).toBeVisible();
 // Test continues even if above fail, reports all at the end</code></pre>
-</details>
-<h3 id="negation" class="text-xl font-serif my-6">Negation</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await expect(locator).not.toBeVisible();
+    </details>
+    <h3 id="negation" class="text-xl font-serif my-6">Negation</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await expect(locator).not.toBeVisible();
 await expect(page).not.toHaveURL(/error/);</code></pre>
-</details>
-<h3 id="custom-timeout-per-assertion" class="text-xl font-serif my-6">Custom Timeout Per Assertion</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">await expect(locator).toBeVisible({ timeout: 10_000 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="auto-waiting-the-magic-behind-reliability" class="text-2xl font-serif my-6">Auto-Waiting: The Magic Behind Reliability</h2>
-<p class="text-lg font-serif mt-4">This is one of Playwright&#39;s most important features. Before performing any action, Playwright <strong class="font-bold">automatically waits</strong> for the element to be ready. It checks a series of &quot;actionability&quot; conditions:</p>
-<div class="overflow-x-auto my-6">
-  <table class="w-full border-collapse text-left">
-    <thead><tr><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Condition</th><th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">Checked For</th></tr></thead>
-    <tbody><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Attached to DOM</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">click</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">hover</code>, etc.</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Visible</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">click</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">hover</code>, etc.</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Stable (not animating)</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">click</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill</code>, etc.</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Enabled</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">click</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">select</code>, etc.</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Receives events</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">click</code> — not covered by another element</td></tr><tr><td class="border border-gray-300 px-4 py-2 font-serif text-sm">Editable</td><td class="border border-gray-300 px-4 py-2 font-serif text-sm"><code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">fill</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">type</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">clear</code></td></tr></tbody>
-  </table>
-</div>
-<p class="text-lg font-serif mt-4">This means you almost never need <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">await page.waitForSelector(...)</code> or <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">await page.waitForTimeout(...)</code> (the latter is an anti-pattern and should be avoided in nearly all cases).</p>
-<h3 id="how-retry-logic-works-internally" class="text-xl font-serif my-6">How Retry Logic Works Internally</h3>
-<p class="text-lg font-serif mt-4">When you call <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">await locator.click()</code>, Playwright:</p>
-<ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Resolves the locator to a DOM element by running the selector query in the isolated context.</li>
-<li class="text-lg font-serif">Checks all actionability conditions. If any fail, it retries after a short interval.</li>
-<li class="text-lg font-serif">Performs the action once all conditions pass.</li>
-<li class="text-lg font-serif">If the action causes a navigation, waits for the navigation to complete.</li>
-<li class="text-lg font-serif">If the total time exceeds <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">actionTimeout</code> (default: 30s), throws a <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">TimeoutError</code> with a detailed message.</li>
-</ol>
-<h3 id="explicit-waits-when-you-need-them" class="text-xl font-serif my-6">Explicit Waits (When You Need Them)</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Wait for an element
+    </details>
+    <h3 id="custom-timeout-per-assertion" class="text-xl font-serif my-6">
+      Custom Timeout Per Assertion
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">await expect(locator).toBeVisible({ timeout: 10_000 });</code></pre>
+    </details>
+    <hr class="my-10" />
+    <h2
+      id="auto-waiting-the-magic-behind-reliability"
+      class="text-2xl font-serif my-6"
+    >
+      Auto-Waiting: The Magic Behind Reliability
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      This is one of Playwright&#39;s most important features. Before performing
+      any action, Playwright
+      <strong class="font-bold">automatically waits</strong> for the element to
+      be ready. It checks a series of &quot;actionability&quot; conditions:
+    </p>
+    <div class="overflow-x-auto my-6">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Condition
+            </th>
+            <th class="border border-gray-300 px-4 py-2 font-serif bg-gray-100">
+              Checked For
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Attached to DOM
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >click</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >fill</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >hover</code
+              >, etc.
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Visible
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >click</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >fill</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >hover</code
+              >, etc.
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Stable (not animating)
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >click</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >fill</code
+              >, etc.
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Enabled
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >click</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >fill</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >select</code
+              >, etc.
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Receives events
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >click</code
+              >
+              — not covered by another element
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              Editable
+            </td>
+            <td class="border border-gray-300 px-4 py-2 font-serif text-sm">
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >fill</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >type</code
+              >,
+              <code
+                class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+                >clear</code
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-lg font-serif mt-4">
+      This means you almost never need
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >await page.waitForSelector(...)</code
+      >
+      or
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >await page.waitForTimeout(...)</code
+      >
+      (the latter is an anti-pattern and should be avoided in nearly all cases).
+    </p>
+    <h3 id="how-retry-logic-works-internally" class="text-xl font-serif my-6">
+      How Retry Logic Works Internally
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      When you call
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >await locator.click()</code
+      >, Playwright:
+    </p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Resolves the locator to a DOM element by running the selector query in
+        the isolated context.
+      </li>
+      <li class="text-lg font-serif">
+        Checks all actionability conditions. If any fail, it retries after a
+        short interval.
+      </li>
+      <li class="text-lg font-serif">
+        Performs the action once all conditions pass.
+      </li>
+      <li class="text-lg font-serif">
+        If the action causes a navigation, waits for the navigation to complete.
+      </li>
+      <li class="text-lg font-serif">
+        If the total time exceeds
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >actionTimeout</code
+        >
+        (default: 30s), throws a
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >TimeoutError</code
+        >
+        with a detailed message.
+      </li>
+    </ol>
+    <h3 id="explicit-waits-when-you-need-them" class="text-xl font-serif my-6">
+      Explicit Waits (When You Need Them)
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Wait for an element
 await page.waitForSelector('.toast', { state: 'visible' });
 await page.waitForSelector('.spinner', { state: 'hidden' });
 
@@ -565,29 +1405,53 @@ const [popup] = await Promise.all([
   page.waitForEvent('popup'),
   page.click('#open-popup')
 ]);</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="fixtures-test-lifecycle" class="text-2xl font-serif my-6">Fixtures & Test Lifecycle</h2>
-<p class="text-lg font-serif mt-4">Fixtures are Playwright&#39;s dependency injection system. They replace <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">beforeEach</code>/<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">afterEach</code> hooks with composable, reusable setup/teardown logic.</p>
-<h3 id="built-in-fixtures" class="text-xl font-serif my-6">Built-in Fixtures</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('example', async ({
+    </details>
+    <hr class="my-10" />
+    <h2 id="fixtures-test-lifecycle" class="text-2xl font-serif my-6">
+      Fixtures & Test Lifecycle
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Fixtures are Playwright&#39;s dependency injection system. They replace
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >beforeEach</code
+      >/<code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >afterEach</code
+      >
+      hooks with composable, reusable setup/teardown logic.
+    </p>
+    <h3 id="built-in-fixtures" class="text-xl font-serif my-6">
+      Built-in Fixtures
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('example', async ({
   page,           // A Page in a new context
   context,        // The BrowserContext
   browser,        // The Browser instance
   browserName,    // 'chromium' | 'firefox' | 'webkit'
   request,        // APIRequestContext for HTTP requests
 }) =&gt; { ... });</code></pre>
-</details>
-<h3 id="custom-fixtures" class="text-xl font-serif my-6">Custom Fixtures</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// fixtures.ts
+    </details>
+    <h3 id="custom-fixtures" class="text-xl font-serif my-6">
+      Custom Fixtures
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// fixtures.ts
 import { test as base } from '@playwright/test';
 
 type MyFixtures = {
@@ -620,25 +1484,33 @@ export const test = base.extend&lt;MyFixtures&gt;({
 });
 
 export { expect } from '@playwright/test';</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// my.spec.ts
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// my.spec.ts
 import { test, expect } from './fixtures';
 
 test('can create a todo', async ({ todoPage }) =&gt; {
   await todoPage.addItem('Write Playwright tests');
   await expect(todoPage.items).toHaveCount(1);
 });</code></pre>
-</details>
-<h3 id="fixture-scopes" class="text-xl font-serif my-6">Fixture Scopes</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">export const test = base.extend({
+    </details>
+    <h3 id="fixture-scopes" class="text-xl font-serif my-6">Fixture Scopes</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">export const test = base.extend({
   // Default: 'test' scope — created/destroyed per test
   myFixture: async ({}, use) =&gt; { ... },
 
@@ -649,13 +1521,17 @@ test('can create a todo', async ({ todoPage }) =&gt; {
     await db.disconnect();
   }, { scope: 'worker' }],
 });</code></pre>
-</details>
-<h3 id="hooks" class="text-xl font-serif my-6">Hooks</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test.describe('suite', () =&gt; {
+    </details>
+    <h3 id="hooks" class="text-xl font-serif my-6">Hooks</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test.describe('suite', () =&gt; {
   test.beforeAll(async () =&gt; {
     // Runs once before all tests in this describe block
   });
@@ -674,15 +1550,24 @@ test('can create a todo', async ({ todoPage }) =&gt; {
     }
   });
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="page-object-model" class="text-2xl font-serif my-6">Page Object Model</h2>
-<p class="text-lg font-serif mt-4">Page Object Model (POM) is a design pattern that encapsulates page-specific selectors and interactions into reusable classes.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// pages/LoginPage.ts
+    </details>
+    <hr class="my-10" />
+    <h2 id="page-object-model" class="text-2xl font-serif my-6">
+      Page Object Model
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Page Object Model (POM) is a design pattern that encapsulates
+      page-specific selectors and interactions into reusable classes.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// pages/LoginPage.ts
 import { Page, Locator } from '@playwright/test';
 
 export class LoginPage {
@@ -714,12 +1599,16 @@ export class LoginPage {
     await expect(this.errorMessage).toContainText(message);
   }
 }</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// pages/DashboardPage.ts
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// pages/DashboardPage.ts
 export class DashboardPage {
   constructor(private page: Page) {}
 
@@ -729,12 +1618,16 @@ export class DashboardPage {
     ).toBeVisible();
   }
 }</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// tests/login.spec.ts
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// tests/login.spec.ts
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
@@ -754,15 +1647,23 @@ test('invalid credentials', async ({ page }) =&gt; {
   await loginPage.login('wrong@example.com', 'bad');
   await loginPage.expectError('Invalid credentials');
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="network-interception-mocking" class="text-2xl font-serif my-6">Network Interception & Mocking</h2>
-<h3 id="route-interception" class="text-xl font-serif my-6">Route Interception</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Abort all image requests
+    </details>
+    <hr class="my-10" />
+    <h2 id="network-interception-mocking" class="text-2xl font-serif my-6">
+      Network Interception & Mocking
+    </h2>
+    <h3 id="route-interception" class="text-xl font-serif my-6">
+      Route Interception
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Abort all image requests
 await page.route('**/*.{png,jpg,jpeg,gif,svg}', route =&gt; route.abort());
 
 // Mock an API endpoint
@@ -796,55 +1697,84 @@ await page.route('**/api/**', async (route, request) =&gt; {
     await route.continue();
   }
 });</code></pre>
-</details>
-<h3 id="waiting-for-network-events" class="text-xl font-serif my-6">Waiting for Network Events</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Wait for a specific request/response
+    </details>
+    <h3 id="waiting-for-network-events" class="text-xl font-serif my-6">
+      Waiting for Network Events
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Wait for a specific request/response
 const [response] = await Promise.all([
   page.waitForResponse('**/api/login'),
   page.getByRole('button', { name: 'Log in' }).click(),
 ]);
 const data = await response.json();
 expect(data.token).toBeDefined();</code></pre>
-</details>
-<h3 id="inspecting-requests" class="text-xl font-serif my-6">Inspecting Requests</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">page.on('request', request =&gt; {
+    </details>
+    <h3 id="inspecting-requests" class="text-xl font-serif my-6">
+      Inspecting Requests
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">page.on('request', request =&gt; {
   console.log('&gt;&gt;', request.method(), request.url());
 });
 
 page.on('response', response =&gt; {
   console.log('&lt;&lt;', response.status(), response.url());
 });</code></pre>
-</details>
-<h3 id="har-recording-replay" class="text-xl font-serif my-6">HAR Recording & Replay</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Record all network into a HAR file
+    </details>
+    <h3 id="har-recording-replay" class="text-xl font-serif my-6">
+      HAR Recording & Replay
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Record all network into a HAR file
 await page.routeFromHAR('./fixtures/api.har', { update: true });
 await page.goto('/');  // All requests served from or recorded to HAR
 
 // Later, replay from HAR (no real network needed)
 await page.routeFromHAR('./fixtures/api.har');
 await page.goto('/');</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="authentication-state-management" class="text-2xl font-serif my-6">Authentication & State Management</h2>
-<h3 id="reusing-signed-in-state" class="text-xl font-serif my-6">Reusing Signed-In State</h3>
-<p class="text-lg font-serif mt-4">The most efficient pattern: authenticate once, save the storage state, and reuse it across all tests.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// global-setup.ts
+    </details>
+    <hr class="my-10" />
+    <h2 id="authentication-state-management" class="text-2xl font-serif my-6">
+      Authentication & State Management
+    </h2>
+    <h3 id="reusing-signed-in-state" class="text-xl font-serif my-6">
+      Reusing Signed-In State
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The most efficient pattern: authenticate once, save the storage state, and
+      reuse it across all tests.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// global-setup.ts
 import { chromium, FullConfig } from '@playwright/test';
 
 async function globalSetup(config: FullConfig) {
@@ -863,25 +1793,35 @@ async function globalSetup(config: FullConfig) {
 }
 
 export default globalSetup;</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// playwright.config.ts
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// playwright.config.ts
 export default defineConfig({
   globalSetup: './global-setup',
   use: {
     storageState: 'auth/user.json',  // Applied to every test
   },
 });</code></pre>
-</details>
-<h3 id="per-role-authentication" class="text-xl font-serif my-6">Per-Role Authentication</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// playwright.config.ts
+    </details>
+    <h3 id="per-role-authentication" class="text-xl font-serif my-6">
+      Per-Role Authentication
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// playwright.config.ts
 export default defineConfig({
   projects: [
     {
@@ -896,13 +1836,19 @@ export default defineConfig({
     },
   ],
 });</code></pre>
-</details>
-<h3 id="cookie-localstorage-manipulation" class="text-xl font-serif my-6">Cookie & LocalStorage Manipulation</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Set cookies
+    </details>
+    <h3 id="cookie-localstorage-manipulation" class="text-xl font-serif my-6">
+      Cookie & LocalStorage Manipulation
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Set cookies
 await context.addCookies([{
   name: 'session',
   value: 'abc123',
@@ -920,25 +1866,64 @@ await context.clearCookies();
 await page.evaluate(() =&gt; {
   localStorage.setItem('theme', 'dark');
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="browser-contexts-isolation-without-overhead" class="text-2xl font-serif my-6">Browser Contexts: Isolation Without Overhead</h2>
-<p class="text-lg font-serif mt-4">A <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">BrowserContext</code> is the key to fast, isolated tests.</p>
-<h3 id="what-a-context-isolates" class="text-xl font-serif my-6">What a Context Isolates</h3>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><strong class="font-bold">Cookies</strong> — each context has its own cookie jar</li>
-<li class="text-lg font-serif"><strong class="font-bold">LocalStorage / SessionStorage</strong> — completely separate</li>
-<li class="text-lg font-serif"><strong class="font-bold">IndexedDB</strong> — isolated</li>
-<li class="text-lg font-serif"><strong class="font-bold">Cache</strong> — separate cache</li>
-<li class="text-lg font-serif"><strong class="font-bold">Network conditions</strong> — can emulate offline, throttle per context</li>
-<li class="text-lg font-serif"><strong class="font-bold">Permissions</strong> — geolocation, camera, notifications</li>
-<li class="text-lg font-serif"><strong class="font-bold">HTTP credentials</strong></li>
-</ul>
-<h3 id="creating-contexts-with-options" class="text-xl font-serif my-6">Creating Contexts With Options</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">const context = await browser.newContext({
+    </details>
+    <hr class="my-10" />
+    <h2
+      id="browser-contexts-isolation-without-overhead"
+      class="text-2xl font-serif my-6"
+    >
+      Browser Contexts: Isolation Without Overhead
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      A
+      <code
+        class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+        >BrowserContext</code
+      >
+      is the key to fast, isolated tests.
+    </p>
+    <h3 id="what-a-context-isolates" class="text-xl font-serif my-6">
+      What a Context Isolates
+    </h3>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Cookies</strong> — each context has its own
+        cookie jar
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">LocalStorage / SessionStorage</strong> —
+        completely separate
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">IndexedDB</strong> — isolated
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Cache</strong> — separate cache
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Network conditions</strong> — can emulate
+        offline, throttle per context
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Permissions</strong> — geolocation, camera,
+        notifications
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">HTTP credentials</strong>
+      </li>
+    </ul>
+    <h3 id="creating-contexts-with-options" class="text-xl font-serif my-6">
+      Creating Contexts With Options
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">const context = await browser.newContext({
   // Authentication
   httpCredentials: { username: 'user', password: 'pass' },
 
@@ -965,13 +1950,19 @@ await page.evaluate(() =&gt; {
   // Proxy
   proxy: { server: 'http://myproxy.com:8080' },
 });</code></pre>
-</details>
-<h3 id="multiple-users-in-one-test" class="text-xl font-serif my-6">Multiple Users in One Test</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('two users chat', async ({ browser }) =&gt; {
+    </details>
+    <h3 id="multiple-users-in-one-test" class="text-xl font-serif my-6">
+      Multiple Users in One Test
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('two users chat', async ({ browser }) =&gt; {
   const aliceContext = await browser.newContext({ storageState: 'auth/alice.json' });
   const bobContext = await browser.newContext({ storageState: 'auth/bob.json' });
 
@@ -989,44 +1980,77 @@ await page.evaluate(() =&gt; {
   await aliceContext.close();
   await bobContext.close();
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="parallel-execution-sharding" class="text-2xl font-serif my-6">Parallel Execution & Sharding</h2>
-<h3 id="parallelism-model" class="text-xl font-serif my-6">Parallelism Model</h3>
-<p class="text-lg font-serif mt-4">Playwright tests run in <strong class="font-bold">worker processes</strong> (separate Node.js processes). By default:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Tests within a single file run <strong class="font-bold">sequentially</strong> in one worker.</li>
-<li class="text-lg font-serif">Different test files run <strong class="font-bold">in parallel</strong> across multiple workers.</li>
-</ul>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// playwright.config.ts
+    </details>
+    <hr class="my-10" />
+    <h2 id="parallel-execution-sharding" class="text-2xl font-serif my-6">
+      Parallel Execution & Sharding
+    </h2>
+    <h3 id="parallelism-model" class="text-xl font-serif my-6">
+      Parallelism Model
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Playwright tests run in
+      <strong class="font-bold">worker processes</strong> (separate Node.js
+      processes). By default:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Tests within a single file run
+        <strong class="font-bold">sequentially</strong> in one worker.
+      </li>
+      <li class="text-lg font-serif">
+        Different test files run
+        <strong class="font-bold">in parallel</strong> across multiple workers.
+      </li>
+    </ul>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// playwright.config.ts
 export default defineConfig({
   workers: 4,           // 4 parallel workers (default: CPU count / 2)
   fullyParallel: true,  // Also parallelize within files
 });</code></pre>
-</details>
-<h3 id="forcing-sequential-tests" class="text-xl font-serif my-6">Forcing Sequential Tests</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test.describe.configure({ mode: 'serial' });
+    </details>
+    <h3 id="forcing-sequential-tests" class="text-xl font-serif my-6">
+      Forcing Sequential Tests
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test.describe.configure({ mode: 'serial' });
 
 test.describe('checkout flow', () =&gt; {
   test('add to cart', async ({ page }) =&gt; { ... });
   test('proceed to checkout', async ({ page }) =&gt; { ... });  // depends on above
   test('complete payment', async ({ page }) =&gt; { ... });
 });</code></pre>
-</details>
-<h3 id="sharding-for-ci" class="text-xl font-serif my-6">Sharding for CI</h3>
-<p class="text-lg font-serif mt-4">Distribute tests across multiple CI machines:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash"># Machine 1: Run shard 1 of 3
+    </details>
+    <h3 id="sharding-for-ci" class="text-xl font-serif my-6">
+      Sharding for CI
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      Distribute tests across multiple CI machines:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash"># Machine 1: Run shard 1 of 3
 npx playwright test --shard=1/3
 
 # Machine 2: Run shard 2 of 3
@@ -1034,22 +2058,34 @@ npx playwright test --shard=2/3
 
 # Machine 3: Run shard 3 of 3
 npx playwright test --shard=3/3</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">After all shards complete, merge reports:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright merge-reports --reporter html ./blob-reports/</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="screenshots-videos-traces" class="text-2xl font-serif my-6">Screenshots, Videos & Traces</h2>
-<h3 id="screenshots" class="text-xl font-serif my-6">Screenshots</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Full page
+    </details>
+    <p class="text-lg font-serif mt-4">
+      After all shards complete, merge reports:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright merge-reports --reporter html ./blob-reports/</code></pre>
+    </details>
+    <hr class="my-10" />
+    <h2 id="screenshots-videos-traces" class="text-2xl font-serif my-6">
+      Screenshots, Videos & Traces
+    </h2>
+    <h3 id="screenshots" class="text-xl font-serif my-6">Screenshots</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Full page
 await page.screenshot({ path: 'screenshot.png', fullPage: true });
 
 // Specific element
@@ -1060,57 +2096,103 @@ await page.getByRole('dialog').screenshot({ path: 'modal.png' });
 use: {
   screenshot: 'only-on-failure',  // 'on', 'off', 'only-on-failure'
 }</code></pre>
-</details>
-<h3 id="video-recording" class="text-xl font-serif my-6">Video Recording</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">use: {
+    </details>
+    <h3 id="video-recording" class="text-xl font-serif my-6">
+      Video Recording
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">use: {
   video: 'retain-on-failure',  // 'on', 'off', 'retain-on-failure', 'on-first-retry'
 }</code></pre>
-</details>
-<h3 id="trace-viewer-the-crown-jewel" class="text-xl font-serif my-6">Trace Viewer — The Crown Jewel</h3>
-<p class="text-lg font-serif mt-4">The Trace Viewer is Playwright&#39;s most powerful debugging tool. A trace is a full recording of a test: every action, screenshot at each step, network request/response, console logs, and source code.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// playwright.config.ts
+    </details>
+    <h3 id="trace-viewer-the-crown-jewel" class="text-xl font-serif my-6">
+      Trace Viewer — The Crown Jewel
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      The Trace Viewer is Playwright&#39;s most powerful debugging tool. A trace
+      is a full recording of a test: every action, screenshot at each step,
+      network request/response, console logs, and source code.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// playwright.config.ts
 use: {
   trace: 'retain-on-failure',  // 'on', 'off', 'retain-on-failure', 'on-first-retry'
 }</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Viewing a trace:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright show-trace test-results/my-test/trace.zip</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Or upload to <a href="https://trace.playwright.dev" class="underline underline-offset-2 hover:text-gray-600 transition-colors">trace.playwright.dev</a> in the browser.</p>
-<p class="text-lg font-serif mt-4">The Trace Viewer shows:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">A timeline of all actions</li>
-<li class="text-lg font-serif">DOM snapshots before/after each action (fully interactive)</li>
-<li class="text-lg font-serif">Network requests with request/response bodies</li>
-<li class="text-lg font-serif">Console output</li>
-<li class="text-lg font-serif">Source code at each step</li>
-<li class="text-lg font-serif">Call stack</li>
-</ul>
-<hr class="my-10" />
-<h2 id="component-testing" class="text-2xl font-serif my-6">Component Testing</h2>
-<p class="text-lg font-serif mt-4">Playwright can test individual React, Vue, Svelte, and Solid components in isolation — without a full browser app.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npm init playwright@latest -- --ct  # Add component testing</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Button.spec.tsx
+    </details>
+    <p class="text-lg font-serif mt-4">Viewing a trace:</p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright show-trace test-results/my-test/trace.zip</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Or upload to
+      <a
+        href="https://trace.playwright.dev"
+        class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+        >trace.playwright.dev</a
+      >
+      in the browser.
+    </p>
+    <p class="text-lg font-serif mt-4">The Trace Viewer shows:</p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">A timeline of all actions</li>
+      <li class="text-lg font-serif">
+        DOM snapshots before/after each action (fully interactive)
+      </li>
+      <li class="text-lg font-serif">
+        Network requests with request/response bodies
+      </li>
+      <li class="text-lg font-serif">Console output</li>
+      <li class="text-lg font-serif">Source code at each step</li>
+      <li class="text-lg font-serif">Call stack</li>
+    </ul>
+    <hr class="my-10" />
+    <h2 id="component-testing" class="text-2xl font-serif my-6">
+      Component Testing
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright can test individual React, Vue, Svelte, and Solid components in
+      isolation — without a full browser app.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npm init playwright@latest -- --ct  # Add component testing</code></pre>
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Button.spec.tsx
 import { test, expect } from '@playwright/experimental-ct-react';
 import Button from './Button';
 
@@ -1132,21 +2214,37 @@ test('disabled state', async ({ mount }) =&gt; {
   const component = await mount(&lt;Button label="Disabled" disabled /&gt;);
   await expect(component).toBeDisabled();
 });</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Under the hood, Playwright CT:</p>
-<ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Spins up a lightweight Vite dev server.</li>
-<li class="text-lg font-serif">Mounts the component into a special test page.</li>
-<li class="text-lg font-serif">Connects Playwright&#39;s protocol to that page.</li>
-<li class="text-lg font-serif">Runs assertions against the live-rendered component.</li>
-</ol>
-<hr class="my-10" />
-<h2 id="api-testing" class="text-2xl font-serif my-6">API Testing</h2>
-<p class="text-lg font-serif mt-4">Playwright includes a full HTTP client for API testing, sharing the same assertion library as E2E tests.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">import { test, expect } from '@playwright/test';
+    </details>
+    <p class="text-lg font-serif mt-4">Under the hood, Playwright CT:</p>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Spins up a lightweight Vite dev server.
+      </li>
+      <li class="text-lg font-serif">
+        Mounts the component into a special test page.
+      </li>
+      <li class="text-lg font-serif">
+        Connects Playwright&#39;s protocol to that page.
+      </li>
+      <li class="text-lg font-serif">
+        Runs assertions against the live-rendered component.
+      </li>
+    </ol>
+    <hr class="my-10" />
+    <h2 id="api-testing" class="text-2xl font-serif my-6">API Testing</h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright includes a full HTTP client for API testing, sharing the same
+      assertion library as E2E tests.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">import { test, expect } from '@playwright/test';
 
 test('CRUD user API', async ({ request }) =&gt; {
   // Create
@@ -1173,14 +2271,22 @@ test('CRUD user API', async ({ request }) =&gt; {
   const deletedResponse = await request.get(`/api/users/${user.id}`);
   expect(deletedResponse.status()).toBe(404);
 });</code></pre>
-</details>
-<h3 id="combining-api-and-ui-tests" class="text-xl font-serif my-6">Combining API and UI Tests</h3>
-<p class="text-lg font-serif mt-4">A powerful pattern: use the API to set up test state, then test the UI:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('user sees their orders', async ({ page, request }) =&gt; {
+    </details>
+    <h3 id="combining-api-and-ui-tests" class="text-xl font-serif my-6">
+      Combining API and UI Tests
+    </h3>
+    <p class="text-lg font-serif mt-4">
+      A powerful pattern: use the API to set up test state, then test the UI:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('user sees their orders', async ({ page, request }) =&gt; {
   // Set up data via API (fast, reliable)
   const order = await request.post('/api/orders', {
     data: { product: 'Widget', qty: 3 },
@@ -1190,56 +2296,106 @@ test('CRUD user API', async ({ request }) =&gt; {
   await page.goto('/orders');
   await expect(page.getByText(`Order #${order.id}`)).toBeVisible();
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="visual-comparisons" class="text-2xl font-serif my-6">Visual Comparisons</h2>
-<p class="text-lg font-serif mt-4">Playwright has a built-in visual regression testing system using screenshot diffing.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Captures a screenshot and compares to a stored "golden" image
+    </details>
+    <hr class="my-10" />
+    <h2 id="visual-comparisons" class="text-2xl font-serif my-6">
+      Visual Comparisons
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright has a built-in visual regression testing system using
+      screenshot diffing.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Captures a screenshot and compares to a stored "golden" image
 await expect(page).toHaveScreenshot('homepage.png');
 await expect(page.getByRole('dialog')).toHaveScreenshot('modal.png');</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">On first run, Playwright saves the baseline screenshot. On subsequent runs, it diffs against it and fails if pixels differ beyond a threshold.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Configure tolerance
+    </details>
+    <p class="text-lg font-serif mt-4">
+      On first run, Playwright saves the baseline screenshot. On subsequent
+      runs, it diffs against it and fails if pixels differ beyond a threshold.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Configure tolerance
 await expect(page).toHaveScreenshot('chart.png', {
   maxDiffPixels: 100,
   maxDiffPixelRatio: 0.01,  // 1% of pixels may differ
   threshold: 0.2,           // Color distance threshold per pixel
 });</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Update golden screenshots:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright test --update-snapshots</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="codegen-record-replay" class="text-2xl font-serif my-6">Codegen: Record & Replay</h2>
-<p class="text-lg font-serif mt-4">Playwright&#39;s code generator watches your browser interactions and generates test code automatically.</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright codegen https://example.com</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">This opens a browser with a recording toolbar. As you interact:</p>
-<ul class="list-disc list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif">Clicks, fills, and navigations are translated to Playwright API calls in real-time.</li>
-<li class="text-lg font-serif">It automatically picks the best available locator (<code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">getByRole</code>, <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">getByLabel</code>, etc.).</li>
-<li class="text-lg font-serif">Code is shown in a side panel and can be copied.</li>
-</ul>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash"># Generate with specific browser
+    </details>
+    <p class="text-lg font-serif mt-4">Update golden screenshots:</p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright test --update-snapshots</code></pre>
+    </details>
+    <hr class="my-10" />
+    <h2 id="codegen-record-replay" class="text-2xl font-serif my-6">
+      Codegen: Record & Replay
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Playwright&#39;s code generator watches your browser interactions and
+      generates test code automatically.
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright codegen https://example.com</code></pre>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      This opens a browser with a recording toolbar. As you interact:
+    </p>
+    <ul class="list-disc list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        Clicks, fills, and navigations are translated to Playwright API calls in
+        real-time.
+      </li>
+      <li class="text-lg font-serif">
+        It automatically picks the best available locator (<code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >getByRole</code
+        >,
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >getByLabel</code
+        >, etc.).
+      </li>
+      <li class="text-lg font-serif">
+        Code is shown in a side panel and can be copied.
+      </li>
+    </ul>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash"># Generate with specific browser
 npx playwright codegen --browser=firefox https://example.com
 
 # Save directly to file
@@ -1247,16 +2403,26 @@ npx playwright codegen --output=tests/recorded.spec.ts https://example.com
 
 # With auth state
 npx playwright codegen --load-storage=auth/user.json https://example.com/dashboard</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Codegen is excellent for bootstrapping tests — but the generated code should always be reviewed and refactored, especially around locators and assertions.</p>
-<hr class="my-10" />
-<h2 id="cicd-integration" class="text-2xl font-serif my-6">CI/CD Integration</h2>
-<h3 id="github-actions" class="text-xl font-serif my-6">GitHub Actions</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Yaml snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-yaml"># .github/workflows/playwright.yml
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Codegen is excellent for bootstrapping tests — but the generated code
+      should always be reviewed and refactored, especially around locators and
+      assertions.
+    </p>
+    <hr class="my-10" />
+    <h2 id="cicd-integration" class="text-2xl font-serif my-6">
+      CI/CD Integration
+    </h2>
+    <h3 id="github-actions" class="text-xl font-serif my-6">GitHub Actions</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Yaml snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-yaml"># .github/workflows/playwright.yml
 name: Playwright Tests
 
 on: [push, pull_request]
@@ -1286,13 +2452,17 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30</code></pre>
-</details>
-<h3 id="sharding-in-ci" class="text-xl font-serif my-6">Sharding in CI</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Yaml snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-yaml">strategy:
+    </details>
+    <h3 id="sharding-in-ci" class="text-xl font-serif my-6">Sharding in CI</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Yaml snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-yaml">strategy:
   matrix:
     shard: [1, 2, 3, 4]
 
@@ -1312,14 +2482,20 @@ merge-reports:
         path: all-blob-reports
         pattern: blob-report-*
     - run: npx playwright merge-reports --reporter html ./all-blob-reports</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="configuration-deep-dive" class="text-2xl font-serif my-6">Configuration Deep Dive</h2>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// playwright.config.ts
+    </details>
+    <hr class="my-10" />
+    <h2 id="configuration-deep-dive" class="text-2xl font-serif my-6">
+      Configuration Deep Dive
+    </h2>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -1394,15 +2570,23 @@ export default defineConfig({
   globalSetup: './global-setup.ts',
   globalTeardown: './global-teardown.ts',
 });</code></pre>
-</details>
-<hr class="my-10" />
-<h2 id="advanced-patterns-tips" class="text-2xl font-serif my-6">Advanced Patterns & Tips</h2>
-<h3 id="handling-dialogs" class="text-xl font-serif my-6">Handling Dialogs</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Auto-dismiss all dialogs
+    </details>
+    <hr class="my-10" />
+    <h2 id="advanced-patterns-tips" class="text-2xl font-serif my-6">
+      Advanced Patterns & Tips
+    </h2>
+    <h3 id="handling-dialogs" class="text-xl font-serif my-6">
+      Handling Dialogs
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Auto-dismiss all dialogs
 page.on('dialog', dialog =&gt; dialog.accept());
 
 // Handle specific dialog
@@ -1411,43 +2595,66 @@ page.once('dialog', async dialog =&gt; {
   await dialog.accept('confirmed');  // Pass value for prompt dialogs
 });
 await page.getByRole('button', { name: 'Delete' }).click();</code></pre>
-</details>
-<h3 id="handling-popups-new-tabs" class="text-xl font-serif my-6">Handling Popups & New Tabs</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">const [newPage] = await Promise.all([
+    </details>
+    <h3 id="handling-popups-new-tabs" class="text-xl font-serif my-6">
+      Handling Popups & New Tabs
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">const [newPage] = await Promise.all([
   page.waitForEvent('popup'),
   page.getByRole('link', { name: 'Open in new tab' }).click(),
 ]);
 await newPage.waitForLoadState();
 await expect(newPage).toHaveURL(/new-page/);</code></pre>
-</details>
-<h3 id="iframes" class="text-xl font-serif my-6">iFrames</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">const frame = page.frameLocator('#embedded-widget');
+    </details>
+    <h3 id="iframes" class="text-xl font-serif my-6">iFrames</h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">const frame = page.frameLocator('#embedded-widget');
 await frame.getByRole('button', { name: 'Submit' }).click();
 await expect(frame.getByText('Success')).toBeVisible();</code></pre>
-</details>
-<h3 id="shadow-dom" class="text-xl font-serif my-6">Shadow DOM</h3>
-<p class="text-lg font-serif mt-4">Playwright&#39;s locators pierce shadow DOM by default — no special handling needed:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Automatically traverses shadow roots
+    </details>
+    <h3 id="shadow-dom" class="text-xl font-serif my-6">Shadow DOM</h3>
+    <p class="text-lg font-serif mt-4">
+      Playwright&#39;s locators pierce shadow DOM by default — no special
+      handling needed:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Automatically traverses shadow roots
 await page.getByRole('button', { name: 'Submit' }).click();</code></pre>
-</details>
-<h3 id="evaluating-javascript-in-the-page" class="text-xl font-serif my-6">Evaluating JavaScript in the Page</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">// Run JS in main world, return serializable value
+    </details>
+    <h3 id="evaluating-javascript-in-the-page" class="text-xl font-serif my-6">
+      Evaluating JavaScript in the Page
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">// Run JS in main world, return serializable value
 const title = await page.evaluate(() =&gt; document.title);
 
 // Pass arguments to the page function
@@ -1460,13 +2667,19 @@ const text = await page.locator('h1').evaluate(el =&gt; el.textContent);
 
 // evaluateHandle returns a JSHandle (for non-serializable objects)
 const element = await page.evaluateHandle(() =&gt; document.body);</code></pre>
-</details>
-<h3 id="intercepting-console-errors" class="text-xl font-serif my-6">Intercepting Console & Errors</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">const errors: string[] = [];
+    </details>
+    <h3 id="intercepting-console-errors" class="text-xl font-serif my-6">
+      Intercepting Console & Errors
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">const errors: string[] = [];
 page.on('console', msg =&gt; {
   if (msg.type() === 'error') errors.push(msg.text());
 });
@@ -1474,40 +2687,65 @@ page.on('pageerror', err =&gt; errors.push(err.message));
 
 await page.goto('/');
 expect(errors).toHaveLength(0);</code></pre>
-</details>
-<h3 id="annotating-tests" class="text-xl font-serif my-6">Annotating Tests</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('flaky feature', {
+    </details>
+    <h3 id="annotating-tests" class="text-xl font-serif my-6">
+      Annotating Tests
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('flaky feature', {
   annotation: [
     { type: 'issue', description: 'https://github.com/org/repo/issues/123' },
     { type: 'known-bug', description: 'Race condition in payment flow' },
   ],
 }, async ({ page }) =&gt; { ... });</code></pre>
-</details>
-<h3 id="tagging-filtering" class="text-xl font-serif my-6">Tagging & Filtering</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('login @smoke @regression', async ({ page }) =&gt; { ... });
+    </details>
+    <h3 id="tagging-filtering" class="text-xl font-serif my-6">
+      Tagging & Filtering
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('login @smoke @regression', async ({ page }) =&gt; { ... });
 test('full checkout @regression', async ({ page }) =&gt; { ... });</code></pre>
-</details>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Bash snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-bash">npx playwright test --grep @smoke           # Run only smoke tests
+    </details>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Bash snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-bash">npx playwright test --grep @smoke           # Run only smoke tests
 npx playwright test --grep-invert @slow     # Skip slow tests</code></pre>
-</details>
-<h3 id="testinfo-accessing-test-metadata-inside-tests" class="text-xl font-serif my-6">TestInfo — Accessing Test Metadata Inside Tests</h3>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Typescript snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-typescript">test('example', async ({ page }, testInfo) =&gt; {
+    </details>
+    <h3
+      id="testinfo-accessing-test-metadata-inside-tests"
+      class="text-xl font-serif my-6"
+    >
+      TestInfo — Accessing Test Metadata Inside Tests
+    </h3>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Typescript snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-typescript">test('example', async ({ page }, testInfo) =&gt; {
   console.log(testInfo.title);        // Test title
   console.log(testInfo.titlePath);    // ['describe', 'test title']
   console.log(testInfo.project.name); // 'chromium'
@@ -1522,21 +2760,57 @@ npx playwright test --grep-invert @slow     # Skip slow tests</code></pre>
   // Add to output path
   const outputPath = testInfo.outputPath('data.json');
 });</code></pre>
-</details>
-<h3 id="parallelism-anti-patterns-to-avoid" class="text-xl font-serif my-6">Parallelism Anti-Patterns to Avoid</h3>
-<ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1"><li class="text-lg font-serif"><strong class="font-bold">Shared mutable state</strong> — don&#39;t share a single <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">page</code> or global variable across tests that run in parallel.</li>
-<li class="text-lg font-serif"><strong class="font-bold">Depending on test order</strong> — each test should be able to run independently unless explicitly serialized.</li>
-<li class="text-lg font-serif"><strong class="font-bold">Hard-coded port conflicts</strong> — use <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">webServer.port</code> or dynamic ports in CI.</li>
-<li class="text-lg font-serif"><strong class="font-bold">Sleeping</strong> — <code class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded">await page.waitForTimeout(2000)</code> is nearly always wrong. Use proper waits or assertions.</li>
-</ol>
-<hr class="my-10" />
-<h2 id="putting-it-all-together" class="text-2xl font-serif my-6">Putting It All Together</h2>
-<p class="text-lg font-serif mt-4">Here&#39;s what a mature Playwright project structure looks like:</p>
-<details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
-  <summary class="p-4 cursor-pointer font-serif text-lg outline-none select-none">
-    Plaintext snippet
-  </summary>
-  <pre class="font-mono text-sm p-4 overflow-x-auto"><code class="hljs language-plaintext">my-app/
+    </details>
+    <h3 id="parallelism-anti-patterns-to-avoid" class="text-xl font-serif my-6">
+      Parallelism Anti-Patterns to Avoid
+    </h3>
+    <ol class="list-decimal list-inside font-serif text-lg my-4 space-y-1">
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Shared mutable state</strong> — don&#39;t
+        share a single
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >page</code
+        >
+        or global variable across tests that run in parallel.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Depending on test order</strong> — each test
+        should be able to run independently unless explicitly serialized.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Hard-coded port conflicts</strong> — use
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >webServer.port</code
+        >
+        or dynamic ports in CI.
+      </li>
+      <li class="text-lg font-serif">
+        <strong class="font-bold">Sleeping</strong> —
+        <code
+          class="bg-gray-200 text-gray-800 font-mono text-sm px-1 py-0.5 rounded"
+          >await page.waitForTimeout(2000)</code
+        >
+        is nearly always wrong. Use proper waits or assertions.
+      </li>
+    </ol>
+    <hr class="my-10" />
+    <h2 id="putting-it-all-together" class="text-2xl font-serif my-6">
+      Putting It All Together
+    </h2>
+    <p class="text-lg font-serif mt-4">
+      Here&#39;s what a mature Playwright project structure looks like:
+    </p>
+    <details class="my-6 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto">
+      <summary
+        class="p-4 cursor-pointer font-serif text-lg outline-none select-none"
+      >
+        Plaintext snippet
+      </summary>
+      <pre
+        class="font-mono text-sm p-4 overflow-x-auto"
+      ><code class="hljs language-plaintext">my-app/
 ├── playwright.config.ts
 ├── global-setup.ts
 ├── auth/
@@ -1557,20 +2831,38 @@ npx playwright test --grep-invert @slow     # Skip slow tests</code></pre>
 │   └── checkout/
 │       └── payment.spec.ts
 └── test-results/           # Generated: screenshots, videos, traces</code></pre>
-</details>
-<p class="text-lg font-serif mt-4">Playwright rewards thinking about test isolation, using semantic locators, and trusting the auto-waiting mechanism. The result is a test suite that is fast, reliable, debuggable, and — most importantly — catches real regressions.</p>
-<hr class="my-10" />
-<p class="text-lg font-serif mt-4"><em class="italic">Playwright documentation: <a href="https://playwright.dev" class="underline underline-offset-2 hover:text-gray-600 transition-colors">playwright.dev</a> | Trace viewer: <a href="https://trace.playwright.dev" class="underline underline-offset-2 hover:text-gray-600 transition-colors">trace.playwright.dev</a></em></p>
+    </details>
+    <p class="text-lg font-serif mt-4">
+      Playwright rewards thinking about test isolation, using semantic locators,
+      and trusting the auto-waiting mechanism. The result is a test suite that
+      is fast, reliable, debuggable, and — most importantly — catches real
+      regressions.
+    </p>
+    <hr class="my-10" />
+    <p class="text-lg font-serif mt-4">
+      <em class="italic"
+        >Playwright documentation:
+        <a
+          href="https://playwright.dev"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >playwright.dev</a
+        >
+        | Trace viewer:
+        <a
+          href="https://trace.playwright.dev"
+          class="underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >trace.playwright.dev</a
+        ></em
+      >
+    </p>
 
-
-  <!-- ── Footer ────────────────────────────────────────────────────────── -->
-  <hr class="my-10" />
-  <footer class="my-8">
-    <div class="flex justify-between items-center">
-      <p>By Kanai</p>
-      <a href="https://buymeacoffee.com/Kanaixdev">BuyMeACoffee</a>
-    </div>
-  </footer>
-
-</body>
+    <!-- ── Footer ────────────────────────────────────────────────────────── -->
+    <hr class="my-10" />
+    <footer class="my-8">
+      <div class="flex justify-between items-center">
+        <p>By Kanai</p>
+        <a href="https://buymeacoffee.com/Kanaixdev">BuyMeACoffee</a>
+      </div>
+    </footer>
+  </body>
 </html>
