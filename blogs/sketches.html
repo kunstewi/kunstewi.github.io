@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Childlike Sketches</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Schoolbell&family=Crayon&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f0e8;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 27px, #d0c8b8 27px, #d0c8b8 28px),
+      repeating-linear-gradient(90deg, transparent, transparent 27px, #d0c8b8 27px, #d0c8b8 28px);
+    font-family: 'Schoolbell', 'Comic Sans MS', cursive;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #5a4a3a;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px #d0b89a;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 1rem;
+    color: #8a7a6a;
+    margin-bottom: 24px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .sketch-card {
+    background: white;
+    border-radius: 4px;
+    padding: 12px 12px 8px 12px;
+    box-shadow: 3px 3px 0 #c8b8a0, 6px 6px 0 #b8a890;
+    border: 2px solid #d8c8b0;
+    position: relative;
+  }
+  .sketch-card::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 20px;
+    width: 60px; height: 8px;
+    background: rgba(200,180,150,0.5);
+    border-radius: 2px;
+  }
+  .sketch-label {
+    font-size: 1.05rem;
+    color: #6a5a4a;
+    margin-top: 8px;
+    text-align: center;
+  }
+  canvas { display: block; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<h1>✏️ My Drawings ✏️</h1>
+<p class="subtitle">four ways a child might draw a home</p>
+
+<div class="grid">
+  <div class="sketch-card">
+    <div id="sketch1"></div>
+    <div class="sketch-label">🖍️ Crayon Style</div>
+  </div>
+  <div class="sketch-card">
+    <div id="sketch2"></div>
+    <div class="sketch-label">✏️ Pencil Scribble</div>
+  </div>
+  <div class="sketch-card">
+    <div id="sketch3"></div>
+    <div class="sketch-label">🎨 Bright Marker</div>
+  </div>
+  <div class="sketch-card">
+    <div id="sketch4"></div>
+    <div class="sketch-label">🖊️ Wobbly Pen</div>
+  </div>
+</div>
+
+<script>
+// ─── SKETCH 1: CRAYON STYLE ─────────────────────────────────────────────────
+new p5(function(p) {
+  p.setup = function() {
+    let cnv = p.createCanvas(420, 300);
+    cnv.parent('sketch1');
+    p.noLoop();
+  };
+
+  function wobbly(x, y, r=1.5) {
+    return { x: x + p.random(-r, r), y: y + p.random(-r, r) };
+  }
+
+  function crayonLine(x1, y1, x2, y2, col, sw=4) {
+    p.stroke(col);
+    p.strokeWeight(sw);
+    for (let i = 0; i < 3; i++) {
+      let a = wobbly(x1, y1, sw*0.4), b = wobbly(x2, y2, sw*0.4);
+      p.line(a.x, a.y, b.x, b.y);
+    }
+  }
+
+  function crayonRect(x, y, w, h, col, sw=4) {
+    crayonLine(x, y, x+w, y, col, sw);
+    crayonLine(x+w, y, x+w, y+h, col, sw);
+    crayonLine(x+w, y+h, x, y+h, col, sw);
+    crayonLine(x, y+h, x, y, col, sw);
+  }
+
+  function fillRect(x, y, w, h, col) {
+    p.noStroke();
+    p.fill(col);
+    for (let fy = y+2; fy < y+h-2; fy += 4) {
+      p.strokeWeight(3);
+      p.stroke(p.red(col), p.green(col), p.blue(col), 160);
+      let ox = p.random(-1,1);
+      p.line(x+2+ox, fy, x+w-2+ox, fy);
+    }
+  }
+
+  p.draw = function() {
+    p.background(255, 252, 235);
+
+    // Sky
+    p.noStroke(); p.fill(180, 210, 255);
+    p.rect(0, 0, 420, 200);
+    // Ground
+    p.fill(130, 195, 100); p.rect(0, 200, 420, 100);
+
+    // Sun
+    p.fill(255, 230, 50); p.noStroke();
+    p.ellipse(60, 50, 55, 55);
+    p.stroke(255, 215, 30); p.strokeWeight(3);
+    for (let a = 0; a < p.TWO_PI; a += p.PI/4) {
+      p.line(60+28*p.cos(a), 50+28*p.sin(a), 60+40*p.cos(a), 50+40*p.sin(a));
+    }
+
+    // Mountains
+    let mtnCol = p.color(100, 150, 120);
+    p.noStroke(); p.fill(mtnCol);
+    p.triangle(220, 200, 290, 80, 360, 200);
+    p.fill(80, 130, 100);
+    p.triangle(280, 200, 360, 70, 420, 200);
+    p.fill(120, 165, 135);
+    p.triangle(150, 200, 230, 95, 310, 200);
+    // Snow caps
+    p.fill(245, 245, 255);
+    p.triangle(290, 80, 275, 108, 305, 108);
+    p.triangle(360, 70, 345, 100, 375, 100);
+    p.triangle(230, 95, 215, 122, 245, 122);
+
+    // House body
+    fillRect(90, 140, 110, 80, p.color(220, 160, 110));
+    crayonRect(90, 140, 110, 80, p.color(180, 110, 60), 3);
+
+    // Roof
+    crayonLine(80, 140, 145, 95, p.color(190, 60, 50), 4);
+    crayonLine(145, 95, 210, 140, p.color(190, 60, 50), 4);
+    p.noStroke(); p.fill(200, 70, 55);
+    p.triangle(80, 140, 145, 95, 210, 140);
+
+    // Door
+    fillRect(128, 178, 34, 42, p.color(140, 80, 40));
+    crayonRect(128, 178, 34, 42, p.color(100, 50, 20), 2);
+    p.fill(255, 200, 50); p.noStroke();
+    p.ellipse(155, 200, 7, 7);
+
+    // Window
+    fillRect(95, 153, 28, 25, p.color(160, 210, 255));
+    crayonRect(95, 153, 28, 25, p.color(100, 60, 30), 2);
+    crayonLine(109, 153, 109, 178, p.color(100,60,30), 1.5);
+    crayonLine(95, 165, 123, 165, p.color(100,60,30), 1.5);
+
+    // Trees
+    function drawTree(tx, ty) {
+      // trunk
+      crayonLine(tx, ty, tx, ty+40, p.color(120, 75, 35), 5);
+      // poofy top - layered circles
+      p.noStroke(); p.fill(60, 155, 60);
+      p.ellipse(tx, ty, 52, 48);
+      p.fill(50, 135, 50);
+      p.ellipse(tx-12, ty+10, 36, 32);
+      p.ellipse(tx+12, ty+10, 36, 32);
+      p.ellipse(tx, ty-8, 36, 32);
+      p.fill(80, 175, 70);
+      p.ellipse(tx, ty-5, 28, 26);
+    }
+    drawTree(50, 165);
+    drawTree(340, 165);
+
+    // Clouds
+    function cloud(cx, cy) {
+      p.noStroke(); p.fill(255, 255, 255, 220);
+      p.ellipse(cx, cy, 50, 30);
+      p.ellipse(cx+22, cy+4, 38, 26);
+      p.ellipse(cx-18, cy+4, 34, 24);
+      p.ellipse(cx+6, cy-10, 34, 24);
+    }
+    cloud(130, 45); cloud(310, 35);
+
+    // Grass squiggles
+    p.stroke(90, 160, 70); p.strokeWeight(2); p.noFill();
+    for (let gx = 10; gx < 420; gx += 20) {
+      p.beginShape();
+      for (let i = 0; i <= 8; i++) p.vertex(gx + i*2, 200 - p.sin(i)*5 + p.random(-1,1));
+      p.endShape();
+    }
+  };
+}, document.getElementById('sketch1'));
+
+
+// ─── SKETCH 2: PENCIL SCRIBBLE ──────────────────────────────────────────────
+new p5(function(p) {
+  p.setup = function() {
+    let cnv = p.createCanvas(420, 300);
+    cnv.parent('sketch2');
+    p.noLoop();
+  };
+
+  function scribbleLine(x1,y1,x2,y2,sw=1.2,col=[40,40,50]) {
+    p.stroke(col[0],col[1],col[2],180);
+    p.strokeWeight(sw);
+    let steps = p.dist(x1,y1,x2,y2)/3;
+    p.beginShape();
+    for (let i=0;i<=steps;i++) {
+      let t = i/steps;
+      p.vertex(
+        p.lerp(x1,x2,t)+p.random(-1.2,1.2),
+        p.lerp(y1,y2,t)+p.random(-1.2,1.2)
+      );
+    }
+    p.endShape();
+  }
+
+  function scribbleFill(points, col, density=3) {
+    p.noStroke(); p.fill(col[0],col[1],col[2],col[3]||255);
+    p.beginShape();
+    points.forEach(pt=>p.vertex(pt[0],pt[1]));
+    p.endShape(p.CLOSE);
+    // crosshatch
+    p.stroke(col[0]*0.7,col[1]*0.7,col[2]*0.7,80);
+    p.strokeWeight(0.8);
+    let minX=Math.min(...points.map(pt=>pt[0]));
+    let maxX=Math.max(...points.map(pt=>pt[0]));
+    let minY=Math.min(...points.map(pt=>pt[1]));
+    let maxY=Math.max(...points.map(pt=>pt[1]));
+    for (let y=minY; y<maxY; y+=density) {
+      scribbleLine(minX,y+p.random(-1,1),maxX,y+p.random(-1,1),0.6,col);
+    }
+  }
+
+  p.draw = function() {
+    p.background(248, 246, 240);
+
+    // paper texture lines
+    p.stroke(200,195,185,60); p.strokeWeight(0.5);
+    for (let y=28; y<300; y+=28) p.line(0,y,420,y);
+
+    // Sky fill
+    scribbleFill([[0,0],[420,0],[420,185],[0,185]],[200,225,255,100],5);
+    // Ground
+    scribbleFill([[0,185],[420,185],[420,300],[0,300]],[160,210,140,120],4);
+
+    // Sun
+    scribbleFill([[45,25],[75,25],[80,50],[60,65],[40,50]],[255,230,100,200],3);
+    for (let a=0; a<p.TWO_PI; a+=p.PI/5)
+      scribbleLine(60+22*p.cos(a),45+22*p.sin(a),60+35*p.cos(a),45+35*p.sin(a),1.5,[220,190,30]);
+
+    // Mountains
+    scribbleFill([[160,185],[250,75],[340,185]],[150,175,155,200],3);
+    scribbleFill([[260,185],[350,65],[420,185],[420,185]],[120,155,130,200],3);
+    scribbleFill([[80,185],[170,90],[260,185]],[170,195,170,200],3);
+    // Snow
+    scribbleFill([[250,75],[238,100],[262,100]],[240,245,255,230],2);
+
+    // House
+    scribbleFill([[85,135],[195,135],[195,215],[85,215]],[235,200,165,220],4);
+    scribbleFill([[75,135],[140,88],[205,135]],[200,80,70,220],3);
+    scribbleFill([[118,175],[158,175],[158,215],[118,215]],[160,110,70,220],4);
+    scribbleFill([[90,148],[120,148],[120,172],[90,172]],[180,220,255,200],3);
+
+    // Outlines
+    scribbleLine(85,135,195,135,1.5,[80,50,30]);
+    scribbleLine(195,135,195,215,1.5,[80,50,30]);
+    scribbleLine(195,215,85,215,1.5,[80,50,30]);
+    scribbleLine(85,215,85,135,1.5,[80,50,30]);
+    scribbleLine(75,135,140,88,1.5,[80,40,30]);
+    scribbleLine(140,88,205,135,1.5,[80,40,30]);
+    scribbleLine(118,175,158,175,1.2,[60,40,20]);
+    scribbleLine(158,175,158,215,1.2,[60,40,20]);
+    scribbleLine(158,215,118,215,1.2,[60,40,20]);
+    scribbleLine(118,215,118,175,1.2,[60,40,20]);
+
+    // Trees
+    function pTree(tx, ty) {
+      scribbleLine(tx,ty,tx,ty+35,2,[100,65,30]);
+      scribbleFill([[tx,ty-35],[tx-22,ty+5],[tx+22,ty+5]],[70,150,65,220],2.5);
+      scribbleFill([[tx-10,ty-15],[tx-25,ty+18],[tx+25,ty+18]],[60,140,55,220],2.5);
+    }
+    pTree(45, 175); pTree(320, 170); pTree(370, 178);
+
+    // Clouds
+    function sCloud(cx,cy) {
+      scribbleFill([[cx-25,cy],[cx+25,cy],[cx+22,cy-16],[cx,cy-22],[cx-18,cy-16]],[255,255,255,200],3);
+    }
+    sCloud(120,38); sCloud(290,28); sCloud(360,55);
+
+    // Chimney
+    scribbleLine(155,88,155,118,1.5,[100,60,50]);
+    scribbleLine(163,88,163,115,1.5,[100,60,50]);
+    // Smoke
+    p.noFill(); p.stroke(180,180,185,150); p.strokeWeight(1.2);
+    p.beginShape();
+    p.vertex(159,88); p.vertex(157,78); p.vertex(162,68); p.vertex(158,58);
+    p.endShape();
+  };
+}, document.getElementById('sketch2'));
+
+
+// ─── SKETCH 3: BRIGHT MARKER ────────────────────────────────────────────────
+new p5(function(p) {
+  p.setup = function() {
+    let cnv = p.createCanvas(420, 300);
+    cnv.parent('sketch3');
+    p.noLoop();
+  };
+
+  function markerStroke(x1,y1,x2,y2,col,sw=5) {
+    p.stroke(col); p.strokeWeight(sw);
+    p.line(x1+p.random(-1,1), y1+p.random(-1,1), x2+p.random(-1,1), y2+p.random(-1,1));
+    p.strokeWeight(sw*0.4);
+    p.stroke(p.red(col), p.green(col), p.blue(col), 80);
+    p.line(x1+p.random(-2,2), y1+p.random(-2,2), x2+p.random(-2,2), y2+p.random(-2,2));
+  }
+
+  p.draw = function() {
+    p.background(255, 255, 250);
+
+    // Sky
+    p.noStroke(); p.fill(100, 185, 255, 180);
+    p.rect(0, 0, 420, 195);
+    // Ground
+    p.fill(60, 200, 80, 180); p.rect(0, 195, 420, 105);
+
+    // Sun - big wobbly circle
+    p.fill(255, 230, 0, 220); p.stroke(255, 200, 0); p.strokeWeight(3);
+    p.ellipse(355+p.random(-1,1), 45+p.random(-1,1), 58, 56);
+    for (let a=0; a<p.TWO_PI; a+=p.PI/5) {
+      markerStroke(355+24*p.cos(a), 45+24*p.sin(a), 355+38*p.cos(a), 45+38*p.sin(a), p.color(255,210,0), 3);
+    }
+
+    // Mountains - bold flat colour
+    p.noStroke();
+    p.fill(80, 170, 120, 230); p.triangle(170, 200, 260, 60, 350, 200);
+    p.fill(50, 140, 95, 220); p.triangle(250, 200, 345, 55, 420, 200);
+    p.fill(110, 190, 145, 220); p.triangle(40, 200, 150, 80, 260, 200);
+    // Snow
+    p.fill(240, 248, 255, 240);
+    p.triangle(260, 60, 247, 88, 274, 88);
+    p.triangle(345, 55, 332, 85, 358, 85);
+
+    // Outline mountains
+    markerStroke(170,200,260,60,p.color(30,110,60),3.5);
+    markerStroke(260,60,350,200,p.color(30,110,60),3.5);
+
+    // House body
+    p.noStroke(); p.fill(255, 160, 80, 230);
+    p.rect(78, 140, 116, 80);
+    // Roof
+    p.fill(255, 60, 80, 240);
+    p.triangle(68, 142, 136, 88, 204, 142);
+    // Door
+    p.fill(180, 90, 20, 230); p.rect(117, 178, 38, 42);
+    // Windows
+    p.fill(100, 200, 255, 220); p.rect(84, 150, 30, 26);
+    p.fill(100, 200, 255, 220); p.rect(160, 150, 30, 26);
+    // Window cross
+    p.stroke(255,255,255,200); p.strokeWeight(2);
+    p.line(99,150,99,176); p.line(84,163,114,163);
+    p.line(175,150,175,176); p.line(160,163,190,163);
+
+    // Bold outlines
+    markerStroke(78,140,194,140,p.color(180,80,20),4);
+    markerStroke(194,140,194,220,p.color(180,80,20),4);
+    markerStroke(194,220,78,220,p.color(180,80,20),4);
+    markerStroke(78,220,78,140,p.color(180,80,20),4);
+    markerStroke(68,142,136,88,p.color(180,30,40),4.5);
+    markerStroke(136,88,204,142,p.color(180,30,40),4.5);
+
+    // Trees - round blob tops
+    function mTree(tx, ty, col1, col2) {
+      p.noStroke(); p.fill(col2); p.rect(tx-4, ty, 8, 38);
+      p.fill(col1); p.ellipse(tx, ty+5, 52, 50);
+      p.fill(p.lerpColor(p.color(col1), p.color(255,255,255), 0.3));
+      p.ellipse(tx-8, ty-5, 24, 20);
+      // Outline
+      markerStroke(tx-4,ty,tx-4,ty+38,p.color(80,50,20),3);
+      markerStroke(tx+4,ty,tx+4,ty+38,p.color(80,50,20),3);
+      p.noFill(); p.stroke(p.red(col1)*0.6, p.green(col1)*0.6, p.blue(col1)*0.6); p.strokeWeight(3.5);
+      p.ellipse(tx,ty+5,52,50);
+    }
+    mTree(42, 158, p.color(40,185,60), p.color(120,70,30));
+    mTree(360, 162, p.color(30,170,55), p.color(110,65,25));
+    mTree(390, 170, p.color(50,195,70), p.color(115,68,28));
+
+    // Clouds - puffy marker
+    function mCloud(cx,cy,s) {
+      p.noStroke(); p.fill(255,255,255,230);
+      p.ellipse(cx,cy,s*2,s*1.2);
+      p.ellipse(cx+s*0.5,cy+s*0.2,s*1.4,s);
+      p.ellipse(cx-s*0.5,cy+s*0.2,s*1.2,s*0.9);
+      p.ellipse(cx+s*0.15,cy-s*0.4,s*1.2,s);
+      p.stroke(200,210,230,150); p.strokeWeight(2.5); p.noFill();
+      p.ellipse(cx,cy,s*2,s*1.2);
+    }
+    mCloud(100, 38, 22); mCloud(260, 30, 26);
+
+    // Birds - simple V shapes
+    p.stroke(50,50,100); p.strokeWeight(2.5); p.noFill();
+    [[185,28],[200,22],[215,30],[230,25]].forEach(b=>{
+      p.line(b[0]-6,b[1],b[0],b[1]-5); p.line(b[0],b[1]-5,b[0]+6,b[1]);
+    });
+
+    // Flowers in grass
+    function flower(fx,fy,col) {
+      p.noStroke(); p.fill(col);
+      for (let a=0;a<p.TWO_PI;a+=p.TWO_PI/5)
+        p.ellipse(fx+8*p.cos(a),fy+8*p.sin(a),10,7);
+      p.fill(255,230,50); p.ellipse(fx,fy,10,10);
+    }
+    flower(230,215,p.color(255,80,150));
+    flower(270,222,p.color(255,140,30));
+    flower(310,218,p.color(200,80,255));
+  };
+}, document.getElementById('sketch3'));
+
+
+// ─── SKETCH 4: WOBBLY PEN ───────────────────────────────────────────────────
+new p5(function(p) {
+  let t=0;
+  p.setup = function() {
+    let cnv = p.createCanvas(420, 300);
+    cnv.parent('sketch4');
+  };
+
+  function wobPt(x,y,amt=2.5) {
+    return [x + p.noise(x*0.1+t)*amt*2-amt, y + p.noise(y*0.1+t+5)*amt*2-amt];
+  }
+
+  function wobLine(x1,y1,x2,y2,sw=2,col=[30,25,40]) {
+    p.stroke(col[0],col[1],col[2]);
+    p.strokeWeight(sw);
+    let steps = Math.ceil(p.dist(x1,y1,x2,y2)/4);
+    p.beginShape();
+    for (let i=0;i<=steps;i++) {
+      let t2=i/steps;
+      let px=p.lerp(x1,x2,t2), py=p.lerp(y1,y2,t2);
+      let [wx,wy]=wobPt(px,py,1.8);
+      p.vertex(wx,wy);
+    }
+    p.endShape();
+  }
+
+  function wobFill(pts, col, alpha=200) {
+    p.noStroke();
+    p.fill(col[0],col[1],col[2],alpha);
+    p.beginShape();
+    pts.forEach(pt=>{ let [wx,wy]=wobPt(pt[0],pt[1]); p.vertex(wx,wy); });
+    p.endShape(p.CLOSE);
+  }
+
+  p.draw = function() {
+    t += 0.003;
+    p.background(252, 248, 240);
+
+    // ruled lines
+    p.stroke(185,178,168,50); p.strokeWeight(0.6);
+    for (let y=28;y<300;y+=28) p.line(0,y,420,y);
+    p.stroke(210,185,190,80); p.strokeWeight(1.2);
+    p.line(35,0,35,300);
+
+    // Sky wash
+    wobFill([[0,0],[420,0],[420,190],[0,190]],[200,220,255],110);
+    // Ground
+    wobFill([[0,190],[420,190],[420,300],[0,300]],[140,200,110],120);
+
+    // Mountains
+    wobFill([[130,195],[215,72],[300,195]],[155,185,160],190);
+    wobFill([[240,195],[340,60],[420,195],[420,195]],[120,155,130],190);
+    wobFill([[50,195],[145,85],[240,195]],[175,200,175],190);
+    // Snow caps
+    wobFill([[215,72],[204,98],[226,98]],[240,245,255],230);
+    wobFill([[340,60],[328,88],[352,88]],[240,245,255],230);
+
+    // Outline mountains  
+    wobLine(130,195,215,72,2,[60,100,70]);
+    wobLine(215,72,300,195,2,[60,100,70]);
+    wobLine(240,195,340,60,2,[50,90,65]);
+    wobLine(340,60,420,195,2,[50,90,65]);
+
+    // House body
+    wobFill([[82,138],[198,138],[198,218],[82,218]],[230,190,155],220);
+    // Roof
+    wobFill([[72,140],[140,90],[208,140]],[195,70,60],220);
+    // Chimney
+    wobFill([[148,88],[162,88],[162,115],[148,115]],[180,140,120],200);
+    wobLine(148,88,148,118,2,[120,80,60]);
+    wobLine(162,88,162,118,2,[120,80,60]);
+    // Door
+    wobFill([[116,178],[156,178],[156,218],[116,218]],[165,105,60],220);
+    // Window L
+    wobFill([[87,150],[117,150],[117,175],[87,175]],[175,220,255],210);
+    // Window R
+    wobFill([[163,150],[193,150],[193,175],[163,175]],[175,220,255],210);
+
+    // Outlines house
+    wobLine(82,138,198,138,2.5,[130,75,40]);
+    wobLine(198,138,198,218,2.5,[130,75,40]);
+    wobLine(198,218,82,218,2.5,[130,75,40]);
+    wobLine(82,218,82,138,2.5,[130,75,40]);
+    wobLine(72,140,140,90,3,[140,50,45]);
+    wobLine(140,90,208,140,3,[140,50,45]);
+    wobLine(116,178,156,178,2,[100,60,25]);
+    wobLine(156,178,156,218,2,[100,60,25]);
+    wobLine(156,218,116,218,2,[100,60,25]);
+    wobLine(116,218,116,178,2,[100,60,25]);
+    wobLine(87,150,117,150,1.5,[100,60,30]);
+    wobLine(117,150,117,175,1.5,[100,60,30]);
+    wobLine(117,175,87,175,1.5,[100,60,30]);
+    wobLine(87,175,87,150,1.5,[100,60,30]);
+    wobLine(163,150,193,150,1.5,[100,60,30]);
+    wobLine(193,150,193,175,1.5,[100,60,30]);
+    wobLine(193,175,163,175,1.5,[100,60,30]);
+    wobLine(163,175,163,150,1.5,[100,60,30]);
+    // window cross
+    wobLine(102,150,102,175,1.2,[100,60,30]);
+    wobLine(87,162,117,162,1.2,[100,60,30]);
+    wobLine(178,150,178,175,1.2,[100,60,30]);
+    wobLine(163,162,193,162,1.2,[100,60,30]);
+    // door knob
+    p.noStroke(); p.fill(220,170,50,200);
+    let [kx,ky]=wobPt(150,198,1);
+    p.ellipse(kx,ky,7,7);
+    // smoke
+    p.noFill(); p.stroke(180,175,185,160); p.strokeWeight(1.5);
+    p.beginShape();
+    let [sx,sy]=wobPt(155,85,2);
+    p.vertex(sx,sy);
+    p.bezierVertex(sx-8,sy-12,sx+8,sy-22,sx-5,sy-32);
+    p.endShape();
+
+    // Trees
+    function wTree(tx,ty) {
+      wobLine(tx,ty,tx,ty+36,3.5,[115,70,28]);
+      wobFill([[tx,ty-32],[tx-24,ty+4],[tx+24,ty+4]],[55,145,55],210);
+      wobFill([[tx-12,ty-10],[tx-26,ty+20],[tx+26,ty+20]],[45,130,48],210);
+      p.noFill();
+      p.stroke(30,100,35); p.strokeWeight(2.5);
+      p.beginShape();
+      let wpts=[[tx,ty-32],[tx-24,ty+4],[tx+24,ty+4]];
+      wpts.forEach(wp=>{ let[wx,wy]=wobPt(wp[0],wp[1]); p.vertex(wx,wy); });
+      p.endShape(p.CLOSE);
+      p.beginShape();
+      let wpts2=[[tx-12,ty-10],[tx-26,ty+20],[tx+26,ty+20]];
+      wpts2.forEach(wp=>{ let[wx,wy]=wobPt(wp[0],wp[1]); p.vertex(wx,wy); });
+      p.endShape(p.CLOSE);
+    }
+    wTree(44, 170); wTree(355, 165); wTree(390, 172);
+
+    // Sun
+    wobFill([[335,20],[365,20],[375,48],[355,62],[330,48]],[255,225,55],220);
+    p.stroke(220,185,20); p.strokeWeight(2.5);
+    for (let a=0;a<p.TWO_PI;a+=p.PI/5) {
+      wobLine(350+22*p.cos(a),40+22*p.sin(a),350+35*p.cos(a),40+35*p.sin(a),2,[220,185,20]);
+    }
+
+    // Clouds
+    function wCloud(cx,cy) {
+      wobFill([[cx-26,cy],[cx+26,cy],[cx+22,cy-18],[cx+2,cy-26],[cx-20,cy-18]],[255,255,255],210);
+      p.noFill(); p.stroke(200,210,225,180); p.strokeWeight(1.8);
+      p.beginShape();
+      let cpts=[[cx-26,cy],[cx+26,cy],[cx+22,cy-18],[cx+2,cy-26],[cx-20,cy-18]];
+      cpts.forEach(cp=>{ let[wx,wy]=wobPt(cp[0],cp[1]); p.vertex(wx,wy); });
+      p.endShape(p.CLOSE);
+    }
+    wCloud(100,40); wCloud(255,30);
+
+    // Grass tufts
+    p.stroke(80,155,65); p.strokeWeight(1.8);
+    for (let gx=10; gx<420; gx+=18) {
+      let[bx,by]=wobPt(gx,195,1);
+      p.line(bx,by,bx-3,by-8); p.line(bx,by,bx,by-10); p.line(bx,by,bx+3,by-8);
+    }
+  };
+}, document.getElementById('sketch4'));
+</script>
+</body>
+</html>
