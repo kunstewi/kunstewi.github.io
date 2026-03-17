@@ -1,5 +1,25 @@
 [
   {
+    "title": "feat: added initial playwright e2e tests",
+    "url": "https://github.com/kunstewi/ebook/pull/2",
+    "label": "feature",
+    "repo": "ebook",
+    "mergedOn": "Mar 17, 2026",
+    "filesChanged": 30,
+    "additions": 1765,
+    "deletions": 238
+  },
+  {
+    "title": "feat(phase-one): extended unit tests in the backend ",
+    "url": "https://github.com/kunstewi/ebook/pull/4",
+    "label": "feature",
+    "repo": "ebook",
+    "mergedOn": "Mar 17, 2026",
+    "filesChanged": 17,
+    "additions": 810,
+    "deletions": 46
+  },
+  {
     "title": "docs: added a new section in installation.md to get the mongodb connection string from cloud.mongodb.com ",
     "url": "https://github.com/processing/p5.js-web-editor/pull/3976",
     "label": "docs",
