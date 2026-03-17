@@ -1,5 +1,13 @@
 [
   {
+    "title": "p5.js: Sketches I made using p5.js",
+    "file": "sketches.html",
+    "date": "Mar 17, 2026",
+    "readingTime": 5,
+    "depth": "Sketches",
+    "tags": ["p5.js", "sketches"]
+  },
+  {
     "title": "p5.js: The Architecture of the p5.js Web Editor",
     "file": "p5-editor-architecture.html",
     "date": "Mar 6, 2026",
