@@ -1,5 +1,15 @@
 [
   {
+    "title": "fix: replaced the old script that was blocking p5.sound.js multiple files' docs generation",
+    "url": "https://github.com/processing/p5.js-website/pull/1225",
+    "label": "bug fix",
+    "repo": "p5.js-website",
+    "mergedOn": "Mar 20, 2026",
+    "filesChanged": 1,
+    "additions": 27,
+    "deletions": 10
+  },
+  {
     "title": "feat: added initial playwright e2e tests",
     "url": "https://github.com/kunstewi/ebook/pull/2",
     "label": "feature",
