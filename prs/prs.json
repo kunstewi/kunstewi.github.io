@@ -1,5 +1,15 @@
 [
   {
+    "title": "docs: added example sketches for start() and stop() methods in AudioIn class",
+    "url": "https://github.com/processing/p5.sound.js/pull/78",
+    "label": "docs",
+    "repo": "p5.sound.js",
+    "mergedOn": "Mar 23, 2026",
+    "filesChanged": 1,
+    "additions": 72,
+    "deletions": 0
+  },
+  {
     "title": "fix: replaced the old script that was blocking p5.sound.js multiple files' docs generation",
     "url": "https://github.com/processing/p5.js-website/pull/1225",
     "label": "bug fix",
