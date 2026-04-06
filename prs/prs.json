@@ -1,5 +1,15 @@
 [
   {
+    "title": "feat: initial workflow for e2e tests",
+    "url": "https://github.com/kunstewi/ebook/pull/5",
+    "label": "feature",
+    "repo": "ebook",
+    "mergedOn": "Apr 06, 2026",
+    "filesChanged": 1,
+    "additions": 64,
+    "deletions": 0
+  },
+  {
     "title": "docs: added example sketches for start() and stop() methods in AudioIn class",
     "url": "https://github.com/processing/p5.sound.js/pull/78",
     "label": "docs",

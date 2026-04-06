@@ -1,92 +1,128 @@
 [
   {
-    "title": "restaurant-landing-page",
-    "url": "https://github.com/kunstewi/the-banquet",
-    "tags": "html, css, js"
-  },
-  {
-    "title": "pet-adoption-landing-page",
-    "url": "https://github.com/kunstewi/pet-adoption-website",
-    "tags": "html, css, js"
-  },
-  {
-    "title": "yodora-landing-page",
-    "url": "https://github.com/kunstewi/yodora-landing",
-    "tags": "vite, react, tailwindcss"
-  },
-  {
-    "title": "noteflow-landing-page",
-    "url": "https://github.com/kunstewi/noteflow-landing",
-    "tags": "vite, react, tailwindcss"
-  },
-  {
-    "title": "travel-landing-page",
-    "url": "https://github.com/kunstewi/travel",
-    "tags": "vite, react, tailwindcss"
-  },
-  {
-    "title": "team-task-management-web-app",
-    "url": "https://github.com/kunstewi/achiever",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "blogging-web-app",
-    "url": "https://github.com/kunstewi/blogger",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "interview-prep-web-app",
-    "url": "https://github.com/kunstewi/interviewer",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "expense-tracker-web-app",
-    "url": "https://github.com/kunstewi/spender",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "invoice-generator-web-app",
-    "url": "https://github.com/kunstewi/invoice",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "resume-builder-web-app",
-    "url": "https://github.com/kunstewi/resume",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "ebook-generator-web-app",
-    "url": "https://github.com/kunstewi/ebook",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb"
-  },
-  {
-    "title": "chess-web-app",
+    "title": "Chess",
     "url": "https://github.com/kunstewi/chess",
-    "tags": "vite, react, tailwindcss, nodejs, express, mongodb, socketio"
+    "description": "Real-time multiplayer chess with live game sync via WebSockets. Full move validation, matchmaking, and game-state persistence.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb, socket.io",
+    "category": "featured"
   },
   {
-    "title": "bricks-game",
-    "url": "https://github.com/kunstewi/brickball",
-    "tags": "html, css, js"
-  },
-  {
-    "title": "c-http-server",
+    "title": "C HTTP Server",
     "url": "https://github.com/kunstewi/c-http-server",
-    "tags": "c"
+    "description": "A bare-metal HTTP/1.1 server written from scratch in C. Handles TCP connections, request parsing, static file serving, and concurrent clients with zero dependencies.",
+    "tags": "c, tcp, http",
+    "category": "featured"
   },
   {
-    "title": "production-rest-api",
+    "title": "Production REST API",
     "url": "https://github.com/kunstewi/rest-api",
-    "tags": "nodejs, express, typescript, mongodb"
+    "description": "Production-grade REST API with authentication, rate limiting, input validation, and structured error handling. Built with TypeScript for end-to-end type safety.",
+    "tags": "nodejs, express, typescript, mongodb",
+    "category": "featured"
   },
   {
-    "title": "nest-js-backend",
+    "title": "Achiever",
+    "url": "https://github.com/kunstewi/achiever",
+    "description": "Team task management app with role-based access, real-time board updates, and deadline tracking across projects.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Blogger",
+    "url": "https://github.com/kunstewi/blogger",
+    "description": "Full-featured blogging platform with markdown editor, image uploads, and authenticated user profiles.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Interviewer",
+    "url": "https://github.com/kunstewi/interviewer",
+    "description": "Interview preparation app with curated question banks, progress tracking, and timed practice sessions.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Spender",
+    "url": "https://github.com/kunstewi/spender",
+    "description": "Expense tracking app with category breakdowns, monthly reports, and budget alerts.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Invoice",
+    "url": "https://github.com/kunstewi/invoice",
+    "description": "Invoice generator with PDF export, client management, and payment status tracking.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Resume",
+    "url": "https://github.com/kunstewi/resume",
+    "description": "Resume builder with multiple templates, live preview, and PDF download.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "Ebook",
+    "url": "https://github.com/kunstewi/ebook",
+    "description": "Ebook generator that compiles markdown content into downloadable ebook formats.",
+    "tags": "react, tailwindcss, nodejs, express, mongodb",
+    "category": "fullstack"
+  },
+  {
+    "title": "NestJS Backend",
     "url": "https://github.com/kunstewi/nest-backend",
-    "tags": "nestjs, typescript"
+    "description": "Backend service built with NestJS using modules, guards, interceptors, and TypeORM for clean architecture.",
+    "tags": "nestjs, typescript",
+    "category": "backend"
   },
   {
-    "title": "learnings",
+    "title": "Yodora",
+    "url": "https://github.com/kunstewi/yodora-landing",
+    "description": "Animated product landing page with scroll-driven interactions.",
+    "tags": "react, tailwindcss",
+    "category": "frontend"
+  },
+  {
+    "title": "Noteflow",
+    "url": "https://github.com/kunstewi/noteflow-landing",
+    "description": "Clean landing page for a note-taking SaaS product.",
+    "tags": "react, tailwindcss",
+    "category": "frontend"
+  },
+  {
+    "title": "Travel",
+    "url": "https://github.com/kunstewi/travel",
+    "description": "Travel agency landing page with destination showcase and booking CTA.",
+    "tags": "react, tailwindcss",
+    "category": "frontend"
+  },
+  {
+    "title": "The Banquet",
+    "url": "https://github.com/kunstewi/the-banquet",
+    "description": "Restaurant landing page with menu sections and reservation flow.",
+    "tags": "html, css, javascript",
+    "category": "frontend"
+  },
+  {
+    "title": "Pet Adoption",
+    "url": "https://github.com/kunstewi/pet-adoption-website",
+    "description": "Pet adoption website with breed filtering and adoption form.",
+    "tags": "html, css, javascript",
+    "category": "frontend"
+  },
+  {
+    "title": "Brickball",
+    "url": "https://github.com/kunstewi/brickball",
+    "description": "Classic brick-breaker game built with vanilla Canvas API.",
+    "tags": "html, css, javascript, canvas",
+    "category": "frontend"
+  },
+  {
+    "title": "Learnings",
     "url": "https://github.com/kunstewi/learnings",
-    "tags": "documenting everything i have learned or currently learning"
+    "description": "A living repository documenting everything I've learned and am currently learning.",
+    "tags": "documentation",
+    "category": "other"
   }
 ]
