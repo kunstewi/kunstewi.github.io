@@ -96,24 +96,6 @@
             return `<span class="px-2 py-0.5 bg-black/5 rounded text-[10px] font-mono whitespace-nowrap text-gray-700">${tag.trim()}</span>`;
         }
 
-        function renderFeaturedCard(project) {
-            const tags = project.tags.split(',').map(t => renderTag(t)).join('');
-            return `
-                <a href="${project.url}" target="_blank" rel="noopener noreferrer"
-                   class="block border border-black/10 rounded-lg p-5 hover:border-black/25 transition-colors duration-200 group">
-                    <div class="flex items-start justify-between gap-3">
-                        <h3 class="font-semibold text-base text-black group-hover:underline underline-offset-4 decoration-1">${project.title}</h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor"
-                            class="size-4 shrink-0 mt-1 text-gray-400 group-hover:text-black transition-colors duration-200">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-                        </svg>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-2 leading-relaxed text-pretty">${project.description}</p>
-                    <div class="flex flex-wrap gap-1.5 mt-3">${tags}</div>
-                </a>`;
-        }
-
         function renderListItem(project) {
             const tags = project.tags.split(',').map(t => renderTag(t)).join('');
             return `
@@ -145,10 +127,10 @@
                 const featuredEl = document.getElementById("featured-section");
                 if (featured.length) {
                     featuredEl.innerHTML = `
-                        <h2 class="text-xs font-semibold tracking-widest uppercase text-gray-500 mb-4">Notable Projects</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            ${featured.map(renderFeaturedCard).join('')}
-                        </div>`;
+                        <h2 class="text-xs font-semibold tracking-widest uppercase text-gray-500 mb-3">Notable Projects</h2>
+                        <ul class="flex flex-col gap-1 pl-0">
+                            ${featured.map(renderListItem).join('')}
+                        </ul>`;
                 }
 
                 // Grouped
