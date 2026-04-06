@@ -67,7 +67,7 @@
     "url": "https://github.com/kunstewi/ebook",
     "description": "Ebook generator that compiles markdown content into downloadable ebook formats.",
     "tags": "react, tailwindcss, nodejs, express, mongodb",
-    "category": "fullstack"
+    "category": "featured"
   },
   {
     "title": "NestJS Backend",
